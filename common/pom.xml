@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ruoyi-vue-plus-kotlin</artifactId>
+        <groupId>com.blank</groupId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>common-bom</module>
+        <module>common-social</module>
+        <module>common-core</module>
+        <module>common-doc</module>
+        <module>common-idempotent</module>
+        <module>common-job</module>
+        <module>common-log</module>
+        <module>common-mail</module>
+        <module>common-mybatis</module>
+        <module>common-oss</module>
+        <module>common-ratelimiter</module>
+        <module>common-redis</module>
+        <module>common-satoken</module>
+        <module>common-security</module>
+        <module>common-web</module>
+        <module>common-translation</module>
+        <module>common-sensitive</module>
+        <module>common-json</module>
+        <module>common-encrypt</module>
+        <module>common-websocket</module>
+        <module>common-kotlin</module>
+    </modules>
+
+    <artifactId>common</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        common 通用模块
+    </description>
+
+</project>

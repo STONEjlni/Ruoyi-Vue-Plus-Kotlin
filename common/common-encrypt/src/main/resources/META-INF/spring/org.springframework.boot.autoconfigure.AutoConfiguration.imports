@@ -1,0 +1,3 @@
+com.blank.common.encrypt.config.EncryptorAutoConfiguration
+com.blank.common.encrypt.config.ApiDecryptAutoConfiguration
+

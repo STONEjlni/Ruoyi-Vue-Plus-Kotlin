@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ruoyi-vue-plus-kotlin</artifactId>
+        <groupId>com.blank</groupId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>generator</module>
+        <module>job</module>
+        <module>system</module>
+    </modules>
+
+    <artifactId>modules</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        modules 业务模块
+    </description>
+
+</project>

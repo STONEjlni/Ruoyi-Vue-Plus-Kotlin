@@ -1,0 +1,5 @@
+com.blank.common.translation.config.TranslationConfig
+com.blank.common.translation.core.impl.DeptNameTranslationImpl
+com.blank.common.translation.core.impl.DictTypeTranslationImpl
+com.blank.common.translation.core.impl.OssUrlTranslationImpl
+com.blank.common.translation.core.impl.UserNameTranslationImpl

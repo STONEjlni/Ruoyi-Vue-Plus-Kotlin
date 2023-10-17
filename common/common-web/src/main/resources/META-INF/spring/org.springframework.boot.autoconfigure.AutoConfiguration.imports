@@ -1,0 +1,5 @@
+com.blank.common.web.config.CaptchaConfig
+com.blank.common.web.config.FilterConfig
+com.blank.common.web.config.I18nConfig
+com.blank.common.web.config.ResourcesConfig
+com.blank.common.web.config.UndertowConfig
