@@ -10,7 +10,7 @@
     <artifactId>powerjob-server</artifactId>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>20</java.version>
         <spring-boot.version>2.7.14</spring-boot.version>
         <spring-boot-admin.version>2.7.10</spring-boot-admin.version>
     </properties>
@@ -73,6 +73,15 @@
                         <goals>
                             <goal>kapt</goal>
                         </goals>
+                        <configuration>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>com.mybatis-flex</groupId>
+                                    <artifactId>mybatis-flex-processor</artifactId>
+                                    <version>${mybatis-flex.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>compile</id>
@@ -91,10 +100,9 @@
                 </executions>
                 <configuration>
                     <correctErrorTypes>true</correctErrorTypes>
-                    <languageVersion>${kotlin-language.version}</languageVersion>
                     <args>
                         <arg>-Xjsr305=strict</arg>
-                        <arg>-jvm-target=17</arg>
+                        <arg>-jvm-target=20</arg>
                         <arg>-Xjvm-default=all</arg>
                     </args>
                     <compilerPlugins>
