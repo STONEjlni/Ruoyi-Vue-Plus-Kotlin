@@ -18,7 +18,7 @@ interface SysRoleMapper : BaseMapperPlus<SysRole, SysRoleVo> {
             value = ["r.create_by"]
         )]
     )
-    fun selectPageRoleList(page: Page<SysRole>?,  /*<SysRole>*/queryWrapper: QueryWrapper?): Page<SysRoleVo>?
+    fun selectPageRoleList(page: Page<SysRole>,  /*<SysRole>*/queryWrapper: QueryWrapper): Page<SysRoleVo>?
 
     /**
      * 根据条件分页查询角色数据
@@ -32,7 +32,7 @@ interface SysRoleMapper : BaseMapperPlus<SysRole, SysRoleVo> {
             value = ["r.create_by"]
         )]
     )
-    fun selectRoleList( /*<SysRole>*/queryWrapper: QueryWrapper?): MutableList<SysRoleVo>?
+    fun selectRoleList( /*<SysRole>*/queryWrapper: QueryWrapper): MutableList<SysRoleVo>?
 
     @DataPermission(
         [DataColumn(key = ["deptName"], value = ["d.dept_id"]), DataColumn(
@@ -40,7 +40,7 @@ interface SysRoleMapper : BaseMapperPlus<SysRole, SysRoleVo> {
             value = ["r.create_by"]
         )]
     )
-    fun selectRoleById(roleId: Long?): SysRoleVo?
+    fun selectRoleById(roleId: Long): SysRoleVo?
 
     /**
      * 根据用户ID查询角色
@@ -48,7 +48,7 @@ interface SysRoleMapper : BaseMapperPlus<SysRole, SysRoleVo> {
      * @param userId 用户ID
      * @return 角色列表
      */
-    fun selectRolePermissionByUserId(userId: Long?): MutableList<SysRoleVo>?
+    fun selectRolePermissionByUserId(userId: Long): MutableList<SysRoleVo>?
 
     /**
      * 根据用户ID获取角色选择框列表
@@ -56,7 +56,7 @@ interface SysRoleMapper : BaseMapperPlus<SysRole, SysRoleVo> {
      * @param userId 用户ID
      * @return 选中角色ID列表
      */
-    fun selectRoleListByUserId(userId: Long?): MutableList<Long>?
+    fun selectRoleListByUserId(userId: Long): MutableList<Long>?
 
     /**
      * 根据用户ID查询角色
@@ -64,5 +64,5 @@ interface SysRoleMapper : BaseMapperPlus<SysRole, SysRoleVo> {
      * @param userName 用户名
      * @return 角色列表
      */
-    fun selectRolesByUserName(userName: String?): MutableList<SysRoleVo>?
+    fun selectRolesByUserName(userName: String): MutableList<SysRoleVo>?
 }

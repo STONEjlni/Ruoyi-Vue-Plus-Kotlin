@@ -3,13 +3,17 @@ package com.blank.web.service.impl
 import cn.dev33.satoken.secure.BCrypt
 import cn.dev33.satoken.stp.SaLoginModel
 import cn.dev33.satoken.stp.StpUtil
+import cn.hutool.core.util.ObjectUtil
 import com.blank.common.core.annotation.LoginType
 import com.blank.common.core.annotation.Slf4j
+import com.blank.common.core.annotation.Slf4j.Companion.log
+import com.blank.common.core.annotation.UserStatus
 import com.blank.common.core.constant.Constants
 import com.blank.common.core.constant.GlobalConstants
 import com.blank.common.core.domain.model.LoginBody
 import com.blank.common.core.exception.user.CaptchaException
 import com.blank.common.core.exception.user.CaptchaExpireException
+import com.blank.common.core.exception.user.UserException
 import com.blank.common.core.utils.MessageUtils.message
 import com.blank.common.core.utils.ValidatorUtils.validate
 import com.blank.common.core.validate.auth.PasswordGroup
@@ -19,11 +23,13 @@ import com.blank.common.satoken.utils.LoginHelper
 import com.blank.common.satoken.utils.LoginHelper.login
 import com.blank.common.web.config.properties.CaptchaProperties
 import com.blank.system.domain.SysClient
+import com.blank.system.domain.table.SysUserDef
 import com.blank.system.domain.vo.SysUserVo
 import com.blank.system.mapper.SysUserMapper
 import com.blank.web.domain.vo.LoginVo
 import com.blank.web.service.IAuthStrategy
 import com.blank.web.service.SysLoginService
+import com.mybatisflex.core.query.QueryWrapper
 import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
 
@@ -95,22 +101,21 @@ class PasswordAuthStrategy(
         }
     }
 
-    private fun loadUserByUsername(username: String?): SysUserVo? {
-        /*SysUser user = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getUserName, SysUser::getStatus)
-            .eq(TenantHelper.isEnable(), SysUser::getTenantId, tenantId)
-            .eq(SysUser::getUserName, username));
+    private fun loadUserByUsername(username: String): SysUserVo? {
+        val def = SysUserDef.SYS_USER
+        val user = userMapper.selectOneByQuery(
+            QueryWrapper()
+                .select(def.USER_NAME, def.STATUS)
+                .where {
+                    def.USER_NAME.eq(username)
+                })
         if (ObjectUtil.isNull(user)) {
-            log.info("登录用户：{} 不存在.", username);
-            throw new UserException("user.not.exists", username);
-        } else if (UserStatus.DISABLE.getCode().equals(user.getStatus())) {
-            log.info("登录用户：{} 已被停用.", username);
-            throw new UserException("user.blocked", username);
+            log.info{"登录用户：$username 不存在."}
+            throw UserException("user.not.exists", username)
+        } else if (UserStatus.DISABLE.code == user.status) {
+            log.info{"登录用户：$username 已被停用."}
+            throw UserException("user.blocked", username);
         }
-        if (TenantHelper.isEnable()) {
-            return userMapper.selectTenantUserByUserName(username, tenantId);
-        }
-        return userMapper.selectUserByUserName(username);*/
-        return null
+        return userMapper.selectUserByUserName(username)
     }
 }

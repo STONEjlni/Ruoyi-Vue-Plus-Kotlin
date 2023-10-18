@@ -1,7 +1,9 @@
 package com.blank.system.mapper
 
+import com.blank.common.core.constant.UserConstants
 import com.blank.common.mybatis.core.mapper.BaseMapperPlus
 import com.blank.system.domain.SysMenu
+import com.blank.system.domain.table.SysMenuDef
 import com.blank.system.domain.vo.SysMenuVo
 import com.mybatisflex.core.query.QueryWrapper
 import org.apache.ibatis.annotations.Param
@@ -23,7 +25,7 @@ interface SysMenuMapper : BaseMapperPlus<SysMenu, SysMenuVo> {
      * @param queryWrapper 查询条件
      * @return 菜单列表
      */
-    fun selectMenuListByUserId( /*<SysMenu>*/queryWrapper: QueryWrapper?): MutableList<SysMenu>?
+    fun selectMenuListByUserId(queryWrapper: QueryWrapper): MutableList<SysMenu>?
 
     /**
      * 根据用户ID查询权限
@@ -31,7 +33,7 @@ interface SysMenuMapper : BaseMapperPlus<SysMenu, SysMenuVo> {
      * @param userId 用户ID
      * @return 权限列表
      */
-    fun selectMenuPermsByUserId(userId: Long?): MutableList<String>?
+    fun selectMenuPermsByUserId(userId: Long): MutableList<String>?
 
     /**
      * 根据角色ID查询权限
@@ -39,7 +41,7 @@ interface SysMenuMapper : BaseMapperPlus<SysMenu, SysMenuVo> {
      * @param roleId 角色ID
      * @return 权限列表
      */
-    fun selectMenuPermsByRoleId(roleId: Long?): MutableList<String>?
+    fun selectMenuPermsByRoleId(roleId: Long): MutableList<String>?
 
     /**
      * 根据用户ID查询菜单
@@ -47,13 +49,18 @@ interface SysMenuMapper : BaseMapperPlus<SysMenu, SysMenuVo> {
      * @return 菜单列表
      */
     fun selectMenuTreeAll(): MutableList<SysMenu>? {
-        /*LambdaQueryWrapper<SysMenu> lqw = new LambdaQueryWrapper<SysMenu>()
-            .in(SysMenu::getMenuType, UserConstants.TYPE_DIR, UserConstants.TYPE_MENU)
-            .eq(SysMenu::getStatus, UserConstants.MENU_NORMAL)
-            .orderByAsc(SysMenu::getParentId)
-            .orderByAsc(SysMenu::getOrderNum);
-        return this.selectList(lqw);*/
-        return null
+        val def = SysMenuDef.SYS_MENU
+        return this.selectListByQuery(
+            QueryWrapper().select()
+                .where {
+                    def.MENU_TYPE.`in`(
+                        UserConstants.TYPE_DIR, UserConstants.TYPE_MENU
+                    )
+                    def.STATUS.eq(UserConstants.MENU_NORMAL)
+                }
+                .orderBy(def.PARENT_ID, true)
+                .orderBy(def.ORDER_NUM, true)
+        )
     }
 
     /**
@@ -62,7 +69,7 @@ interface SysMenuMapper : BaseMapperPlus<SysMenu, SysMenuVo> {
      * @param userId 用户ID
      * @return 菜单列表
      */
-    fun selectMenuTreeByUserId(userId: Long?): MutableList<SysMenu>?
+    fun selectMenuTreeByUserId(userId: Long): MutableList<SysMenu>?
 
     /**
      * 根据角色ID查询菜单树信息
@@ -72,7 +79,7 @@ interface SysMenuMapper : BaseMapperPlus<SysMenu, SysMenuVo> {
      * @return 选中菜单列表
      */
     fun selectMenuListByRoleId(
-        @Param("roleId") roleId: Long?,
+        @Param("roleId") roleId: Long,
         @Param("menuCheckStrictly") menuCheckStrictly: Boolean
     ): MutableList<Long>?
 }

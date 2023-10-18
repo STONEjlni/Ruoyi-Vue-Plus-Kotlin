@@ -4,9 +4,12 @@ import cn.dev33.satoken.stp.SaLoginModel
 import cn.dev33.satoken.stp.StpUtil
 import cn.hutool.core.util.ObjectUtil
 import com.blank.common.core.annotation.Slf4j
+import com.blank.common.core.annotation.Slf4j.Companion.log
+import com.blank.common.core.annotation.UserStatus
 import com.blank.common.core.constant.Constants
 import com.blank.common.core.domain.model.LoginBody
 import com.blank.common.core.exception.ServiceException
+import com.blank.common.core.exception.user.UserException
 import com.blank.common.core.utils.MessageUtils.message
 import com.blank.common.core.utils.ValidatorUtils.validate
 import com.blank.common.core.validate.auth.SocialGroup
@@ -15,12 +18,14 @@ import com.blank.common.satoken.utils.LoginHelper.login
 import com.blank.common.social.config.properties.SocialProperties
 import com.blank.common.social.utils.SocialUtils.loginAuth
 import com.blank.system.domain.SysClient
+import com.blank.system.domain.table.SysUserDef
 import com.blank.system.domain.vo.SysUserVo
 import com.blank.system.mapper.SysUserMapper
 import com.blank.system.service.ISysSocialService
 import com.blank.web.domain.vo.LoginVo
 import com.blank.web.service.IAuthStrategy
 import com.blank.web.service.SysLoginService
+import com.mybatisflex.core.query.QueryWrapper
 import org.springframework.stereotype.Service
 
 /**
@@ -61,7 +66,7 @@ class SocialAuthStrategy(
         }
 
         // 查找用户
-        val user = loadUser(social!!.userId)!!
+        val user = loadUser(social!!.userId!!)!!
 
         // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
         val loginUser = loginService.buildLoginUser(user)
@@ -83,18 +88,20 @@ class SocialAuthStrategy(
         return loginVo
     }
 
-    private fun loadUser(userId: Long?): SysUserVo? {
-        /*SysUser user = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getUserName, SysUser::getStatus)
-            .eq(SysUser::getUserId, userId));
+    private fun loadUser(userId: Long): SysUserVo? {
+        val def = SysUserDef.SYS_USER
+        val user = userMapper.selectOneByQuery(
+            QueryWrapper().select(def.USER_NAME, def.STATUS)
+                .where {
+                    def.USER_ID.eq(userId)
+                })
         if (ObjectUtil.isNull(user)) {
-            log.info("登录用户：{} 不存在.", "");
-            throw new UserException("user.not.exists", "");
-        } else if (UserStatus.DISABLE.getCode().equals(user.getStatus())) {
-            log.info("登录用户：{} 已被停用.", "");
-            throw new UserException("user.blocked", "");
+            log.info{"登录用户：$userId 不存在."}
+            throw UserException("user.not.exists", "");
+        } else if (UserStatus.DISABLE.code == user.status) {
+            log.info{"登录用户：$userId 已被停用."}
+            throw UserException("user.blocked", "")
         }
-        return userMapper.selectUserByUserName(user.getUserName());*/
-        return null
+        return userMapper.selectUserByUserName(user.userName!!)
     }
 }

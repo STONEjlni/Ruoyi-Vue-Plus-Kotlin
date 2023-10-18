@@ -2,13 +2,17 @@ package com.blank.web.service.impl
 
 import cn.dev33.satoken.stp.SaLoginModel
 import cn.dev33.satoken.stp.StpUtil
+import cn.hutool.core.util.ObjectUtil
 import cn.hutool.core.util.StrUtil
 import com.blank.common.core.annotation.LoginType
 import com.blank.common.core.annotation.Slf4j
+import com.blank.common.core.annotation.Slf4j.Companion.log
+import com.blank.common.core.annotation.UserStatus
 import com.blank.common.core.constant.Constants
 import com.blank.common.core.constant.GlobalConstants
 import com.blank.common.core.domain.model.LoginBody
 import com.blank.common.core.exception.user.CaptchaExpireException
+import com.blank.common.core.exception.user.UserException
 import com.blank.common.core.utils.MessageUtils.message
 import com.blank.common.core.utils.ValidatorUtils.validate
 import com.blank.common.core.validate.auth.EmailGroup
@@ -16,11 +20,13 @@ import com.blank.common.redis.utils.RedisUtils.getCacheObject
 import com.blank.common.satoken.utils.LoginHelper
 import com.blank.common.satoken.utils.LoginHelper.login
 import com.blank.system.domain.SysClient
+import com.blank.system.domain.table.SysUserDef
 import com.blank.system.domain.vo.SysUserVo
 import com.blank.system.mapper.SysUserMapper
 import com.blank.web.domain.vo.LoginVo
 import com.blank.web.service.IAuthStrategy
 import com.blank.web.service.SysLoginService
+import com.mybatisflex.core.query.QueryWrapper
 import org.springframework.stereotype.Service
 
 /**
@@ -76,22 +82,24 @@ class EmailAuthStrategy(
         return code == emailCode
     }
 
-    private fun loadUserByEmail(email: String?): SysUserVo? {
-        /*SysUser user = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getEmail, SysUser::getStatus)
-            .eq(TenantHelper.isEnable(), SysUser::getTenantId, tenantId)
-            .eq(SysUser::getEmail, email));
+    private fun loadUserByEmail(email: String): SysUserVo? {
+        val def = SysUserDef.SYS_USER
+        var user = userMapper.selectOneByQuery(
+            QueryWrapper()
+                .select(def.EMAIL, def.STATUS)
+                .where {
+                    def.EMAIL.eq(email)
+                }
+        )
+
         if (ObjectUtil.isNull(user)) {
-            log.info("登录用户：{} 不存在.", email);
-            throw new UserException("user.not.exists", email);
-        } else if (UserStatus.DISABLE.getCode().equals(user.getStatus())) {
-            log.info("登录用户：{} 已被停用.", email);
-            throw new UserException("user.blocked", email);
+            log.info{"登录用户：$email 不存在."}
+            throw UserException("user.not.exists", email)
+        } else if (UserStatus.DISABLE.code == user.status) {
+            log.info{"登录用户：$email 已被停用."}
+            throw UserException("user.blocked", email)
         }
-        if (TenantHelper.isEnable()) {
-            return userMapper.selectTenantUserByEmail(email, tenantId);
-        }
-        return userMapper.selectUserByEmail(email);*/
-        return null
+
+        return userMapper.selectUserByEmail(email)
     }
 }

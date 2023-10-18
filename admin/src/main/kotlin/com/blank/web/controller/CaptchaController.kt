@@ -64,40 +64,39 @@ class CaptchaController(
         return ok()
     }
 
-    @get:GetMapping("/auth/code")
-    val code: R<CaptchaVo>
-        /**
-         * 生成验证码
-         */
-        get() {
-            val captchaVo = CaptchaVo()
-            val captchaEnabled = captchaProperties.enable!!
-            if (!captchaEnabled) {
-                captchaVo.captchaEnabled = false
-                return ok(captchaVo)
-            }
-            // 保存验证码信息
-            val uuid = IdUtil.simpleUUID()
-            val verifyKey = GlobalConstants.CAPTCHA_CODE_KEY + uuid
-            // 生成验证码
-            val captchaType = captchaProperties.type
-            val isMath = CaptchaType.MATH === captchaType
-            val length = if (isMath) captchaProperties.numberLength else captchaProperties.charLength
-            val codeGenerator: CodeGenerator = ReflectUtil.newInstance(
-                captchaType!!.clazz, length
-            )
-            val captcha = SpringUtil.getBean(captchaProperties.category!!.clazz)
-            captcha.generator = codeGenerator
-            captcha.createCode()
-            var code = captcha.code
-            if (isMath) {
-                val parser: ExpressionParser = SpelExpressionParser()
-                val exp = parser.parseExpression(StringUtils.remove(code, "="))
-                code = exp.getValue(String::class.java)
-            }
-            setCacheObject(verifyKey, code, Duration.ofMinutes(Constants.CAPTCHA_EXPIRATION.toLong()))
-            captchaVo.uuid = uuid
-            captchaVo.img = captcha.imageBase64
+    /**
+     * 生成验证码
+     */
+    @GetMapping("/auth/code")
+    fun getCode(): R<CaptchaVo> {
+        val captchaVo = CaptchaVo()
+        val captchaEnabled = captchaProperties.enable!!
+        if (!captchaEnabled) {
+            captchaVo.captchaEnabled = false
             return ok(captchaVo)
         }
+        // 保存验证码信息
+        val uuid = IdUtil.simpleUUID()
+        val verifyKey = GlobalConstants.CAPTCHA_CODE_KEY + uuid
+        // 生成验证码
+        val captchaType = captchaProperties.type
+        val isMath = CaptchaType.MATH === captchaType
+        val length = if (isMath) captchaProperties.numberLength else captchaProperties.charLength
+        val codeGenerator: CodeGenerator = ReflectUtil.newInstance(
+            captchaType!!.clazz, length
+        )
+        val captcha = SpringUtil.getBean(captchaProperties.category!!.clazz)
+        captcha.generator = codeGenerator
+        captcha.createCode()
+        var code = captcha.code
+        if (isMath) {
+            val parser: ExpressionParser = SpelExpressionParser()
+            val exp = parser.parseExpression(StringUtils.remove(code, "="))
+            code = exp.getValue(String::class.java)
+        }
+        setCacheObject(verifyKey, code, Duration.ofMinutes(Constants.CAPTCHA_EXPIRATION.toLong()))
+        captchaVo.uuid = uuid
+        captchaVo.img = captcha.imageBase64
+        return ok(captchaVo)
+    }
 }

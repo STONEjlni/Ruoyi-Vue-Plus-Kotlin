@@ -19,10 +19,10 @@ interface SysDeptMapper : BaseMapperPlus<SysDept, SysDeptVo> {
      * @return 部门信息集合
      */
     @DataPermission([DataColumn(key = ["deptName"], value = ["dept_id"])])
-    fun selectDeptList(queryWrapper: QueryWrapper?): MutableList<SysDeptVo>?
+    fun selectDeptList(queryWrapper: QueryWrapper): MutableList<SysDeptVo>?
 
     @DataPermission([DataColumn(key = ["deptName"], value = ["dept_id"])])
-    fun selectDeptById(deptId: Long?): SysDeptVo?
+    fun selectDeptById(deptId: Long): SysDeptVo?
 
     /**
      * 根据角色ID查询部门树信息
@@ -32,7 +32,7 @@ interface SysDeptMapper : BaseMapperPlus<SysDept, SysDeptVo> {
      * @return 选中部门列表
      */
     fun selectDeptListByRoleId(
-        @Param("roleId") roleId: Long?,
+        @Param("roleId") roleId: Long,
         @Param("deptCheckStrictly") deptCheckStrictly: Boolean
     ): MutableList<Long>?
 }

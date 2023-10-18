@@ -99,9 +99,9 @@ class SysDictDataServiceImpl(
     @CachePut(cacheNames = [CacheNames.SYS_DICT], key = "#bo.dictType")
     override fun insertDictData(bo: SysDictDataBo): MutableList<SysDictDataVo>? {
         val data = convert(bo, SysDictData::class.java)!!
-        val row = baseMapper!!.insert(data)
+        val row = baseMapper.insert(data)
         if (row > 0) {
-            return baseMapper.selectDictDataByType(data.dictType)
+            return baseMapper.selectDictDataByType(data.dictType!!)
         }
         throw ServiceException("操作失败")
     }

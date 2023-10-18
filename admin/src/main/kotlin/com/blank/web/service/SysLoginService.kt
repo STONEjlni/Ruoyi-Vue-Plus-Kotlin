@@ -141,7 +141,6 @@ class SysLoginService(
         sysUser.loginDate = getNowDate()
         sysUser.updateBy = userId
         userMapper.update(sysUser)
-        //        userMapper.updateById(sysUser);
     }
 
     /**

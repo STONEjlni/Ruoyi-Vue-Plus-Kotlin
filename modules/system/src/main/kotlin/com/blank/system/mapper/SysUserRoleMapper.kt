@@ -7,5 +7,5 @@ import com.blank.system.domain.SysUserRole
  * 用户与角色关联表 数据层
  */
 interface SysUserRoleMapper : BaseMapperPlus<SysUserRole, SysUserRole> {
-    fun selectUserIdsByRoleId(roleId: Long?): MutableList<Long>?
+    fun selectUserIdsByRoleId(roleId: Long): MutableList<Long>?
 }
