@@ -31,6 +31,7 @@
         <module>common-encrypt</module>
         <module>common-websocket</module>
         <module>common-kotlin</module>
+        <module>common-flex-apt</module>
     </modules>
 
     <artifactId>common</artifactId>

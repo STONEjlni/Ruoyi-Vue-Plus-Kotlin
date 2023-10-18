@@ -158,6 +158,13 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!-- flex-apt模块 -->
+            <dependency>
+                <groupId>com.blank</groupId>
+                <artifactId>common-flex-apt</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
