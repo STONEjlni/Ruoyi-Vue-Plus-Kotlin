@@ -14,7 +14,5 @@ import org.springframework.context.annotation.Bean
 @EnableConfigurationProperties(SocialProperties::class)
 class SocialAutoConfiguration {
     @Bean
-    fun authStateCache(): AuthStateCache {
-        return AuthRedisStateCache()
-    }
+    fun authStateCache(): AuthStateCache = AuthRedisStateCache()
 }

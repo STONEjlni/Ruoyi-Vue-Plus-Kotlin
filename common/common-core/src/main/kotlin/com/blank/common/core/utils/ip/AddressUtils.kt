@@ -13,7 +13,6 @@ object AddressUtils {
     // 未知地址
     const val UNKNOWN = "XX XX"
 
-    @JvmStatic
     fun getRealAddressByIP(ip: String): String {
         var ip = ip
         if (StrUtil.isBlank(ip)) {

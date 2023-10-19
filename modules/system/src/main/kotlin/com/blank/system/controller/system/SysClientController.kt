@@ -45,7 +45,7 @@ class SysClientController(
     @SaCheckPermission("system:client:query")
     @GetMapping("/{id}")
     fun getInfo(@PathVariable id: @NotNull(message = "主键不能为空") Long): R<SysClientVo> {
-        return ok(sysClientService.queryById(id))
+        return ok(data = sysClientService.queryById(id))
     }
 
     /**

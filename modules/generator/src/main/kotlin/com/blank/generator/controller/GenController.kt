@@ -53,7 +53,7 @@ class GenController(
         map["info"] = table
         map["rows"] = list
         map["tables"] = tables
-        return ok(map)
+        return ok(data = map)
     }
 
     /**
@@ -133,7 +133,7 @@ class GenController(
     )
     fun preview(@PathVariable("tableId") tableId: Long): R<Map<String, String>> {
         val dataMap = genTableService.previewCode(tableId)
-        return ok(dataMap)
+        return ok(data = dataMap)
     }
 
     /**
@@ -209,12 +209,11 @@ class GenController(
         IoUtil.write(response.outputStream, false, data)
     }
 
-    @get:GetMapping(value = ["/getDataNames"])
-    @get:SaCheckPermission("tool:gen:list")
-    val currentDataSourceNameList: R<Any>
-        /**
-         * 查询数据源名称列表
-         */
-        get() = ok(getDataSourceNameList())
+    /**
+     * 查询数据源名称列表
+     */
+    @GetMapping(value = ["/getDataNames"])
+    @SaCheckPermission("tool:gen:list")
+    fun getCurrentDataSourceNameList() = ok(data = getDataSourceNameList())
 }
 

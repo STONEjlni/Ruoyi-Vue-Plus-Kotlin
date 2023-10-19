@@ -2,6 +2,7 @@ package com.blank.common.social.maxkey
 
 import cn.hutool.extra.spring.SpringUtil
 import com.blank.common.json.utils.JsonUtils.parseMap
+import me.zhyd.oauth.cache.AuthDefaultStateCache
 import me.zhyd.oauth.cache.AuthStateCache
 import me.zhyd.oauth.config.AuthConfig
 import me.zhyd.oauth.exception.AuthException
@@ -13,18 +14,16 @@ import me.zhyd.oauth.request.AuthDefaultRequest
 /**
  * Oauth2 默认接口说明
  */
-class AuthMaxKeyRequest : AuthDefaultRequest {
+class AuthMaxKeyRequest
+/**
+ * 设定归属域
+ */
+@JvmOverloads
+constructor(config: AuthConfig, authStateCache: AuthStateCache? = AuthDefaultStateCache.INSTANCE) :
+    AuthDefaultRequest(config, AuthMaxKeySource.MAXKEY, authStateCache) {
     companion object {
-        val SERVER_URL = SpringUtil.getProperty("justauth.type.maxkey.server-url")
+        val SERVER_URL: String = SpringUtil.getProperty("justauth.type.maxkey.server-url")
     }
-
-    /**
-     * 设定归属域
-     */
-    constructor(config: AuthConfig?) : super(config, AuthMaxKeySource.MAXKEY)
-
-    constructor(config: AuthConfig?, authStateCache: AuthStateCache?) :
-        super(config, AuthMaxKeySource.MAXKEY, authStateCache)
 
     override fun getAccessToken(authCallback: AuthCallback): AuthToken {
         val body = doPostAuthorizationCode(authCallback.code)

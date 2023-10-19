@@ -26,58 +26,6 @@ class R<T> : Serializable {
          */
         const val FAIL = 500
 
-
-        /**
-         * 返回成功消息
-         *
-         * @return 成功消息
-         */
-        fun <T> ok(): R<T> {
-            return restResult(null, SUCCESS, "操作成功")
-        }
-
-        /**
-         * 返回成功消息
-         *
-         * @param msg 返回内容
-         * @return 成功消息
-         */
-        fun <T> ok(msg: String): R<T> {
-            return restResult(null, SUCCESS, msg)
-        }
-
-        /**
-         * 返回成功消息
-         *
-         * @param code 编码
-         * @param msg 返回内容
-         * @return 成功消息
-         */
-        fun <T> ok(code: Int? = SUCCESS, msg: String? = "操作成功"): R<T> {
-            return restResult(null, code, msg)
-        }
-
-        /**
-         * 返回成功消息
-         *
-         * @param data 数据对象
-         * @return 成功消息
-         */
-        fun <T> ok(data: T? = null): R<T> {
-            return restResult(data, SUCCESS, "操作成功")
-        }
-
-        /**
-         * 返回成功消息
-         *
-         * @param msg 返回内容
-         * @param data 数据对象
-         * @return 成功消息
-         */
-        fun <T> ok(msg: String? = "操作成功", data: T? = null): R<T> {
-            return restResult(data, SUCCESS, msg)
-        }
-
         /**
          * 返回成功消息
          *
@@ -86,63 +34,12 @@ class R<T> : Serializable {
          * @param data 数据对象
          * @return 成功消息
          */
+        @JvmOverloads
         fun <T> ok(code: Int? = SUCCESS, msg: String? = "操作成功", data: T? = null): R<T> {
             return restResult(data, code, msg)
         }
 
         /**
-         * 返回成功消息
-         *
-         * @return 成功消息
-         */
-        fun <T> fail(): R<T> {
-            return restResult(null, FAIL, "操作失败")
-        }
-
-        /**
-         * 返回失败消息
-         *
-         * @param msg 返回内容
-         * @param data 数据对象
-         * @return 失败消息
-         */
-        fun <T> fail(msg: String): R<T> {
-            return restResult(null, FAIL, msg)
-        }
-
-        /**
-         * 返回失败消息
-         *
-         * @param code 编码
-         * @param msg 返回内容
-         * @return 失败消息
-         */
-        fun <T> fail(code: Int? = FAIL, msg: String? = "操作失败"): R<T> {
-            return restResult(null, code, msg)
-        }
-
-        /**
-         * 返回失败消息
-         *
-         * @param msg 返回内容
-         * @return 失败消息
-         */
-        fun <T> fail(data: T? = null): R<T> {
-            return restResult(data, FAIL, "操作失败")
-        }
-
-        /**
-         * 返回失败消息
-         *
-         * @param msg 返回内容
-         * @param data 数据对象
-         * @return 失败消息
-         */
-        fun <T> fail(msg: String? = "操作失败", data: T? = null): R<T> {
-            return restResult(data, FAIL, msg)
-        }
-
-        /**
          * 返回失败消息
          *
          * @param code 编码
@@ -150,6 +47,7 @@ class R<T> : Serializable {
          * @param data 数据对象
          * @return 失败消息
          */
+        @JvmOverloads
         fun <T> fail(code: Int? = FAIL, msg: String? = "操作失败", data: T? = null): R<T> {
             return restResult(data, code, msg)
         }
@@ -162,18 +60,7 @@ class R<T> : Serializable {
          * @param data 数据对象
          * @return 警告消息
          */
-        fun <T> warn(msg: String): R<T> {
-            return restResult(null, HttpStatus.WARN, msg)
-        }
-
-        /**
-         * 返回警告消息
-         *
-         * @param code 编码
-         * @param msg 返回内容
-         * @param data 数据对象
-         * @return 警告消息
-         */
+        @JvmOverloads
         fun <T> warn(code: Int? = HttpStatus.WARN, msg: String? = "操作失败", data: T? = null): R<T> {
             return restResult(data, code, msg)
         }

@@ -22,7 +22,6 @@ object SocialUtils {
     )
 
     @Throws(AuthException::class)
-    @JvmStatic
     fun loginAuth(loginBody: LoginBody, socialProperties: SocialProperties): AuthResponse<AuthUser> {
         val authRequest = getAuthRequest(loginBody.source, socialProperties)
         val callback = AuthCallback()

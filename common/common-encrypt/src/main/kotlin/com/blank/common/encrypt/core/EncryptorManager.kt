@@ -17,12 +17,12 @@ class EncryptorManager {
     /**
      * 缓存加密器
      */
-    private var encryptorMap: MutableMap<EncryptContext, IEncryptor> = ConcurrentHashMap()
+    private val encryptorMap: MutableMap<EncryptContext, IEncryptor> = ConcurrentHashMap()
 
     /**
      * 类加密字段缓存
      */
-    private var fieldCache: MutableMap<Class<*>, Set<Field>> = ConcurrentHashMap()
+    private val fieldCache: MutableMap<Class<*>, Set<Field>> = ConcurrentHashMap()
 
     /**
      * 获取类加密字段缓存

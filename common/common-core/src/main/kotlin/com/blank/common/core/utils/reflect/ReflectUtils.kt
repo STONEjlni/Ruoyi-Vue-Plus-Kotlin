@@ -16,7 +16,6 @@ object ReflectUtils {
      * 调用Getter方法.
      * 支持多级，如：对象名.对象名.方法
      */
-    @JvmStatic
     fun <E> invokeGetter(obj: Any, propertyName: String): E {
         var `object` = obj
         for (name in StringUtils.split(propertyName, ".")) {
@@ -30,7 +29,6 @@ object ReflectUtils {
      * 调用Setter方法, 仅匹配方法名。
      * 支持多级，如：对象名.对象名.方法
      */
-    @JvmStatic
     fun <E> invokeSetter(obj: Any, propertyName: String, value: E) {
         var `object` = obj
         val names: Array<String> = StringUtils.split(propertyName, ".")

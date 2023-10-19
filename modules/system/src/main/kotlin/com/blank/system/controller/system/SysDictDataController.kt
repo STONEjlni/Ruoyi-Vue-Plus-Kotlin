@@ -44,7 +44,7 @@ class SysDictDataController(
     @SaCheckPermission("system:dict:query")
     @GetMapping(value = ["/{dictCode}"])
     fun getInfo(@PathVariable dictCode: Long): R<SysDictDataVo> {
-        return ok(dictDataService.selectDictDataById(dictCode))
+        return ok(data = dictDataService.selectDictDataById(dictCode))
     }
 
     /**
@@ -58,7 +58,7 @@ class SysDictDataController(
         if (ObjectUtil.isNull(data)) {
             data = ArrayList()
         }
-        return ok(data)
+        return ok(data = data)
     }
 
     /**

@@ -22,8 +22,7 @@ object RedisUtils {
      * @param rateInterval 速率间隔
      * @return -1 表示失败
      */
-    @JvmStatic
-    fun rateLimiter(key: String?, rateType: RateType?, rate: Int, rateInterval: Int): Long {
+    fun rateLimiter(key: String, rateType: RateType, rate: Int, rateInterval: Int): Long {
         val rateLimiter = CLIENT.getRateLimiter(key)
         rateLimiter.trySetRate(rateType, rate.toLong(), rateInterval.toLong(), RateIntervalUnit.SECONDS)
         return if (rateLimiter.tryAcquire()) {
@@ -36,10 +35,7 @@ object RedisUtils {
     /**
      * 获取客户端实例
      */
-    @JvmStatic
-    fun getClient(): RedissonClient {
-        return CLIENT
-    }
+    fun getClient(): RedissonClient = CLIENT
 
     /**
      * 发布通道消息

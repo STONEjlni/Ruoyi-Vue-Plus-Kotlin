@@ -208,7 +208,7 @@ class SysDictTypeServiceImpl(
         }
         val map = toMap(datas, { obj: SysDictDataVo -> obj.dictValue }) { obj: SysDictDataVo -> obj.dictLabel }
         return if (StringUtils.containsAny(dictValue, separator)) {
-            Arrays.stream(dictValue.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+            Arrays.stream(dictValue.split(separator).toTypedArray())
                 .map { v: String? -> map[v] ?: StringUtils.EMPTY }
                 .collect(Collectors.joining(separator))
         } else {
@@ -233,7 +233,7 @@ class SysDictTypeServiceImpl(
         }
         val map = toMap(datas, { obj: SysDictDataVo -> obj.dictLabel }) { obj: SysDictDataVo -> obj.dictValue }
         return if (StringUtils.containsAny(dictLabel, separator)) {
-            Arrays.stream(dictLabel!!.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+            Arrays.stream(dictLabel!!.split(separator).toTypedArray())
                 .map { l: String? -> map[l] ?: StringUtils.EMPTY }
                 .collect(Collectors.joining(separator))
         } else {

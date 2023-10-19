@@ -11,7 +11,5 @@ import org.springframework.data.redis.connection.RedisConfiguration
 @AutoConfiguration(after = [RedisConfiguration::class])
 class IdempotentConfig {
     @Bean
-    fun repeatSubmitAspect(): RepeatSubmitAspect {
-        return RepeatSubmitAspect()
-    }
+    fun repeatSubmitAspect() = RepeatSubmitAspect()
 }

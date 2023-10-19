@@ -10,7 +10,6 @@ import jakarta.validation.Validator
 object ValidatorUtils {
     private val VALID: Validator = SpringUtil.getBean(Validator::class.java)
 
-    @JvmStatic
     fun <T> validate(`object`: T, vararg groups: Class<*>?) {
         val validate = VALID.validate(`object`, *groups)
         if (validate.isNotEmpty()) {

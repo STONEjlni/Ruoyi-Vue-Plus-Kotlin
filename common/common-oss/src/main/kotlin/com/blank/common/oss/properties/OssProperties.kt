@@ -8,47 +8,47 @@ class OssProperties {
     /**
      * 访问站点
      */
-    val endpoint: String? = null
+    var endpoint: String? = null
 
     /**
      * 自定义域名
      */
-    val domain: String? = null
+    var domain: String? = null
 
     /**
      * 前缀
      */
-    val prefix: String? = null
+    var prefix: String? = null
 
     /**
      * ACCESS_KEY
      */
-    val accessKey: String? = null
+    var accessKey: String? = null
 
     /**
      * SECRET_KEY
      */
-    val secretKey: String? = null
+    var secretKey: String? = null
 
     /**
      * 存储空间名
      */
-    val bucketName: String? = null
+    var bucketName: String? = null
 
     /**
      * 存储区域
      */
-    val region: String? = null
+    var region: String? = null
 
     /**
      * 是否https（Y=是,N=否）
      */
-    val isHttps: String? = null
+    var isHttps: String? = null
 
     /**
      * 桶权限类型(0private 1public 2custom)
      */
-    val accessPolicy: String? = null
+    var accessPolicy: String? = null
 
     val tenantId: String
         get() = "blank"

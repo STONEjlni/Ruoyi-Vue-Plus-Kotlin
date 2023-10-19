@@ -51,21 +51,21 @@ object DataBaseHelper {
     }
 
     @JvmStatic
-    fun findInSet(var1: Any?, var2: String?): String {
+    fun findInSet(var1: Any, var2: String): String {
         val dataBasyType = getDataBaseType()
         val `var` = Convert.toStr(var1)
         if (dataBasyType === DataBaseType.SQL_SERVER) {
             // charindex(',100,' , ',0,100,101,') <> 0
-            return "charindex(',$`var`,' , ','+$var2+',') <> 0"
+            return "charindex(',${`var`},' , ','+${var2}+',') <> 0"
         } else if (dataBasyType === DataBaseType.POSTGRE_SQL) {
             // (select position(',100,' in ',0,100,101,')) <> 0
-            return "(select position(',$`var`,' in ','||$var2||',')) <> 0"
+            return "(select position(',${`var`},' in ','||${var2}||',')) <> 0"
         } else if (dataBasyType === DataBaseType.ORACLE) {
             // instr(',0,100,101,' , ',100,') <> 0
-            return "instr(','||$var2||',' , ',$`var`,') <> 0"
+            return "instr(','||${var2}||',' , ',${`var`},') <> 0"
         }
         // find_in_set(100 , '0,100,101')
-        return "find_in_set('$`var`' , $var2) <> 0"
+        return "find_in_set('${`var`}' , ${var2}) <> 0"
     }
 
     /**

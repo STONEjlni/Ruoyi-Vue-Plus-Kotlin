@@ -13,30 +13,30 @@ class EncryptorProperties {
     /**
      * 过滤开关
      */
-    val enable: Boolean? = null
+    var enable: Boolean? = null
 
     /**
      * 默认算法
      */
-    val algorithm: AlgorithmType? = null
+    var algorithm: AlgorithmType? = null
 
     /**
      * 安全秘钥
      */
-    val password: String? = null
+    var password: String? = null
 
     /**
      * 公钥
      */
-    val publicKey: String? = null
+    var publicKey: String? = null
 
     /**
      * 私钥
      */
-    val privateKey: String? = null
+    var privateKey: String? = null
 
     /**
      * 编码方式，base64/hex
      */
-    val encode: EncodeType? = null
+    var encode: EncodeType? = null
 }

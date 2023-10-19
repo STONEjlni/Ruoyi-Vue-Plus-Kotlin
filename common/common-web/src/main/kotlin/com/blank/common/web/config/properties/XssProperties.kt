@@ -10,15 +10,15 @@ class XssProperties {
     /**
      * 过滤开关
      */
-    val enabled: String? = null
+    var enabled: String? = null
 
     /**
      * 排除链接（多个用逗号分隔）
      */
-    val excludes: String? = null
+    var excludes: String? = null
 
     /**
      * 匹配链接
      */
-    val urlPatterns: String? = null
+    var urlPatterns: String? = null
 }

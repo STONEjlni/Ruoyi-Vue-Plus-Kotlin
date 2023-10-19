@@ -17,10 +17,10 @@ class ValidatorConfig {
      * 配置校验框架 快速返回模式
      */
     @Bean
-    fun validator(messageSource: MessageSource?): Validator {
+    fun validator(messageSource: MessageSource): Validator {
         LocalValidatorFactoryBean().use { factoryBean ->
             // 国际化
-            factoryBean.setValidationMessageSource(messageSource!!)
+            factoryBean.setValidationMessageSource(messageSource)
             // 设置使用 HibernateValidator 校验器
             factoryBean.setProviderClass(HibernateValidator::class.java)
             val properties = Properties()

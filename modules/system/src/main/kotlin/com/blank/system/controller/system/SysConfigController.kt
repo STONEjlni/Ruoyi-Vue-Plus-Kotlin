@@ -43,7 +43,7 @@ class SysConfigController(
     @SaCheckPermission("system:config:query")
     @GetMapping(value = ["/{configId}"])
     fun getInfo(@PathVariable configId: Long): R<SysConfigVo> {
-        return ok(configService.selectConfigById(configId))
+        return ok(data = configService.selectConfigById(configId))
     }
 
     /**
@@ -53,7 +53,7 @@ class SysConfigController(
      */
     @GetMapping(value = ["/configKey/{configKey}"])
     fun getConfigKey(@PathVariable configKey: String): R<String> {
-        return ok("操作成功", configService.selectConfigByKey(configKey))
+        return ok(msg = "操作成功", data = configService.selectConfigByKey(configKey))
     }
 
     /**
@@ -64,7 +64,7 @@ class SysConfigController(
     @PostMapping
     fun add(@Validated @RequestBody config: SysConfigBo): R<Unit> {
         if (!configService.checkConfigKeyUnique(config)) {
-            return fail("新增参数'" + config.configName + "'失败，参数键名已存在")
+            return fail(msg = "新增参数'${config.configName}'失败，参数键名已存在")
         }
         configService.insertConfig(config)
         return ok()
@@ -78,7 +78,7 @@ class SysConfigController(
     @PutMapping
     fun edit(@Validated @RequestBody config: SysConfigBo): R<Unit> {
         if (!configService.checkConfigKeyUnique(config)) {
-            return fail("修改参数'" + config.configName + "'失败，参数键名已存在")
+            return fail(msg = "修改参数'${config.configName}'失败，参数键名已存在")
         }
         configService.updateConfig(config)
         return ok()

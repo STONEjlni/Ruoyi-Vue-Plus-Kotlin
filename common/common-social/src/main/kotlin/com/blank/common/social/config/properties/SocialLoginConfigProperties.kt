@@ -7,55 +7,55 @@ class SocialLoginConfigProperties {
     /**
      * 应用 ID
      */
-    val clientId: String? = null
+    var clientId: String? = null
 
     /**
      * 应用密钥
      */
-    val clientSecret: String? = null
+    var clientSecret: String? = null
 
     /**
      * 回调地址
      */
-    val redirectUri: String? = null
+    var redirectUri: String? = null
 
     /**
      * 是否获取unionId
      */
-    val unionId = false
+    var unionId = false
 
     /**
      * Coding 企业名称
      */
-    val codingGroupName: String? = null
+    var codingGroupName: String? = null
 
     /**
      * 支付宝公钥
      */
-    val alipayPublicKey: String? = null
+    var alipayPublicKey: String? = null
 
     /**
      * 企业微信应用ID
      */
-    val agentId: String? = null
+    var agentId: String? = null
 
     /**
      * stackoverflow api key
      */
-    val stackOverflowKey: String? = null
+    var stackOverflowKey: String? = null
 
     /**
      * 设备ID
      */
-    val deviceId: String? = null
+    var deviceId: String? = null
 
     /**
      * 客户端系统类型
      */
-    val clientOsType: String? = null
+    var clientOsType: String? = null
 
     /**
      * maxkey 服务器地址
      */
-    val serverUrl: String? = null
+    var serverUrl: String? = null
 }

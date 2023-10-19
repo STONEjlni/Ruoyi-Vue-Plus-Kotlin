@@ -17,7 +17,6 @@ import org.springdoc.core.providers.JavadocProvider
 import org.springdoc.core.service.OpenAPIService
 import org.springdoc.core.service.SecurityService
 import org.springdoc.core.utils.PropertyResolverUtils
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -34,7 +33,7 @@ import java.util.function.Consumer
 @EnableConfigurationProperties(SpringDocProperties::class)
 @ConditionalOnProperty(name = ["springdoc.api-docs.enabled"], havingValue = "true", matchIfMissing = true)
 class SpringDocConfig(
-    @Autowired val serverProperties: ServerProperties
+    private val serverProperties: ServerProperties
 ) {
     @Bean
     @ConditionalOnMissingBean(

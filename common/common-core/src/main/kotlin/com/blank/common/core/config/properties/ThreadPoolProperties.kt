@@ -10,16 +10,16 @@ class ThreadPoolProperties {
     /**
      * 是否开启线程池
      */
-    val enabled: Boolean = false
+    var enabled: Boolean = false
 
     /**
      * 队列最大长度
      */
-    val queueCapacity: Int = 0
+    var queueCapacity: Int = 0
 
     /**
      * 线程池维护线程所允许的空闲时间
      */
-    val keepAliveSeconds: Int = 0
+    var keepAliveSeconds: Int = 0
 }
 

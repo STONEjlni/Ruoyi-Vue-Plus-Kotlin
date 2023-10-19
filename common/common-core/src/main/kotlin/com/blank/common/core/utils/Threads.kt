@@ -12,7 +12,6 @@ object Threads {
     /**
      * sleep等待,单位为毫秒
      */
-    @JvmStatic
     fun sleep(milliseconds: Long) {
         try {
             Thread.sleep(milliseconds)
@@ -28,7 +27,6 @@ object Threads {
      * 如果仍然超時，則強制退出.
      * 另对在shutdown时线程本身被调用中断做了处理.
      */
-    @JvmStatic
     fun shutdownAndAwaitTermination(pool: ExecutorService?) {
         if (pool != null && !pool.isShutdown) {
             pool.shutdown()
@@ -49,7 +47,6 @@ object Threads {
     /**
      * 打印线程异常信息
      */
-    @JvmStatic
     fun printException(r: Runnable?, t: Throwable?) {
         var t = t
         if (t == null && r is Future<*>) {

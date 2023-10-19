@@ -16,7 +16,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration
 @Slf4j
 @AutoConfiguration
 class TranslationConfig(
-    var list: List<TranslationInterface<*>>,
+    var list: MutableList<TranslationInterface<*>>,
     val objectMapper: ObjectMapper
 ) {
     @PostConstruct

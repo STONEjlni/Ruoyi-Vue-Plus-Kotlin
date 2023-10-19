@@ -45,7 +45,7 @@ class SysProfileController(
         profileVo.user = user
         profileVo.roleGroup = userService.selectUserRoleGroup(user.userName!!)
         profileVo.postGroup = userService.selectUserPostGroup(user.userName!!)
-        return ok(profileVo)
+        return ok(data = profileVo)
     }
 
     /**
@@ -56,15 +56,15 @@ class SysProfileController(
     fun updateProfile(@RequestBody profile: SysUserProfileBo?): R<Unit> {
         val user = BeanUtil.toBean(profile, SysUserBo::class.java)
         if (StringUtils.isNotEmpty(user.phonenumber) && !userService.checkPhoneUnique(user)) {
-            return fail("修改用户'" + user.userName + "'失败，手机号码已存在")
+            return fail(msg = "修改用户'${user.userName}'失败，手机号码已存在")
         }
         if (StringUtils.isNotEmpty(user.email) && !userService.checkEmailUnique(user)) {
-            return fail("修改用户'" + user.userName + "'失败，邮箱账号已存在")
+            return fail(msg = "修改用户'${user.userName}'失败，邮箱账号已存在")
         }
         user.userId = getUserId()!!
         return if (userService.updateUserProfile(user) > 0) {
             ok()
-        } else fail("修改个人信息异常，请联系管理员")
+        } else fail(msg = "修改个人信息异常，请联系管理员")
     }
 
     /**
@@ -81,14 +81,14 @@ class SysProfileController(
         val user = userService.selectUserById(getUserId()!!)!!
         val password = user.password
         if (!BCrypt.checkpw(bo.oldPassword, password)) {
-            return fail("修改密码失败，旧密码错误")
+            return fail(msg = "修改密码失败，旧密码错误")
         }
         if (BCrypt.checkpw(bo.newPassword, password)) {
-            return fail("新密码不能与旧密码相同")
+            return fail(msg = "新密码不能与旧密码相同")
         }
         return if (userService.resetUserPwd(user.userId!!, BCrypt.hashpw(bo.newPassword)) > 0) {
             ok()
-        } else fail("修改密码异常，请联系管理员")
+        } else fail(msg = "修改密码异常，请联系管理员")
     }
 
     /**
@@ -102,16 +102,16 @@ class SysProfileController(
         if (!avatarfile.isEmpty) {
             val extension = FileUtil.extName(avatarfile.originalFilename)
             if (!StringUtils.equalsAnyIgnoreCase(extension, *MimeTypeUtils.IMAGE_EXTENSION)) {
-                return fail("文件格式不正确，请上传" + MimeTypeUtils.IMAGE_EXTENSION.contentToString() + "格式")
+                return fail(msg = "文件格式不正确，请上传${MimeTypeUtils.IMAGE_EXTENSION.contentToString()}格式")
             }
             val oss = ossService.upload(avatarfile)!!
             val avatar = oss.url
             if (userService.updateUserAvatar(getUserId()!!, oss.ossId!!)) {
                 val avatarVo = AvatarVo()
                 avatarVo.imgUrl = avatar
-                return ok(avatarVo)
+                return ok(data = avatarVo)
             }
         }
-        return fail("上传图片异常，请联系管理员")
+        return fail(msg = "上传图片异常，请联系管理员")
     }
 }

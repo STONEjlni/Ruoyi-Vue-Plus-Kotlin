@@ -37,7 +37,6 @@ object LoginHelper {
      * @param loginUser 登录用户信息
      * @param model     配置参数
      */
-    @JvmStatic
     fun login(loginUser: LoginUser, model: SaLoginModel) {
         var model = model
         val storage = SaHolder.getStorage()
@@ -56,7 +55,6 @@ object LoginHelper {
     /**
      * 获取用户(多级缓存)
      */
-    @JvmStatic
     fun getLoginUser(): LoginUser? {
         var loginUser = SaHolder.getStorage()[LOGIN_USER_KEY] as LoginUser?
         if (loginUser != null) {
@@ -74,7 +72,6 @@ object LoginHelper {
     /**
      * 获取用户基于token
      */
-    @JvmStatic
     fun getLoginUser(token: String?): LoginUser? {
         val loginId = StpUtil.getLoginIdByToken(token)
         val session = StpUtil.getSessionByLoginId(loginId)
@@ -86,7 +83,6 @@ object LoginHelper {
     /**
      * 获取用户id
      */
-    @JvmStatic
     fun getUserId(): Long? {
         return Convert.toLong(getExtra(USER_KEY))
     }
@@ -94,7 +90,6 @@ object LoginHelper {
     /**
      * 获取部门ID
      */
-    @JvmStatic
     fun getDeptId(): Long? {
         return Convert.toLong(getExtra(DEPT_KEY))
     }
@@ -116,7 +111,6 @@ object LoginHelper {
     /**
      * 获取用户账户
      */
-    @JvmStatic
     fun getUsername(): String? {
         return getLoginUser()!!.username
     }
@@ -124,7 +118,6 @@ object LoginHelper {
     /**
      * 获取用户类型
      */
-    @JvmStatic
     fun getUserType(): UserType {
         val loginType = StpUtil.getLoginIdAsString()
         return getUserType(loginType)
@@ -136,12 +129,10 @@ object LoginHelper {
      * @param userId 用户ID
      * @return 结果
      */
-    @JvmStatic
     fun isSuperAdmin(userId: Long): Boolean {
         return UserConstants.SUPER_ADMIN_ID == userId
     }
 
-    @JvmStatic
     fun isSuperAdmin(): Boolean {
         return isSuperAdmin(getUserId()!!)
     }
@@ -149,7 +140,6 @@ object LoginHelper {
     /**
      * 获取登录用户名
      */
-    @JvmStatic
     fun getLoginUserId(): Long? {
         val loginUser: LoginUser? = try {
             getLoginUser()

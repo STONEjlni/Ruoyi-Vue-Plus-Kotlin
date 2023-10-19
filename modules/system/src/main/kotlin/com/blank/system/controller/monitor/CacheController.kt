@@ -41,6 +41,6 @@ class CacheController(
             infoVo.info = connection.commands().info()
             infoVo.dbSize = connection.commands().dbSize()
             infoVo.commandStats = pieList
-            return ok(infoVo)
+            return ok(data = infoVo)
         }
 }

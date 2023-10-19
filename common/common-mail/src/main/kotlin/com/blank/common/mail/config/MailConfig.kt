@@ -17,17 +17,17 @@ class MailConfig {
     @ConditionalOnProperty(value = ["mail.enabled"], havingValue = "true")
     fun mailAccount(mailProperties: MailProperties): MailAccount {
         val account = MailAccount()
-        account.setHost(mailProperties.host)
-        account.setPort(mailProperties.port)
-        account.setAuth(mailProperties.auth)
-        account.setFrom(mailProperties.from)
-        account.setUser(mailProperties.user)
-        account.setPass(mailProperties.pass)
-        account.setSocketFactoryPort(mailProperties.port!!)
-        account.setStarttlsEnable(mailProperties.starttlsEnable)
-        account.setSslEnable(mailProperties.sslEnable)
-        account.setTimeout(mailProperties.timeout!!)
-        account.setConnectionTimeout(mailProperties.connectionTimeout!!)
+        account.host = mailProperties.host
+        account.port = mailProperties.port
+        account.auth = mailProperties.auth
+        account.from = mailProperties.from
+        account.user = mailProperties.user
+        account.pass = mailProperties.pass
+        account.socketFactoryPort = mailProperties.port!!
+        account.starttlsEnable = mailProperties.starttlsEnable
+        account.sslEnable = mailProperties.sslEnable
+        account.timeout = mailProperties.timeout!!
+        account.connectionTimeout = mailProperties.connectionTimeout!!
         return account
     }
 }

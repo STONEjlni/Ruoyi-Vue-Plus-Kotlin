@@ -155,7 +155,7 @@ class GenTableColumn : BaseEntity() {
         var remarks = StringUtils.substringBetween(columnComment, "（", "）")
         var sb = StringBuffer()
         return if (StringUtils.isNotEmpty(remarks)) {
-            for (value in remarks.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+            for (value in remarks.split(" ").toTypedArray()) {
                 if (StringUtils.isNotEmpty(value)) {
                     var startStr: Any = value.subSequence(0, 1)
                     var endStr = value.substring(1)

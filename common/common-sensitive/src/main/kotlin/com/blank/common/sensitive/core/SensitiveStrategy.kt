@@ -9,7 +9,7 @@ import java.util.function.Function
  */
 enum class SensitiveStrategy(
     //可自行添加其他脱敏策略
-    val desensitizer: Function<String, String>? = null
+    val desensitizer: Function<String, String>
 ) {
     /**
      * 身份证脱敏

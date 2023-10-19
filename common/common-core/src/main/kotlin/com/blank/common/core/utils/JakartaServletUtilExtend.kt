@@ -25,7 +25,6 @@ object JakartaServletUtilExtend {
     /**
      * 获取String参数
      */
-    @JvmStatic
     fun getParameter(name: String?): String {
         return getRequest()!!.getParameter(name)
     }
@@ -33,7 +32,6 @@ object JakartaServletUtilExtend {
     /**
      * 获取String参数
      */
-    @JvmStatic
     fun getParameter(name: String?, defaultValue: String?): String {
         return Convert.toStr(getRequest()!!.getParameter(name), defaultValue)
     }
@@ -41,7 +39,6 @@ object JakartaServletUtilExtend {
     /**
      * 获取Integer参数
      */
-    @JvmStatic
     fun getParameterToInt(name: String?): Int {
         return Convert.toInt(getRequest()!!.getParameter(name))
     }
@@ -49,7 +46,6 @@ object JakartaServletUtilExtend {
     /**
      * 获取Integer参数
      */
-    @JvmStatic
     fun getParameterToInt(name: String?, defaultValue: Int?): Int {
         return Convert.toInt(getRequest()!!.getParameter(name), defaultValue)
     }
@@ -57,7 +53,6 @@ object JakartaServletUtilExtend {
     /**
      * 获取Boolean参数
      */
-    @JvmStatic
     fun getParameterToBool(name: String?): Boolean {
         return Convert.toBool(getRequest()!!.getParameter(name))
     }
@@ -65,8 +60,7 @@ object JakartaServletUtilExtend {
     /**
      * 获取Boolean参数
      */
-    @JvmStatic
-    fun getParameterToBool(name: String?, defaultValue: Boolean?): Boolean {
+    fun getParameterToBool(name: String, defaultValue: Boolean?): Boolean {
         return Convert.toBool(getRequest()!!.getParameter(name), defaultValue)
     }
 
@@ -76,7 +70,6 @@ object JakartaServletUtilExtend {
      * @param request 请求对象[ServletRequest]
      * @return Map
      */
-    @JvmStatic
     fun getParams(request: ServletRequest): Map<String, Array<String>> {
         val map = request.parameterMap
         return Collections.unmodifiableMap(map)
@@ -88,7 +81,6 @@ object JakartaServletUtilExtend {
      * @param request 请求对象[ServletRequest]
      * @return Map
      */
-    @JvmStatic
     fun getParamMap(request: ServletRequest): Map<String, String> {
         val params: MutableMap<String, String> = HashMap()
         for ((key, value) in getParams(request)) {
@@ -100,7 +92,6 @@ object JakartaServletUtilExtend {
     /**
      * 获取request
      */
-    @JvmStatic
     fun getRequest(): HttpServletRequest? {
         return try {
             getRequestAttributes()!!.request
@@ -112,7 +103,6 @@ object JakartaServletUtilExtend {
     /**
      * 获取response
      */
-    @JvmStatic
     fun getResponse(): HttpServletResponse? {
         return try {
             getRequestAttributes()!!.response
@@ -124,12 +114,10 @@ object JakartaServletUtilExtend {
     /**
      * 获取session
      */
-    @JvmStatic
     fun getSession(): HttpSession {
         return getRequest()!!.session
     }
 
-    @JvmStatic
     fun getRequestAttributes(): ServletRequestAttributes? {
         return try {
             val attributes = RequestContextHolder.getRequestAttributes()
@@ -139,7 +127,6 @@ object JakartaServletUtilExtend {
         }
     }
 
-    @JvmStatic
     fun getHeader(request: HttpServletRequest, name: String?): String {
         val value = request.getHeader(name)
         return if (StringUtils.isEmpty(value)) {
@@ -147,7 +134,6 @@ object JakartaServletUtilExtend {
         } else urlDecode(value)
     }
 
-    @JvmStatic
     fun getHeaders(request: HttpServletRequest): Map<String, String> {
         val map: MutableMap<String, String> = LinkedCaseInsensitiveMap()
         val enumeration = request.headerNames
@@ -167,7 +153,6 @@ object JakartaServletUtilExtend {
      * @param response 渲染对象
      * @param string   待渲染的字符串
      */
-    @JvmStatic
     fun renderString(response: HttpServletResponse, string: String?) {
         try {
             response.status = HttpStatus.HTTP_OK
@@ -184,7 +169,6 @@ object JakartaServletUtilExtend {
      *
      * @param request
      */
-    @JvmStatic
     fun isAjaxRequest(request: HttpServletRequest): Boolean {
         val accept = request.getHeader("accept")
         if (accept != null && accept.contains(MediaType.APPLICATION_JSON_VALUE)) {
@@ -202,7 +186,6 @@ object JakartaServletUtilExtend {
         return StringUtils.equalsAnyIgnoreCase(ajax, "json", "xml")
     }
 
-    @JvmStatic
     fun getClientIP(): String {
         return JakartaServletUtil.getClientIP(getRequest())
     }
@@ -213,7 +196,6 @@ object JakartaServletUtilExtend {
      * @param str 内容
      * @return 编码后的内容
      */
-    @JvmStatic
     fun urlEncode(str: String?): String {
         return URLEncoder.encode(str, StandardCharsets.UTF_8)
     }
@@ -224,7 +206,6 @@ object JakartaServletUtilExtend {
      * @param str 内容
      * @return 解码后的内容
      */
-    @JvmStatic
     fun urlDecode(str: String?): String {
         return URLDecoder.decode(str, StandardCharsets.UTF_8)
     }

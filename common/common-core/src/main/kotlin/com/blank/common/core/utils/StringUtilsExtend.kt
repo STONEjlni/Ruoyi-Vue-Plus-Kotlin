@@ -25,7 +25,6 @@ object StringUtilsExtend {
      * @param str defaultValue 要判断的value
      * @return value 返回值
      */
-    @JvmStatic
     fun blankToDefault(str: String, defaultValue: String): String {
         return StrUtil.blankToDefault(str, defaultValue)
     }
@@ -36,7 +35,6 @@ object StringUtilsExtend {
      * @param str String
      * @return true：为空 false：非空
      */
-    @JvmStatic
     fun isEmpty(str: String): Boolean {
         return StrUtil.isEmpty(str)
     }
@@ -47,7 +45,6 @@ object StringUtilsExtend {
      * @param str String
      * @return true：非空串 false：空串
      */
-    @JvmStatic
     fun isNotEmpty(str: String): Boolean {
         return !isEmpty(str)
     }
@@ -55,7 +52,6 @@ object StringUtilsExtend {
     /**
      * 去空格
      */
-    @JvmStatic
     fun trim(str: String): String {
         return StrUtil.trim(str)
     }
@@ -67,7 +63,6 @@ object StringUtilsExtend {
      * @param start 开始
      * @return 结果
      */
-    @JvmStatic
     fun substring(str: String, start: Int): String {
         return substring(str, start, str.length)
     }
@@ -80,7 +75,6 @@ object StringUtilsExtend {
      * @param end   结束
      * @return 结果
      */
-    @JvmStatic
     fun substring(str: String?, start: Int, end: Int): String {
         return StrUtil.sub(str, start, end)
     }
@@ -98,7 +92,6 @@ object StringUtilsExtend {
      * @param params   参数值
      * @return 格式化后的文本
      */
-    @JvmStatic
     fun format(template: String, vararg params: Any): String {
         return StrUtil.format(template, *params)
     }
@@ -109,7 +102,6 @@ object StringUtilsExtend {
      * @param link 链接
      * @return 结果
      */
-    @JvmStatic
     fun ishttp(link: String?): Boolean {
         return Validator.isUrl(link)
     }
@@ -121,7 +113,6 @@ object StringUtilsExtend {
      * @param sep 分隔符
      * @return set集合
      */
-    @JvmStatic
     fun str2Set(str: String, sep: String): Set<String> {
         return HashSet(str2List(str, sep, true, false))
     }
@@ -135,7 +126,6 @@ object StringUtilsExtend {
      * @param trim        去掉首尾空白
      * @return list集合
      */
-    @JvmStatic
     fun str2List(str: String, sep: String, filterBlank: Boolean, trim: Boolean): List<String> {
         val list: MutableList<String> = ArrayList()
         if (isEmpty(str)) {
@@ -146,7 +136,7 @@ object StringUtilsExtend {
         if (filterBlank && StrUtil.isBlank(str)) {
             return list
         }
-        val split = str.split(sep.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val split = str.split(sep).toTypedArray()
         for (string in split) {
             var string = string
             if (filterBlank && StrUtil.isBlank(string)) {
@@ -167,7 +157,6 @@ object StringUtilsExtend {
      * @param searchCharSequences 需要检查的字符串数组
      * @return 是否包含任意一个字符串
      */
-    @JvmStatic
     fun containsAnyIgnoreCase(cs: CharSequence, vararg searchCharSequences: CharSequence): Boolean {
         return StrUtil.containsAnyIgnoreCase(cs, *searchCharSequences)
     }
@@ -175,7 +164,6 @@ object StringUtilsExtend {
     /**
      * 驼峰转下划线命名
      */
-    @JvmStatic
     fun toUnderScoreCase(str: String): String {
         return StrUtil.toUnderlineCase(str)
     }
@@ -187,7 +175,6 @@ object StringUtilsExtend {
      * @param strs 字符串组
      * @return 包含返回true
      */
-    @JvmStatic
     fun inStringIgnoreCase(str: String, vararg strs: String): Boolean {
         return StrUtil.equalsAnyIgnoreCase(str, *strs)
     }
@@ -198,7 +185,6 @@ object StringUtilsExtend {
      * @param name 转换前的下划线大写方式命名的字符串
      * @return 转换后的驼峰式命名的字符串
      */
-    @JvmStatic
     fun convertToCamelCase(name: String): String {
         return StrUtil.upperFirst(StrUtil.toCamelCase(name))
     }
@@ -206,7 +192,6 @@ object StringUtilsExtend {
     /**
      * 驼峰式命名法 例如：user_name->userName
      */
-    @JvmStatic
     fun toCamelCase(s: String): String {
         return StrUtil.toCamelCase(s)
     }
@@ -218,7 +203,6 @@ object StringUtilsExtend {
      * @param strs 需要检查的字符串数组
      * @return 是否匹配
      */
-    @JvmStatic
     fun matches(str: String, strs: List<String>): Boolean {
         if (isEmpty(str) || CollUtil.isEmpty(strs)) {
             return false
@@ -240,7 +224,6 @@ object StringUtilsExtend {
      * @param pattern 匹配规则
      * @param url     需要匹配的url
      */
-    @JvmStatic
     fun isMatch(pattern: String, url: String): Boolean {
         val matcher = AntPathMatcher()
         return matcher.match(pattern, url)
@@ -253,7 +236,6 @@ object StringUtilsExtend {
      * @param size 字符串指定长度
      * @return 返回数字的字符串格式，该字符串为指定长度。
      */
-    @JvmStatic
     fun padl(num: Number, size: Int): String {
         return padl(num.toString(), size, '0')
     }
@@ -266,7 +248,6 @@ object StringUtilsExtend {
      * @param c    用于补齐的字符
      * @return 返回指定长度的字符串，由原字符串左补齐或截取得到。
      */
-    @JvmStatic
     fun padl(s: String?, size: Int, c: Char): String {
         val sb = StringBuilder(size)
         if (s != null) {
@@ -289,7 +270,6 @@ object StringUtilsExtend {
      * @param str 被切分的字符串
      * @return 分割后的数据列表
      */
-    @JvmStatic
     fun splitList(str: String): List<String> {
         return splitTo(str) { value: Any -> Convert.toStr(value) }
     }
@@ -301,7 +281,6 @@ object StringUtilsExtend {
      * @param separator 分隔符
      * @return 分割后的数据列表
      */
-    @JvmStatic
     fun splitList(str: String, separator: String): List<String> {
         return splitTo(str, separator) { value: Any -> Convert.toStr(value) }
     }
@@ -313,7 +292,6 @@ object StringUtilsExtend {
      * @param mapper 自定义转换
      * @return 分割后的数据列表
      */
-    @JvmStatic
     fun <T> splitTo(str: String, mapper: Function<in Any, T>): List<T> {
         return splitTo(str, SEPARATOR, mapper)
     }
@@ -326,7 +304,6 @@ object StringUtilsExtend {
      * @param mapper    自定义转换
      * @return 分割后的数据列表
      */
-    @JvmStatic
     fun <T> splitTo(str: String, separator: String, mapper: Function<in Any, T>): List<T> {
         return if (StrUtil.isBlank(str)) {
             ArrayList(0)

@@ -22,7 +22,6 @@ object MapstructUtils {
      * @param desc   描述对象 转换后的对象
      * @return desc
      */
-    @JvmStatic
     fun <T, V> convert(source: T, desc: Class<V>?): V? {
         if (ObjectUtil.isNull(source)) {
             return null
@@ -39,7 +38,6 @@ object MapstructUtils {
      * @param desc   转换后的对象
      * @return desc
      */
-    @JvmStatic
     fun <T, V> convert(source: T, desc: V): V? {
         if (ObjectUtil.isNull(source)) {
             return null
@@ -56,7 +54,6 @@ object MapstructUtils {
      * @param desc       描述对象 转换后的对象
      * @return desc
      */
-    @JvmStatic
     fun <T, V> convert(sourceList: List<T?>?, desc: Class<V>?): MutableList<V>? {
         if (ObjectUtil.isNull(sourceList)) {
             return null
@@ -73,7 +70,6 @@ object MapstructUtils {
      * @param beanClass bean类
      * @return bean对象
      */
-    @JvmStatic
     fun <T> convert(map: Map<String?, Any?>?, beanClass: Class<T>?): T? {
         if (MapUtil.isEmpty(map)) {
             return null

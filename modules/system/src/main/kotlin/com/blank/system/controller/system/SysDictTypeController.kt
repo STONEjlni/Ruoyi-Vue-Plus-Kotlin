@@ -42,7 +42,7 @@ class SysDictTypeController(
     @SaCheckPermission("system:dict:query")
     @GetMapping(value = ["/{dictId}"])
     fun getInfo(@PathVariable dictId: Long): R<SysDictTypeVo> {
-        return ok(dictTypeService.selectDictTypeById(dictId))
+        return ok(data = dictTypeService.selectDictTypeById(dictId))
     }
 
     /**
@@ -53,7 +53,7 @@ class SysDictTypeController(
     @PostMapping
     fun add(@Validated @RequestBody dict: SysDictTypeBo): R<Unit> {
         if (!dictTypeService.checkDictTypeUnique(dict)) {
-            return fail("新增字典'" + dict.dictName + "'失败，字典类型已存在")
+            return fail(msg = "新增字典'${dict.dictName}'失败，字典类型已存在")
         }
         dictTypeService.insertDictType(dict)
         return ok()
@@ -67,7 +67,7 @@ class SysDictTypeController(
     @PutMapping
     fun edit(@Validated @RequestBody dict: SysDictTypeBo): R<Unit> {
         if (!dictTypeService.checkDictTypeUnique(dict)) {
-            return fail("修改字典'" + dict.dictName + "'失败，字典类型已存在")
+            return fail(msg = "修改字典'${dict.dictName}'失败，字典类型已存在")
         }
         dictTypeService.updateDictType(dict)
         return ok()
@@ -103,6 +103,6 @@ class SysDictTypeController(
     @GetMapping("/optionselect")
     fun optionselect(): R<MutableList<SysDictTypeVo>> {
         val dictTypes = dictTypeService.selectDictTypeAll()
-        return ok(dictTypes)
+        return ok(data = dictTypes)
     }
 }

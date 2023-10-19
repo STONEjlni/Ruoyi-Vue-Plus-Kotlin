@@ -53,7 +53,7 @@ class MybatisEncryptInterceptor(
      *
      * @param sourceObject 待加密对象
      */
-    private fun encryptHandler(sourceObject: Any) {
+    private fun encryptHandler(sourceObject: Any?) {
         if (ObjectUtil.isNull(sourceObject)) {
             return
         }
@@ -73,7 +73,7 @@ class MybatisEncryptInterceptor(
             sourceObject.forEach { encryptHandler(it!!) }
             return
         }
-        val fields = encryptorManager.getFieldCache(sourceObject::class.java)
+        val fields = encryptorManager.getFieldCache(sourceObject!!::class.java)
         try {
             for (field in fields) {
                 field[sourceObject] = encryptField(Convert.toStr(field[sourceObject]), field)
@@ -90,7 +90,7 @@ class MybatisEncryptInterceptor(
      * @param field 待加密字段
      * @return 加密后结果
      */
-    private fun encryptField(value: String, field: Field): String? {
+    private fun encryptField(value: String?, field: Field): String? {
         if (ObjectUtil.isNull(value)) {
             return null
         }

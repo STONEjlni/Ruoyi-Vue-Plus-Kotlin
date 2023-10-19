@@ -12,15 +12,15 @@ class BlankConfig {
     /**
      * 项目名称
      */
-    var name: String? = null
+    var name: String = ""
 
     /**
      * 版本
      */
-    var version: String? = null
+    var version: String = ""
 
     /**
      * 版权年份
      */
-    var copyrightYear: String? = null
+    var copyrightYear: String = ""
 }

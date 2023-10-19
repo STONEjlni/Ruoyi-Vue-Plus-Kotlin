@@ -12,7 +12,5 @@ import org.springframework.web.servlet.LocaleResolver
 @AutoConfiguration(before = [WebMvcAutoConfiguration::class])
 class I18nConfig {
     @Bean
-    fun localeResolver(): LocaleResolver {
-        return I18nLocaleResolver()
-    }
+    fun localeResolver(): LocaleResolver = I18nLocaleResolver()
 }

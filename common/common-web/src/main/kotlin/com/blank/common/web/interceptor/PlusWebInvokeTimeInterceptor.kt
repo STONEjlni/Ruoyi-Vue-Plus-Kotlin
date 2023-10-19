@@ -31,7 +31,7 @@ class PlusWebInvokeTimeInterceptor : HandlerInterceptor {
     @Throws(Exception::class)
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (prodProfile != SpringUtil.getActiveProfile()) {
-            val url = request.method + " " + request.requestURI
+            val url = "${request.method} ${request.requestURI}"
 
             // 打印请求参数
             if (isJsonRequest(request)) {

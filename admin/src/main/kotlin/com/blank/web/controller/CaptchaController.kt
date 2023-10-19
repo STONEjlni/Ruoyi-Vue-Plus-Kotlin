@@ -59,7 +59,7 @@ class CaptchaController(
             )
         } catch (e: Exception) {
             log.error { "验证码短信发送异常 => ${e.message}" }
-            return fail(e.message)
+            return fail(msg = e.message)
         }
         return ok()
     }
@@ -73,7 +73,7 @@ class CaptchaController(
         val captchaEnabled = captchaProperties.enable!!
         if (!captchaEnabled) {
             captchaVo.captchaEnabled = false
-            return ok(captchaVo)
+            return ok(data = captchaVo)
         }
         // 保存验证码信息
         val uuid = IdUtil.simpleUUID()
@@ -97,6 +97,6 @@ class CaptchaController(
         setCacheObject(verifyKey, code, Duration.ofMinutes(Constants.CAPTCHA_EXPIRATION.toLong()))
         captchaVo.uuid = uuid
         captchaVo.img = captcha.imageBase64
-        return ok(captchaVo)
+        return ok(data = captchaVo)
     }
 }

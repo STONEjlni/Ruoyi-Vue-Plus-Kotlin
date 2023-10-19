@@ -31,7 +31,7 @@ class TranslationHandler : JsonSerializer<Any>(), ContextualSerializer {
     var translation: Translation? = null
 
     @Throws(IOException::class)
-    override fun serialize(value: Any, gen: JsonGenerator, serializers: SerializerProvider?) {
+    override fun serialize(value: Any, gen: JsonGenerator, serializers: SerializerProvider) {
         var value = value
         val trans = TRANSLATION_MAPPER[translation?.type]!!
         if (ObjectUtil.isNotNull(trans)) {

@@ -31,7 +31,7 @@ class UserActionListener(
     /**
      * 每次登录时触发
      */
-    override fun doLogin(loginType: String?, loginId: Any, tokenValue: String, loginModel: SaLoginModel?) {
+    override fun doLogin(loginType: String, loginId: Any, tokenValue: String, loginModel: SaLoginModel) {
         val userType = getUserType(loginId.toString())
         if (userType === UserType.SYS_USER) {
             val userAgent = UserAgentUtil.parse(
@@ -66,7 +66,7 @@ class UserActionListener(
     /**
      * 每次注销时触发
      */
-    override fun doLogout(loginType: String?, loginId: Any?, tokenValue: String) {
+    override fun doLogout(loginType: String, loginId: Any, tokenValue: String) {
         deleteObject(CacheConstants.ONLINE_TOKEN_KEY + tokenValue)
         log.info { "user doLogout, userId:$loginId, token:$tokenValue" }
     }
@@ -82,7 +82,7 @@ class UserActionListener(
     /**
      * 每次被顶下线时触发
      */
-    override fun doReplaced(loginType: String?, loginId: Any?, tokenValue: String) {
+    override fun doReplaced(loginType: String, loginId: Any, tokenValue: String) {
         deleteObject(CacheConstants.ONLINE_TOKEN_KEY + tokenValue)
         log.info { "user doReplaced, userId:$loginId, token:$tokenValue" }
     }
@@ -90,36 +90,36 @@ class UserActionListener(
     /**
      * 每次被封禁时触发
      */
-    override fun doDisable(loginType: String?, loginId: Any?, service: String?, level: Int, disableTime: Long) {}
+    override fun doDisable(loginType: String, loginId: Any, service: String, level: Int, disableTime: Long) {}
 
     /**
      * 每次被解封时触发
      */
-    override fun doUntieDisable(loginType: String?, loginId: Any?, service: String?) {}
+    override fun doUntieDisable(loginType: String, loginId: Any, service: String) {}
 
     /**
      * 每次打开二级认证时触发
      */
-    override fun doOpenSafe(loginType: String?, tokenValue: String?, service: String?, safeTime: Long) {}
+    override fun doOpenSafe(loginType: String, tokenValue: String, service: String, safeTime: Long) {}
 
     /**
      * 每次创建Session时触发
      */
-    override fun doCloseSafe(loginType: String?, tokenValue: String?, service: String?) {}
+    override fun doCloseSafe(loginType: String, tokenValue: String, service: String) {}
 
     /**
      * 每次创建Session时触发
      */
-    override fun doCreateSession(id: String?) {}
+    override fun doCreateSession(id: String) {}
 
     /**
      * 每次注销Session时触发
      */
-    override fun doLogoutSession(id: String?) {}
+    override fun doLogoutSession(id: String) {}
 
     /**
      * 每次Token续期时触发
      */
-    override fun doRenewTimeout(tokenValue: String?, loginId: Any?, timeout: Long) {}
+    override fun doRenewTimeout(tokenValue: String, loginId: Any, timeout: Long) {}
 
 }

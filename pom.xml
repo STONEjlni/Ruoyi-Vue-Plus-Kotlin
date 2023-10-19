@@ -95,6 +95,15 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- common 的依赖配置-->
+            <dependency>
+                <groupId>com.blank</groupId>
+                <artifactId>common-bom</artifactId>
+                <version>${revision}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- kotlin -->
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -122,15 +131,6 @@
                 <groupId>me.zhyd.oauth</groupId>
                 <artifactId>JustAuth</artifactId>
                 <version>${justauth.version}</version>
-            </dependency>
-
-            <!-- common 的依赖配置-->
-            <dependency>
-                <groupId>com.blank</groupId>
-                <artifactId>common-bom</artifactId>
-                <version>${revision}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
 
             <dependency>

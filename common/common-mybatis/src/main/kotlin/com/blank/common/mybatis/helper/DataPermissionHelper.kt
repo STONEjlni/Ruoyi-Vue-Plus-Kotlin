@@ -11,20 +11,17 @@ import java.util.function.Supplier
 object DataPermissionHelper {
     private const val DATA_PERMISSION_KEY = "data:permission"
 
-    @JvmStatic
     fun <T> getVariable(key: String): T? {
         val context: Map<String, Any> = getContext()
         return context[key] as T?
     }
 
 
-    @JvmStatic
     fun setVariable(key: String, value: Any) {
         val context = getContext()
         context[key] = value
     }
 
-    @JvmStatic
     fun getContext(): MutableMap<String, Any> {
         val saStorage = SaHolder.getStorage()
         var attribute = saStorage[DATA_PERMISSION_KEY]
@@ -41,7 +38,6 @@ object DataPermissionHelper {
     /**
      * 开启忽略数据权限(开启后需手动调用 [.disableIgnore] 关闭)
      */
-    @JvmStatic
     fun enableIgnore() {
         // InterceptorIgnoreHelper.handle(IgnoreStrategy.builder().dataPermission(true).build());
     }
@@ -49,7 +45,6 @@ object DataPermissionHelper {
     /**
      * 关闭忽略数据权限
      */
-    @JvmStatic
     fun disableIgnore() {
         // InterceptorIgnoreHelper.clearIgnoreStrategy();
     }
@@ -59,7 +54,6 @@ object DataPermissionHelper {
      *
      * @param handle 处理执行方法
      */
-    @JvmStatic
     fun ignore(handle: Runnable) {
         enableIgnore()
         try {
@@ -74,7 +68,6 @@ object DataPermissionHelper {
      *
      * @param handle 处理执行方法
      */
-    @JvmStatic
     fun <T> ignore(handle: Supplier<T>): T {
         enableIgnore()
         return try {

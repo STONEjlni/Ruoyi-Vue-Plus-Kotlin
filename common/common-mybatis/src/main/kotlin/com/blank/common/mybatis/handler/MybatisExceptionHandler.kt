@@ -23,7 +23,7 @@ class MybatisExceptionHandler {
     fun handleDuplicateKeyException(e: DuplicateKeyException, request: HttpServletRequest): R<Void> {
         val requestURI = request.requestURI
         log.error { "请求地址'$requestURI',数据库中已存在记录'${e.message}'" }
-        return fail("数据库中已存在该记录，请联系管理员确认")
+        return fail(msg = "数据库中已存在该记录，请联系管理员确认")
     }
 
     /**
@@ -35,9 +35,9 @@ class MybatisExceptionHandler {
         val message = e.message
         if (message!!.contains("CannotFindDataSourceException")) {
             log.error { "请求地址'$requestURI', 未找到数据源" }
-            return fail("未找到数据源，请联系管理员确认")
+            return fail(msg = "未找到数据源，请联系管理员确认")
         }
         log.error(e) { "请求地址'$requestURI', Mybatis系统异常" }
-        return fail(message)
+        return fail(msg = message)
     }
 }

@@ -58,37 +58,38 @@ class Mail : Builder<MimeMessage> {
     /**
      * 收件人列表
      */
-    private var tos: Array<String?> = arrayOf()
+    var tos: Array<String> = arrayOf()
 
     /**
      * 抄送人列表（carbon copy）
      */
-    private var ccs: Array<String?> = arrayOf()
+    var ccs: Array<String> = arrayOf()
 
     /**
      * 密送人列表（blind carbon copy）
      */
-    private var bccs: Array<String?> = arrayOf()
+    var bccs: Array<String> = arrayOf()
 
     /**
      * 回复地址(reply-to)
      */
-    private var reply: Array<String?> = arrayOf()
+    var reply: Array<String> = arrayOf()
 
     /**
      * 标题
      */
-    private var title: String? = null
+    var title: String? = null
 
     /**
      * 内容
+     * 正文可以是普通文本也可以是HTML（默认普通文本），可以通过调用[.setHtml] 设置是否为HTML
      */
-    private var content: String? = null
+    var content: String? = null
 
     /**
      * 是否为HTML
      */
-    private var isHtml = false
+    var isHtml = false
 
     /**
      * 正文、附件和图片的混合部分
@@ -98,12 +99,12 @@ class Mail : Builder<MimeMessage> {
     /**
      * 是否使用全局会话，默认为false
      */
-    private var useGlobalSession = false
+    var useGlobalSession = false
 
     /**
      * debug输出位置，可以自定义debug日志
      */
-    private var debugOutput: PrintStream? = null
+    var debugOutput: PrintStream? = null
 
     // --------------------------------------------------------------- Constructor start
 
@@ -136,88 +137,8 @@ class Mail : Builder<MimeMessage> {
      * @return this
      * @see .setTos
      */
-    fun to(vararg tos: String?): Mail {
-        return setTos(*tos)
-    }
-
-    /**
-     * 设置多个收件人
-     *
-     * @param tos 收件人列表
-     * @return this
-     */
-    fun setTos(vararg tos: String?): Mail {
+    fun to(vararg tos: String): Mail {
         this.tos = arrayOf(*tos)
-        return this
-    }
-
-    /**
-     * 设置多个抄送人（carbon copy）
-     *
-     * @param ccs 抄送人列表
-     * @return this
-     * @since 4.0.3
-     */
-    fun setCcs(vararg ccs: String?): Mail {
-        this.ccs = arrayOf(*ccs)
-        return this
-    }
-
-    /**
-     * 设置多个密送人（blind carbon copy）
-     *
-     * @param bccs 密送人列表
-     * @return this
-     * @since 4.0.3
-     */
-    fun setBccs(vararg bccs: String?): Mail {
-        this.bccs = arrayOf(*bccs)
-        return this
-    }
-
-    /**
-     * 设置多个回复地址(reply-to)
-     *
-     * @param reply 回复地址(reply-to)列表
-     * @return this
-     * @since 4.6.0
-     */
-    fun setReply(vararg reply: String?): Mail {
-        this.reply = arrayOf(*reply)
-        return this
-    }
-
-    /**
-     * 设置标题
-     *
-     * @param title 标题
-     * @return this
-     */
-    fun setTitle(title: String?): Mail {
-        this.title = title
-        return this
-    }
-
-    /**
-     * 设置正文<br></br>
-     * 正文可以是普通文本也可以是HTML（默认普通文本），可以通过调用[.setHtml] 设置是否为HTML
-     *
-     * @param content 正文
-     * @return this
-     */
-    fun setContent(content: String?): Mail {
-        this.content = content
-        return this
-    }
-
-    /**
-     * 设置是否是HTML
-     *
-     * @param isHtml 是否为HTML
-     * @return this
-     */
-    fun setHtml(isHtml: Boolean): Mail {
-        this.isHtml = isHtml
         return this
     }
 
@@ -229,8 +150,9 @@ class Mail : Builder<MimeMessage> {
      * @return this
      */
     fun setContent(content: String?, isHtml: Boolean): Mail {
-        setContent(content)
-        return setHtml(isHtml)
+        this.content = content
+        this.isHtml = isHtml
+        return this
     }
 
     /**
@@ -267,7 +189,7 @@ class Mail : Builder<MimeMessage> {
                     bodyPart = MimeBodyPart()
                     bodyPart.dataHandler = DataHandler(attachment)
                     nameEncoded = attachment.name
-                    if (mailAccount!!.isEncodefilename()) {
+                    if (mailAccount!!.encodefilename) {
                         nameEncoded = encodeText(nameEncoded, charset)
                     }
                     // 普通附件文件名
@@ -342,34 +264,11 @@ class Mail : Builder<MimeMessage> {
      * @return this
      * @see MailAccount.setCharset
      */
-    fun setCharset(charset: Charset?): Mail {
-        mailAccount!!.setCharset(charset)
+    fun setCharset(charset: Charset): Mail {
+        mailAccount!!.charset = charset
         return this
     }
 
-    /**
-     * 设置是否使用全局会话，默认为true
-     *
-     * @param isUseGlobalSession 是否使用全局会话，默认为true
-     * @return this
-     * @since 4.0.2
-     */
-    fun setUseGlobalSession(isUseGlobalSession: Boolean): Mail {
-        useGlobalSession = isUseGlobalSession
-        return this
-    }
-
-    /**
-     * 设置debug输出位置，可以自定义debug日志
-     *
-     * @param debugOutput debug输出位置
-     * @return this
-     * @since 5.5.6
-     */
-    fun setDebugOutput(debugOutput: PrintStream?): Mail {
-        this.debugOutput = debugOutput
-        return this
-    }
     // --------------------------------------------------------------- Getters and Setters end
 
     // --------------------------------------------------------------- Getters and Setters end
@@ -429,7 +328,7 @@ class Mail : Builder<MimeMessage> {
         val charset = mailAccount!!.charset
         val msg = MimeMessage(getSession())
         // 发件人
-        val from = mailAccount!!.from
+        val from = mailAccount!!.from!!
         if (StrUtil.isEmpty(from)) {
             // 用户未提供发送方，则从Session中自动获取
             msg.setFrom()
@@ -437,7 +336,7 @@ class Mail : Builder<MimeMessage> {
             msg.setFrom(parseFirstAddress(from, charset))
         }
         // 标题
-        msg.setSubject(title, charset?.name())
+        msg.setSubject(title, charset.name())
         // 发送时间
         msg.sentDate = Date()
         // 内容和附件
@@ -445,7 +344,7 @@ class Mail : Builder<MimeMessage> {
         // 收件人
         msg.setRecipients(
             MimeMessage.RecipientType.TO, parseAddressFromStrs(
-                tos, charset
+                tos!!, charset
             )
         )
         // 抄送人

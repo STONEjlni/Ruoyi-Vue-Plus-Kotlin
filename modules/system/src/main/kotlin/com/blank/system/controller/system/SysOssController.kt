@@ -55,7 +55,7 @@ class SysOssController(
     @GetMapping("/listByIds/{ossIds}")
     fun listByIds(@PathVariable ossIds: Array<Long>): R<MutableList<SysOssVo>> {
         val list = ossService.listByIds(ossIds.toMutableList())
-        return ok(list)
+        return ok(data = list)
     }
 
     /**
@@ -68,14 +68,14 @@ class SysOssController(
     @PostMapping(value = ["/upload"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun upload(@RequestPart("file") file: MultipartFile): R<SysOssUploadVo> {
         if (ObjectUtil.isNull(file)) {
-            return fail("上传文件不能为空")
+            return fail(msg = "上传文件不能为空")
         }
         val oss = ossService.upload(file)!!
         val uploadVo = SysOssUploadVo()
         uploadVo.url = oss.url
         uploadVo.fileName = oss.originalName
         uploadVo.ossId = oss.ossId.toString()
-        return ok(uploadVo)
+        return ok(data = uploadVo)
     }
 
     /**

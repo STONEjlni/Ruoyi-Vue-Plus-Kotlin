@@ -19,12 +19,10 @@ object JsonUtils {
 
     private val OBJECT_MAPPER = SpringUtil.getBean(ObjectMapper::class.java)
 
-    @JvmStatic
     fun getObjectMapper(): ObjectMapper {
         return OBJECT_MAPPER
     }
 
-    @JvmStatic
     fun toJsonString(`object`: Any?): String? {
         return if (ObjectUtil.isNull(`object`)) {
             null
@@ -35,7 +33,6 @@ object JsonUtils {
         }
     }
 
-    @JvmStatic
     fun <T> parseObject(text: String?, clazz: Class<T>?): T? {
         return if (StringUtils.isEmpty(text)) {
             null
@@ -46,7 +43,6 @@ object JsonUtils {
         }
     }
 
-    @JvmStatic
     fun <T> parseObject(bytes: ByteArray?, clazz: Class<T>?): T? {
         return if (ArrayUtil.isEmpty(bytes)) {
             null
@@ -57,7 +53,6 @@ object JsonUtils {
         }
     }
 
-    @JvmStatic
     fun <T> parseObject(text: String?, typeReference: TypeReference<T>?): T? {
         return if (StrUtil.isBlank(text)) {
             null
@@ -68,7 +63,6 @@ object JsonUtils {
         }
     }
 
-    @JvmStatic
     fun parseMap(text: String?): Dict? {
         return if (StrUtil.isBlank(text)) {
             null
@@ -82,7 +76,6 @@ object JsonUtils {
         }
     }
 
-    @JvmStatic
     fun parseArrayMap(text: String?): List<Dict>? {
         return if (StrUtil.isBlank(text)) {
             null
@@ -98,7 +91,6 @@ object JsonUtils {
         }
     }
 
-    @JvmStatic
     fun <T> parseArray(text: String?, clazz: Class<T>?): List<T> {
         return if (StringUtils.isEmpty(text)) {
             ArrayList()

@@ -12,7 +12,6 @@ object SpringUtilExtend {
     /**
      * 如果BeanFactory包含一个与所给名称匹配的bean定义，则返回true
      */
-    @JvmStatic
     fun containsBean(name: String?): Boolean {
         return SpringUtil.getBeanFactory().containsBean(name!!)
     }
@@ -22,7 +21,6 @@ object SpringUtilExtend {
      * 如果与给定名字相应的bean定义没有被找到，将会抛出一个异常（NoSuchBeanDefinitionException）
      */
     @Throws(NoSuchBeanDefinitionException::class)
-    @JvmStatic
     fun isSingleton(name: String?): Boolean {
         return SpringUtil.getBeanFactory().isSingleton(name!!)
     }
@@ -31,7 +29,6 @@ object SpringUtilExtend {
      * @return Class 注册对象的类型
      */
     @Throws(NoSuchBeanDefinitionException::class)
-    @JvmStatic
     fun getType(name: String?): Class<*>? {
         return SpringUtil.getBeanFactory().getType(name!!)
     }
@@ -40,7 +37,6 @@ object SpringUtilExtend {
      * 如果给定的bean名字在bean定义中有别名，则返回这些别名
      */
     @Throws(NoSuchBeanDefinitionException::class)
-    @JvmStatic
     fun getAliases(name: String?): Array<String> {
         return SpringUtil.getBeanFactory().getAliases(name!!)
     }
@@ -48,7 +44,6 @@ object SpringUtilExtend {
     /**
      * 获取aop代理对象
      */
-    @JvmStatic
     fun <T> getAopProxy(invoker: T): T {
         return AopContext.currentProxy() as T
     }
@@ -57,7 +52,6 @@ object SpringUtilExtend {
     /**
      * 获取spring上下文
      */
-    @JvmStatic
     fun context(): ApplicationContext {
         return SpringUtil.getApplicationContext()
     }

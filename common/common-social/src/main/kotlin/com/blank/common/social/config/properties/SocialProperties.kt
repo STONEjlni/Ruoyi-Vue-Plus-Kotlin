@@ -12,10 +12,10 @@ class SocialProperties {
     /**
      * 是否启用
      */
-    val enabled: Boolean? = null
+    var enabled: Boolean? = null
 
     /**
      * 授权类型
      */
-    val type: Map<String, SocialLoginConfigProperties>? = null
+    var type: Map<String, SocialLoginConfigProperties>? = null
 }

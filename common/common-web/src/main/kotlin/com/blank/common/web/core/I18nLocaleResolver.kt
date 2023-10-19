@@ -14,7 +14,7 @@ class I18nLocaleResolver : LocaleResolver {
         val language = httpServletRequest.getHeader("content-language")
         var locale = Locale.getDefault()
         if (language != null && language.isNotEmpty()) {
-            val split = language.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val split = language.split("_").toTypedArray()
             locale = Locale(split[0], split[1])
         }
         return locale

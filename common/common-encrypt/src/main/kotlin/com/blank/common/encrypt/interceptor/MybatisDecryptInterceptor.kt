@@ -78,7 +78,7 @@ class MybatisDecryptInterceptor(
      * @param field 待加密字段
      * @return 加密后结果
      */
-    private fun decryptField(value: String, field: Field): String? {
+    private fun decryptField(value: String?, field: Field): String? {
         if (ObjectUtil.isNull(value)) {
             return null
         }

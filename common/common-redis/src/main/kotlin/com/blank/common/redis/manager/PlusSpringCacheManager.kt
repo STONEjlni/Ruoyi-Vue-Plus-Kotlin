@@ -46,9 +46,7 @@ class PlusSpringCacheManager : CacheManager {
         }
     }
 
-    fun createDefaultConfig(): CacheConfig {
-        return CacheConfig()
-    }
+    fun createDefaultConfig() = CacheConfig()
 
     override fun getCache(name: String): Cache? {
         // 重写 cacheName 支持多参数
@@ -94,7 +92,7 @@ class PlusSpringCacheManager : CacheManager {
         return cache
     }
 
-    private fun createMapCache(name: String, config: CacheConfig?): Cache {
+    private fun createMapCache(name: String, config: CacheConfig): Cache {
         val map = RedisUtils.getClient().getMapCache<Any, Any>(name)
         var cache: Cache = RedissonCache(map, config, allowNullValues)
         if (transactionAware) {
@@ -104,7 +102,7 @@ class PlusSpringCacheManager : CacheManager {
         if (oldCache != null) {
             cache = oldCache
         } else {
-            map.setMaxSize(config!!.maxSize)
+            map.setMaxSize(config.maxSize)
         }
         return cache
     }

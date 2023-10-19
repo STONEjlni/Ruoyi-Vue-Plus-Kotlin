@@ -27,7 +27,7 @@ class SysClientServiceImpl(
      */
     override fun queryById(id: Long): SysClientVo? {
         val vo = baseMapper.selectVoById(id)!!
-        vo.grantTypeList = vo.grantType!!.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toMutableList()
+        vo.grantTypeList = vo.grantType!!.split(",").toMutableList()
         return vo
     }
 

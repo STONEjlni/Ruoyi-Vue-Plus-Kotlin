@@ -25,8 +25,8 @@ import org.springframework.web.socket.server.HandshakeInterceptor
 class WebSocketConfig {
     @Bean
     fun webSocketConfigurer(
-        handshakeInterceptor: HandshakeInterceptor?,
-        webSocketHandler: WebSocketHandler?,
+        handshakeInterceptor: HandshakeInterceptor,
+        webSocketHandler: WebSocketHandler,
         webSocketProperties: WebSocketProperties
     ): WebSocketConfigurer {
         if (StrUtil.isBlank(webSocketProperties.path)) {
@@ -37,7 +37,7 @@ class WebSocketConfig {
         }
         return WebSocketConfigurer { registry: WebSocketHandlerRegistry ->
             registry
-                .addHandler(webSocketHandler!!, webSocketProperties.path)
+                .addHandler(webSocketHandler, webSocketProperties.path)
                 .addInterceptors(handshakeInterceptor)
                 .setAllowedOrigins(webSocketProperties.allowedOrigins)
         }

@@ -30,11 +30,8 @@ object WebSocketUtils {
      * @param sessionKey session主键 一般为用户id
      * @param message    消息文本
      */
-    @JvmStatic
-    fun sendMessage(sessionKey: Long?, message: String?) {
-        val session = getSessions(
-            sessionKey!!
-        )
+    fun sendMessage(sessionKey: Long, message: String) {
+        val session = getSessions(sessionKey)!!
         sendMessage(session, message)
     }
 
@@ -62,7 +59,7 @@ object WebSocketUtils {
         // 当前服务内session,直接发送消息
         for (sessionKey in webSocketMessage.sessionKeys!!) {
             if (existSession(sessionKey)) {
-                sendMessage(sessionKey, webSocketMessage.message)
+                sendMessage(sessionKey, webSocketMessage.message!!)
                 continue
             }
             unsentSessionKeys.add(sessionKey)
@@ -89,8 +86,8 @@ object WebSocketUtils {
      * @param message 消息内容
      */
     @JvmStatic
-    fun publishAll(message: String?) {
-        getSessionsAll().forEach(Consumer { key: Long? ->
+    fun publishAll(message: String) {
+        getSessionsAll().forEach(Consumer { key: Long ->
             sendMessage(
                 key,
                 message
@@ -108,13 +105,13 @@ object WebSocketUtils {
     }
 
     @JvmStatic
-    fun sendPongMessage(session: WebSocketSession?) {
+    fun sendPongMessage(session: WebSocketSession) {
         sendMessage(session, PongMessage())
     }
 
     @JvmStatic
-    fun sendMessage(session: WebSocketSession?, message: String?) {
-        sendMessage(session, TextMessage(message!!))
+    fun sendMessage(session: WebSocketSession, message: String) {
+        sendMessage(session, TextMessage(message))
     }
 
     @JvmStatic

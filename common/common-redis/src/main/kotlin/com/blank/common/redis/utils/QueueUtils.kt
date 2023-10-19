@@ -17,10 +17,7 @@ object QueueUtils {
     /**
      * 获取客户端实例
      */
-    @JvmStatic
-    fun getClient(): RedissonClient {
-        return CLIENT
-    }
+    fun getClient(): RedissonClient = CLIENT
 
     /**
      * 添加普通队列数据
@@ -28,8 +25,7 @@ object QueueUtils {
      * @param queueName 队列名
      * @param data      数据
      */
-    @JvmStatic
-    fun <T> addQueueObject(queueName: String?, data: T): Boolean {
+    fun <T> addQueueObject(queueName: String, data: T): Boolean {
         val queue = CLIENT.getBlockingQueue<T>(queueName)
         return queue.offer(data)
     }
@@ -39,8 +35,7 @@ object QueueUtils {
      *
      * @param queueName 队列名
      */
-    @JvmStatic
-    fun <T> getQueueObject(queueName: String?): T {
+    fun <T> getQueueObject(queueName: String): T {
         val queue = CLIENT.getBlockingQueue<T>(queueName)
         return queue.poll()
     }
@@ -48,8 +43,7 @@ object QueueUtils {
     /**
      * 通用删除队列数据(不支持延迟队列)
      */
-    @JvmStatic
-    fun <T> removeQueueObject(queueName: String?, data: T): Boolean {
+    fun <T> removeQueueObject(queueName: String, data: T): Boolean {
         val queue = CLIENT.getBlockingQueue<T>(queueName)
         return queue.remove(data)
     }
@@ -58,7 +52,7 @@ object QueueUtils {
      * 通用销毁队列 所有阻塞监听 报错(不支持延迟队列)
      */
     @JvmStatic
-    fun <T> destroyQueue(queueName: String?): Boolean {
+    fun <T> destroyQueue(queueName: String): Boolean {
         val queue = CLIENT.getBlockingQueue<T>(queueName)
         return queue.delete()
     }
@@ -70,8 +64,7 @@ object QueueUtils {
      * @param data      数据
      * @param time      延迟时间
      */
-    @JvmStatic
-    fun <T> addDelayedQueueObject(queueName: String?, data: T, time: Long) {
+    fun <T> addDelayedQueueObject(queueName: String, data: T, time: Long) {
         addDelayedQueueObject(queueName, data, time, TimeUnit.MILLISECONDS)
     }
 
@@ -83,8 +76,7 @@ object QueueUtils {
      * @param time      延迟时间
      * @param timeUnit  单位
      */
-    @JvmStatic
-    fun <T> addDelayedQueueObject(queueName: String?, data: T, time: Long, timeUnit: TimeUnit?) {
+    fun <T> addDelayedQueueObject(queueName: String, data: T, time: Long, timeUnit: TimeUnit?) {
         val queue = CLIENT.getBlockingQueue<T>(queueName)
         val delayedQueue = CLIENT.getDelayedQueue(queue)
         delayedQueue.offer(data, time, timeUnit)
@@ -95,8 +87,7 @@ object QueueUtils {
      *
      * @param queueName 队列名
      */
-    @JvmStatic
-    fun <T> getDelayedQueueObject(queueName: String?): T {
+    fun <T> getDelayedQueueObject(queueName: String): T {
         val queue = CLIENT.getBlockingQueue<T>(queueName)
         val delayedQueue = CLIENT.getDelayedQueue(queue)
         return delayedQueue.poll()
@@ -105,8 +96,7 @@ object QueueUtils {
     /**
      * 删除延迟队列数据
      */
-    @JvmStatic
-    fun <T> removeDelayedQueueObject(queueName: String?, data: T): Boolean {
+    fun <T> removeDelayedQueueObject(queueName: String, data: T): Boolean {
         val queue = CLIENT.getBlockingQueue<T>(queueName)
         val delayedQueue = CLIENT.getDelayedQueue(queue)
         return delayedQueue.remove(data)
@@ -115,8 +105,7 @@ object QueueUtils {
     /**
      * 销毁延迟队列 所有阻塞监听 报错
      */
-    @JvmStatic
-    fun <T> destroyDelayedQueue(queueName: String?) {
+    fun <T> destroyDelayedQueue(queueName: String) {
         val queue = CLIENT.getBlockingQueue<T>(queueName)
         val delayedQueue = CLIENT.getDelayedQueue(queue)
         delayedQueue.destroy()
@@ -128,8 +117,7 @@ object QueueUtils {
      * @param queueName 队列名
      * @param data      数据
      */
-    @JvmStatic
-    fun <T> addPriorityQueueObject(queueName: String?, data: T): Boolean {
+    fun <T> addPriorityQueueObject(queueName: String, data: T): Boolean {
         val priorityBlockingQueue = CLIENT.getPriorityBlockingQueue<T>(queueName)
         return priorityBlockingQueue.offer(data)
     }
@@ -139,8 +127,7 @@ object QueueUtils {
      *
      * @param queueName 队列名
      */
-    @JvmStatic
-    fun <T> getPriorityQueueObject(queueName: String?): T {
+    fun <T> getPriorityQueueObject(queueName: String): T {
         val queue = CLIENT.getPriorityBlockingQueue<T>(queueName)
         return queue.poll()
     }
@@ -148,8 +135,7 @@ object QueueUtils {
     /**
      * 优先队列删除队列数据(不支持延迟队列)
      */
-    @JvmStatic
-    fun <T> removePriorityQueueObject(queueName: String?, data: T): Boolean {
+    fun <T> removePriorityQueueObject(queueName: String, data: T): Boolean {
         val queue = CLIENT.getPriorityBlockingQueue<T>(queueName)
         return queue.remove(data)
     }
@@ -157,8 +143,7 @@ object QueueUtils {
     /**
      * 优先队列销毁队列 所有阻塞监听 报错(不支持延迟队列)
      */
-    @JvmStatic
-    fun <T> destroyPriorityQueue(queueName: String?): Boolean {
+    fun <T> destroyPriorityQueue(queueName: String): Boolean {
         val queue = CLIENT.getPriorityBlockingQueue<T>(queueName)
         return queue.delete()
     }
@@ -169,8 +154,7 @@ object QueueUtils {
      * @param queueName 队列名
      * @param capacity  容量
      */
-    @JvmStatic
-    fun <T> trySetBoundedQueueCapacity(queueName: String?, capacity: Int): Boolean {
+    fun <T> trySetBoundedQueueCapacity(queueName: String, capacity: Int): Boolean {
         val boundedBlockingQueue = CLIENT.getBoundedBlockingQueue<T>(queueName)
         return boundedBlockingQueue.trySetCapacity(capacity)
     }
@@ -182,8 +166,7 @@ object QueueUtils {
      * @param capacity  容量
      * @param destroy   已存在是否销毁
      */
-    @JvmStatic
-    fun <T> trySetBoundedQueueCapacity(queueName: String?, capacity: Int, destroy: Boolean): Boolean {
+    fun <T> trySetBoundedQueueCapacity(queueName: String, capacity: Int, destroy: Boolean): Boolean {
         val boundedBlockingQueue = CLIENT.getBoundedBlockingQueue<T>(queueName)
         if (boundedBlockingQueue.isExists && destroy) {
             destroyQueue<Any>(queueName)
@@ -198,8 +181,7 @@ object QueueUtils {
      * @param data      数据
      * @return 添加成功 true 已达到界限 false
      */
-    @JvmStatic
-    fun <T> addBoundedQueueObject(queueName: String?, data: T): Boolean {
+    fun <T> addBoundedQueueObject(queueName: String, data: T): Boolean {
         val boundedBlockingQueue = CLIENT.getBoundedBlockingQueue<T>(queueName)
         return boundedBlockingQueue.offer(data)
     }
@@ -209,8 +191,7 @@ object QueueUtils {
      *
      * @param queueName 队列名
      */
-    @JvmStatic
-    fun <T> getBoundedQueueObject(queueName: String?): T {
+    fun <T> getBoundedQueueObject(queueName: String): T {
         val queue = CLIENT.getBoundedBlockingQueue<T>(queueName)
         return queue.poll()
     }
@@ -218,8 +199,7 @@ object QueueUtils {
     /**
      * 有界队列删除队列数据(不支持延迟队列)
      */
-    @JvmStatic
-    fun <T> removeBoundedQueueObject(queueName: String?, data: T): Boolean {
+    fun <T> removeBoundedQueueObject(queueName: String, data: T): Boolean {
         val queue = CLIENT.getBoundedBlockingQueue<T>(queueName)
         return queue.remove(data)
     }
@@ -227,8 +207,7 @@ object QueueUtils {
     /**
      * 有界队列销毁队列 所有阻塞监听 报错(不支持延迟队列)
      */
-    @JvmStatic
-    fun <T> destroyBoundedQueue(queueName: String?): Boolean {
+    fun <T> destroyBoundedQueue(queueName: String): Boolean {
         val queue = CLIENT.getBoundedBlockingQueue<T>(queueName)
         return queue.delete()
     }
@@ -236,8 +215,7 @@ object QueueUtils {
     /**
      * 订阅阻塞队列(可订阅所有实现类 例如: 延迟 优先 有界 等)
      */
-    @JvmStatic
-    fun <T> subscribeBlockingQueue(queueName: String?, consumer: Consumer<T>?) {
+    fun <T> subscribeBlockingQueue(queueName: String, consumer: Consumer<T>) {
         val queue = CLIENT.getBlockingQueue<T>(queueName)
         queue.subscribeOnElements(consumer)
     }

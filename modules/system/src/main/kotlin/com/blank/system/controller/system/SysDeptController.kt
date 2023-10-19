@@ -35,7 +35,7 @@ class SysDeptController(
     @GetMapping("/list")
     fun list(dept: SysDeptBo): R<MutableList<SysDeptVo>> {
         val depts = deptService.selectDeptList(dept)
-        return ok(depts)
+        return ok(data = depts)
     }
 
     /**
@@ -54,7 +54,7 @@ class SysDeptController(
                 )
             )
         }
-        return ok(depts)
+        return ok(data = depts)
     }
 
     /**
@@ -66,7 +66,7 @@ class SysDeptController(
     @GetMapping(value = ["/{deptId}"])
     fun getInfo(@PathVariable deptId: Long): R<SysDeptVo> {
         deptService.checkDeptDataScope(deptId)
-        return ok(deptService.selectDeptById(deptId))
+        return ok(data = deptService.selectDeptById(deptId))
     }
 
     /**
@@ -77,7 +77,7 @@ class SysDeptController(
     @PostMapping
     fun add(@Validated @RequestBody dept: SysDeptBo): R<Unit> {
         return if (!deptService.checkDeptNameUnique(dept)) {
-            fail("新增部门'" + dept.deptName + "'失败，部门名称已存在")
+            fail(msg = "新增部门'${dept.deptName}'失败，部门名称已存在")
         } else toAjax(deptService.insertDept(dept))
     }
 
@@ -91,14 +91,14 @@ class SysDeptController(
         val deptId = dept.deptId!!
         deptService.checkDeptDataScope(deptId)
         if (!deptService.checkDeptNameUnique(dept)) {
-            return fail("修改部门'" + dept.deptName + "'失败，部门名称已存在")
+            return fail(msg = "修改部门'${dept.deptName}'失败，部门名称已存在")
         } else if (dept.parentId == deptId) {
-            return fail("修改部门'" + dept.deptName + "'失败，上级部门不能是自己")
+            return fail(msg = "修改部门'${dept.deptName}'失败，上级部门不能是自己")
         } else if (StringUtils.equals(UserConstants.DEPT_DISABLE, dept.status)) {
             if (deptService.selectNormalChildrenDeptById(deptId) > 0) {
-                return fail("该部门包含未停用的子部门!")
+                return fail(msg = "该部门包含未停用的子部门!")
             } else if (deptService.checkDeptExistUser(deptId)) {
-                return fail("该部门下存在已分配用户，不能禁用!")
+                return fail(msg = "该部门下存在已分配用户，不能禁用!")
             }
         }
         return toAjax(deptService.updateDept(dept))
@@ -114,10 +114,10 @@ class SysDeptController(
     @DeleteMapping("/{deptId}")
     fun remove(@PathVariable deptId: Long): R<Unit> {
         if (deptService.hasChildByDeptId(deptId)) {
-            return warn("存在下级部门,不允许删除")
+            return warn(msg = "存在下级部门,不允许删除")
         }
         if (deptService.checkDeptExistUser(deptId)) {
-            return warn("部门存在用户,不允许删除")
+            return warn(msg = "部门存在用户,不允许删除")
         }
         deptService.checkDeptDataScope(deptId)
         return toAjax(deptService.deleteDeptById(deptId))

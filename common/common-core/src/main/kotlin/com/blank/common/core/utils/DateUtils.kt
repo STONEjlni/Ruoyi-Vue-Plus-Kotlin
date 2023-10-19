@@ -38,7 +38,6 @@ object DateUtils {
      *
      * @return Date() 当前日期
      */
-    @JvmStatic
     fun getNowDate(): Date {
         return Date()
     }
@@ -48,37 +47,30 @@ object DateUtils {
      *
      * @return String
      */
-    @JvmStatic
     fun getDate(): String {
         return dateTimeNow(YYYY_MM_DD)
     }
 
-    @JvmStatic
     fun getTime(): String {
         return dateTimeNow(YYYY_MM_DD_HH_MM_SS)
     }
 
-    @JvmStatic
     fun dateTimeNow(): String {
         return dateTimeNow(YYYYMMDDHHMMSS)
     }
 
-    @JvmStatic
     fun dateTimeNow(format: String?): String {
         return parseDateToStr(format, Date())
     }
 
-    @JvmStatic
     fun dateTime(date: Date?): String {
         return parseDateToStr(YYYY_MM_DD, date)
     }
 
-    @JvmStatic
     fun parseDateToStr(format: String?, date: Date?): String {
         return SimpleDateFormat(format).format(date)
     }
 
-    @JvmStatic
     fun dateTime(format: String?, ts: String?): Date {
         return try {
             SimpleDateFormat(format).parse(ts)
@@ -90,7 +82,6 @@ object DateUtils {
     /**
      * 日期路径 即年/月/日 如2018/08/08
      */
-    @JvmStatic
     fun datePath(): String {
         val now = Date()
         return DateFormatUtils.format(now, "yyyy/MM/dd")
@@ -99,7 +90,6 @@ object DateUtils {
     /**
      * 日期路径 即年/月/日 如20180808
      */
-    @JvmStatic
     fun dateTime(): String {
         val now = Date()
         return DateFormatUtils.format(now, "yyyyMMdd")
@@ -108,7 +98,6 @@ object DateUtils {
     /**
      * 日期型字符串转化为日期 格式
      */
-    @JvmStatic
     fun parseDate(str: Any?): Date? {
         return if (str == null) {
             null
@@ -122,7 +111,6 @@ object DateUtils {
     /**
      * 获取服务器启动时间
      */
-    @JvmStatic
     fun getServerStartDate(): Date {
         val time = ManagementFactory.getRuntimeMXBean().startTime
         return Date(time)
@@ -131,7 +119,6 @@ object DateUtils {
     /**
      * 计算相差天数
      */
-    @JvmStatic
     fun differentDaysByMillisecond(date1: Date, date2: Date): Int {
         return abs(((date2.time - date1.time) / (1000 * 3600 * 24)).toInt().toDouble()).toInt()
     }
@@ -139,7 +126,6 @@ object DateUtils {
     /**
      * 计算两个时间差
      */
-    @JvmStatic
     fun getDatePoor(endDate: Date, nowDate: Date): String {
         val nd = (1000 * 24 * 60 * 60).toLong()
         val nh = (1000 * 60 * 60).toLong()
@@ -161,7 +147,6 @@ object DateUtils {
     /**
      * 增加 LocalDateTime ==> Date
      */
-    @JvmStatic
     fun toDate(temporalAccessor: LocalDateTime): Date {
         val zdt = temporalAccessor.atZone(ZoneId.systemDefault())
         return Date.from(zdt.toInstant())
@@ -170,7 +155,6 @@ object DateUtils {
     /**
      * 增加 LocalDate ==> Date
      */
-    @JvmStatic
     fun toDate(temporalAccessor: LocalDate?): Date {
         val localDateTime = LocalDateTime.of(temporalAccessor, LocalTime.of(0, 0, 0))
         val zdt = localDateTime.atZone(ZoneId.systemDefault())

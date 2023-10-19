@@ -71,7 +71,7 @@ class GlobalExceptionHandler {
     ): R<Void> {
         val requestURI = request.requestURI
         log.error { "请求地址'$requestURI',不支持'${e.method}'请求" }
-        return fail(e.message)
+        return fail(msg = e.message)
     }
 
     /**
@@ -81,7 +81,7 @@ class GlobalExceptionHandler {
     fun handleServiceException(e: ServiceException, request: HttpServletRequest?): R<Void> {
         log.error { e.message }
         val code = e.code
-        return if (ObjectUtil.isNotNull(code)) fail(code, e.message) else fail(e.message)
+        return if (ObjectUtil.isNotNull(code)) fail(code = code, msg = e.message) else fail(msg = e.message)
     }
 
     /**
@@ -90,7 +90,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(BaseException::class)
     fun handleBaseException(e: BaseException, request: HttpServletRequest?): R<Void> {
         log.error { e.message }
-        return fail(e.message)
+        return fail(msg = e.message)
     }
 
     /**
@@ -100,7 +100,7 @@ class GlobalExceptionHandler {
     fun handleMissingPathVariableException(e: MissingPathVariableException, request: HttpServletRequest): R<Void> {
         val requestURI = request.requestURI
         log.error { "请求路径中缺少必需的路径变量'$requestURI',发生系统异常." }
-        return fail(String.format("请求路径中缺少必需的路径变量[%s]", e.variableName))
+        return fail(msg = "请求路径中缺少必需的路径变量[${e.variableName}]")
     }
 
     /**
@@ -114,7 +114,7 @@ class GlobalExceptionHandler {
         val requestURI = request.requestURI
         log.error { "请求参数类型不匹配'$requestURI',发生系统异常." }
         return fail(
-            "请求参数类型不匹配，参数[${e.name}]要求类型为：'${e.requiredType?.getName()}'，但输入值为：'${e.value}'"
+            msg = "请求参数类型不匹配，参数[${e.name}]要求类型为：'${e.requiredType?.getName()}'，但输入值为：'${e.value}'"
         )
     }
 
@@ -125,7 +125,7 @@ class GlobalExceptionHandler {
     fun handleRuntimeException(e: RuntimeException, request: HttpServletRequest): R<Void> {
         val requestURI = request.requestURI
         log.error(e) { "请求地址'$requestURI',发生未知异常." }
-        return fail(e.message)
+        return fail(msg = e.message)
     }
 
     /**
@@ -135,7 +135,7 @@ class GlobalExceptionHandler {
     fun handleException(e: Exception, request: HttpServletRequest): R<Void> {
         val requestURI = request.requestURI
         log.error(e) { "请求地址'$requestURI',发生系统异常." }
-        return fail(e.message)
+        return fail(msg = e.message)
     }
 
     /**
@@ -148,7 +148,7 @@ class GlobalExceptionHandler {
             e.allErrors,
             Function { it.defaultMessage.let { "" } }, ", "
         )
-        return fail(message)
+        return fail(msg = message)
     }
 
     /**
@@ -161,7 +161,7 @@ class GlobalExceptionHandler {
             e.constraintViolations,
             { obj: ConstraintViolation<*> -> obj.message }, ", "
         )
-        return fail(message)
+        return fail(msg = message)
     }
 
     /**
@@ -171,7 +171,7 @@ class GlobalExceptionHandler {
     fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): R<Void> {
         log.error { e.message }
         val message = e.bindingResult.fieldError!!.defaultMessage
-        return fail(message)
+        return fail(msg = message)
     }
 
     /**
@@ -179,6 +179,6 @@ class GlobalExceptionHandler {
      */
     @ExceptionHandler(DemoModeException::class)
     fun handleDemoModeException(e: DemoModeException?): R<Void> {
-        return fail("演示模式，不允许操作")
+        return fail(msg = "演示模式，不允许操作")
     }
 }

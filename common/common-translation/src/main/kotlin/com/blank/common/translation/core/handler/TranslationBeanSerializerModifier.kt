@@ -10,9 +10,9 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier
  */
 class TranslationBeanSerializerModifier : BeanSerializerModifier() {
     override fun changeProperties(
-        config: SerializationConfig?, beanDesc: BeanDescription?,
-        beanProperties: List<BeanPropertyWriter>
-    ): List<BeanPropertyWriter> {
+        config: SerializationConfig, beanDesc: BeanDescription,
+        beanProperties: MutableList<BeanPropertyWriter>
+    ): MutableList<BeanPropertyWriter> {
         for (writer in beanProperties) {
             // 如果序列化器为 TranslationHandler 的话 将 Null 值也交给他处理
             if (writer.serializer is TranslationHandler) {

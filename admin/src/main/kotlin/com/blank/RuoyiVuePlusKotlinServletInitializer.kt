@@ -6,8 +6,8 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 /**
  * web容器中进行部署
  */
-class SiteNavServletInitializer : SpringBootServletInitializer() {
+class RuoyiVuePlusKotlinServletInitializer : SpringBootServletInitializer() {
     override fun configure(application: SpringApplicationBuilder): SpringApplicationBuilder {
-        return application.sources(SiteNavApplication::class.java)
+        return application.sources(RuoyiVuePlusKotlinApplication::class.java)
     }
 }

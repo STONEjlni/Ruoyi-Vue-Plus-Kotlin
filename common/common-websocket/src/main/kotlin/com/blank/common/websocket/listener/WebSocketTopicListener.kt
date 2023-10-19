@@ -18,27 +18,24 @@ import java.util.function.Consumer
 @Slf4j
 class WebSocketTopicListener : ApplicationRunner, Ordered {
     @Throws(Exception::class)
-    override fun run(args: ApplicationArguments?) {
+    override fun run(args: ApplicationArguments) {
         WebSocketUtils.subscribeMessage { message: WebSocketMessageDto ->
             log.info {
                 "WebSocket主题订阅收到消息session keys=${message.sessionKeys} message=${message.message}"
             }
             // 如果key不为空就按照key发消息 如果为空就群发
             if (CollUtil.isNotEmpty(message.sessionKeys)) {
-                message.sessionKeys!!.forEach(Consumer { key: Long? ->
-                    if (existSession(
-                            key!!
-                        )
-                    ) {
-                        WebSocketUtils.sendMessage(key, message.message)
+                message.sessionKeys!!.forEach(Consumer { key: Long ->
+                    if (existSession(key)) {
+                        WebSocketUtils.sendMessage(key, message.message!!)
                     }
                 })
             } else {
                 getSessionsAll()
-                    .forEach(Consumer { key: Long? ->
+                    .forEach(Consumer { key: Long ->
                         WebSocketUtils.sendMessage(
                             key,
-                            message.message
+                            message.message!!
                         )
                     })
             }

@@ -15,7 +15,6 @@ object CacheUtils {
      *
      * @param cacheNames 缓存组名称
      */
-    @JvmStatic
     fun keys(cacheNames: String?): Set<Any> {
         val rmap = CACHE_MANAGER.getCache(cacheNames!!)!!
             .nativeCache as RMap<*, *>
@@ -28,7 +27,6 @@ object CacheUtils {
      * @param cacheNames 缓存组名称
      * @param key        缓存key
      */
-    operator @JvmStatic
     fun <T> get(cacheNames: String, key: Any): T? {
         val wrapper = CACHE_MANAGER.getCache(
             cacheNames
@@ -43,7 +41,6 @@ object CacheUtils {
      * @param key        缓存key
      * @param value      缓存值
      */
-    @JvmStatic
     fun put(cacheNames: String?, key: Any?, value: Any?) {
         CACHE_MANAGER.getCache(cacheNames!!)!!.put(key!!, value)
     }
@@ -54,7 +51,6 @@ object CacheUtils {
      * @param cacheNames 缓存组名称
      * @param key        缓存key
      */
-    @JvmStatic
     fun evict(cacheNames: String?, key: Any?) {
         CACHE_MANAGER.getCache(cacheNames!!)!!.evict(key!!)
     }
@@ -64,7 +60,6 @@ object CacheUtils {
      *
      * @param cacheNames 缓存组名称
      */
-    @JvmStatic
     fun clear(cacheNames: String?) {
         CACHE_MANAGER.getCache(cacheNames!!)!!.clear()
     }

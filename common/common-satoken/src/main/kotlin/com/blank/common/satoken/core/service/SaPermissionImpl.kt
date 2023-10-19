@@ -12,7 +12,7 @@ class SaPermissionImpl : StpInterface {
     /**
      * 获取菜单权限列表
      */
-    override fun getPermissionList(loginId: Any?, loginType: String?): MutableList<String> {
+    override fun getPermissionList(loginId: Any, loginType: String?): MutableList<String> {
         val loginUser = LoginHelper.getLoginUser()
         val userType = getUserType(loginUser?.userType!!)
         if (userType === UserType.SYS_USER) {
@@ -26,7 +26,7 @@ class SaPermissionImpl : StpInterface {
     /**
      * 获取角色权限列表
      */
-    override fun getRoleList(loginId: Any?, loginType: String?): MutableList<String> {
+    override fun getRoleList(loginId: Any, loginType: String?): MutableList<String> {
         val loginUser = LoginHelper.getLoginUser()
         val userType = getUserType(loginUser?.userType!!)
         if (userType === UserType.SYS_USER) {

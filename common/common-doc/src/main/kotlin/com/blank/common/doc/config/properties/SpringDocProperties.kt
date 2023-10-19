@@ -18,30 +18,30 @@ class SpringDocProperties {
      * 文档基本信息
      */
     @NestedConfigurationProperty
-    val info = SpringDocProperties.InfoProperties()
+    var info = SpringDocProperties.InfoProperties()
 
     /**
      * 扩展文档地址
      */
     @NestedConfigurationProperty
-    val externalDocs: ExternalDocumentation? = null
+    var externalDocs: ExternalDocumentation? = null
 
     /**
      * 标签
      */
-    val tags: List<Tag>? = null
+    var tags: List<Tag>? = null
 
     /**
      * 路径
      */
     @NestedConfigurationProperty
-    val paths: Paths? = null
+    var paths: Paths? = null
 
     /**
      * 组件
      */
     @NestedConfigurationProperty
-    val components: Components? = null
+    var components: Components? = null
 
     /**
      *
@@ -58,29 +58,29 @@ class SpringDocProperties {
         /**
          * 标题
          */
-        val title: String? = null
+        var title: String? = null
 
         /**
          * 描述
          */
-        val description: String? = null
+        var description: String? = null
 
         /**
          * 联系人信息
          */
         @NestedConfigurationProperty
-        val contact: Contact? = null
+        var contact: Contact? = null
 
         /**
          * 许可证
          */
         @NestedConfigurationProperty
-        val license: License? = null
+        var license: License? = null
 
         /**
          * 版本
          */
-        val version: String? = null
+        var version: String? = null
     }
 
 

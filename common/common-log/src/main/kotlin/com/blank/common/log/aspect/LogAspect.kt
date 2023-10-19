@@ -54,7 +54,7 @@ class LogAspect {
      * 处理请求前执行
      */
     @Before(value = "@annotation(controllerLog)")
-    fun boBefore(joinPoint: JoinPoint?, controllerLog: Log?) {
+    fun boBefore(joinPoint: JoinPoint, controllerLog: Log) {
         val stopWatch = StopWatch()
         TIME_THREADLOCAL.set(stopWatch)
         stopWatch.start()
@@ -113,7 +113,7 @@ class LogAspect {
             context().publishEvent(operLog)
         } catch (exp: Exception) {
             // 记录本地异常日志
-            log.error { "异常信息:$${exp.message}" }
+            log.error { "异常信息:${exp.message}" }
             exp.printStackTrace()
         } finally {
             TIME_THREADLOCAL.remove()

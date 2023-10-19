@@ -50,7 +50,7 @@ class SysOssConfigController(
     @SaCheckPermission("system:oss:query")
     @GetMapping("/{ossConfigId}")
     fun getInfo(@PathVariable ossConfigId: @NotNull(message = "主键不能为空") Long): R<SysOssConfigVo> {
-        return ok(ossConfigService.queryById(ossConfigId))
+        return ok(data = ossConfigService.queryById(ossConfigId))
     }
 
     /**

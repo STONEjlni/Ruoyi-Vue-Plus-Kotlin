@@ -16,7 +16,6 @@ object TreeBuildUtils {
      */
     private val DEFAULT_CONFIG = TreeNodeConfig.DEFAULT_CONFIG.setNameKey("label")
 
-    @JvmStatic
     fun <T, K> build(list: List<T>, nodeParser: NodeParser<T, K>): List<Tree<K>>? {
         if (CollUtil.isEmpty(list)) {
             return null

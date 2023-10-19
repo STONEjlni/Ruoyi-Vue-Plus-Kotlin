@@ -20,7 +20,6 @@ object MessageUtils {
      * @param args 参数
      * @return 获取国际化翻译值
      */
-    @JvmStatic
     fun message(code: String, vararg args: Any?): String {
         return try {
             MESSAGE_SOURCE.getMessage(code, args, LocaleContextHolder.getLocale())

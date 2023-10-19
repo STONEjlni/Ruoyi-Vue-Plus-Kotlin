@@ -21,8 +21,7 @@ object InternalMailUtil {
      * @return 地址数组
      * @since 4.0.3
      */
-    @JvmStatic
-    fun parseAddressFromStrs(addrStrs: Array<String?>, charset: Charset?): Array<InternetAddress> {
+    fun parseAddressFromStrs(addrStrs: Array<String>, charset: Charset = Charset.defaultCharset()): Array<InternetAddress> {
         val resultList: List<InternetAddress> = ArrayList(addrStrs.size)
         var addrs: Array<InternetAddress>
         for (addrStr in addrStrs) {
@@ -41,8 +40,7 @@ object InternalMailUtil {
      * @param charset 编码，`null`表示使用系统属性定义的编码或系统编码
      * @return 地址列表
      */
-    @JvmStatic
-    fun parseFirstAddress(address: String?, charset: Charset?): InternetAddress {
+    fun parseFirstAddress(address: String, charset: Charset = Charset.defaultCharset()): InternetAddress {
         val internetAddresses = parseAddress(address, charset)
         return if (ArrayUtil.isEmpty(internetAddresses)) {
             try {
@@ -61,8 +59,7 @@ object InternalMailUtil {
      * @param charset 编码，`null`表示使用系统属性定义的编码或系统编码
      * @return 地址列表
      */
-    @JvmStatic
-    fun parseAddress(address: String?, charset: Charset?): Array<InternetAddress> {
+    fun parseAddress(address: String, charset: Charset = Charset.defaultCharset()): Array<InternetAddress> {
         val addresses: Array<InternetAddress>
         addresses = try {
             InternetAddress.parse(address)
@@ -91,8 +88,7 @@ object InternalMailUtil {
      * @param charset 编码
      * @return 编码后的结果
      */
-    @JvmStatic
-    fun encodeText(text: String, charset: Charset): String {
+    fun encodeText(text: String, charset: Charset = Charset.defaultCharset()): String {
         try {
             return MimeUtility.encodeText(text, charset.name(), null)
         } catch (e: UnsupportedEncodingException) {

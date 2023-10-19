@@ -22,7 +22,7 @@ class XssFilter : Filter {
     override fun init(filterConfig: FilterConfig) {
         val tempExcludes = filterConfig.getInitParameter("excludes")
         if (StringUtils.isNotEmpty(tempExcludes)) {
-            val url = tempExcludes.split(StringUtilsExtend.SEPARATOR.toRegex()).dropLastWhile { it.isEmpty() }
+            val url = tempExcludes.split(StringUtilsExtend.SEPARATOR)
                 .toTypedArray()
             var i = 0
             while (i < url.size) {

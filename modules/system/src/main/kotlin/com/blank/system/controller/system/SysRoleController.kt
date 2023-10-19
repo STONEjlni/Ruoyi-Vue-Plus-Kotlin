@@ -52,7 +52,7 @@ class SysRoleController(
     @GetMapping(value = ["/{roleId}"])
     fun getInfo(@PathVariable roleId: Long): R<SysRoleVo> {
         roleService.checkRoleDataScope(roleId)
-        return ok(roleService.selectRoleById(roleId))
+        return ok(data = roleService.selectRoleById(roleId))
     }
 
     /**
@@ -64,9 +64,9 @@ class SysRoleController(
     fun add(@Validated @RequestBody role: SysRoleBo): R<Unit> {
         roleService.checkRoleAllowed(role)
         if (!roleService.checkRoleNameUnique(role)) {
-            return fail("新增角色'" + role.roleName + "'失败，角色名称已存在")
+            return fail(msg = "新增角色'${role.roleName}'失败，角色名称已存在")
         } else if (!roleService.checkRoleKeyUnique(role)) {
-            return fail("新增角色'" + role.roleName + "'失败，角色权限已存在")
+            return fail(msg = "新增角色'${role.roleName}'失败，角色权限已存在")
         }
         return toAjax(roleService.insertRole(role))
     }
@@ -81,15 +81,15 @@ class SysRoleController(
         roleService.checkRoleAllowed(role)
         roleService.checkRoleDataScope(role.roleId!!)
         if (!roleService.checkRoleNameUnique(role)) {
-            return fail("修改角色'" + role.roleName + "'失败，角色名称已存在")
+            return fail(msg = "修改角色'${role.roleName}'失败，角色名称已存在")
         } else if (!roleService.checkRoleKeyUnique(role)) {
-            return fail("修改角色'" + role.roleName + "'失败，角色权限已存在")
+            return fail(msg = "修改角色'${role.roleName}'失败，角色权限已存在")
         }
         if (roleService.updateRole(role) > 0) {
             roleService.cleanOnlineUserByRole(role.roleId!!)
             return ok()
         }
-        return fail("修改角色'" + role.roleName + "'失败，请联系管理员")
+        return fail(msg = "修改角色'${role.roleName}'失败，请联系管理员")
     }
 
     /**
@@ -134,7 +134,7 @@ class SysRoleController(
     @SaCheckPermission("system:role:query")
     @GetMapping("/optionselect")
     fun optionselect(): R<MutableList<SysRoleVo>> {
-        return ok(roleService.selectRoleAll())
+        return ok(data = roleService.selectRoleAll())
     }
 
     /**
@@ -203,6 +203,6 @@ class SysRoleController(
         val selectVo = DeptTreeSelectVo()
         selectVo.checkedKeys = deptService.selectDeptListByRoleId(roleId)
         selectVo.depts = deptService.selectDeptTreeList(SysDeptBo())
-        return ok(selectVo)
+        return ok(data = selectVo)
     }
 }

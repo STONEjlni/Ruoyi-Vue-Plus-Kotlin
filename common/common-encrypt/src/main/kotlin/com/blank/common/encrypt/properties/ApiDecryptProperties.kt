@@ -10,21 +10,21 @@ class ApiDecryptProperties {
     /**
      * 加密开关
      */
-    val enabled: Boolean? = null
+    var enabled: Boolean? = null
 
     /**
      * 头部标识
      */
-    val headerFlag: String? = null
+    var headerFlag: String? = null
 
 
     /**
      * 公钥
      */
-    val publicKey: String? = null
+    var publicKey: String? = null
 
     /**
      * 私钥
      */
-    val privateKey: String? = null
+    var privateKey: String? = null
 }

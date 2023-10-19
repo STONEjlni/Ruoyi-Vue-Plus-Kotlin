@@ -67,12 +67,12 @@ class SysUserController(
             val loginUser = getLoginUser()
             val user = userService.selectUserById(loginUser!!.userId!!)
             if (ObjectUtil.isNull(user)) {
-                return fail("没有权限访问用户数据!")
+                return fail(msg = "没有权限访问用户数据!")
             }
             userInfoVo.user = user
             userInfoVo.permissions = loginUser.menuPermission
             userInfoVo.roles = loginUser.rolePermission
-            return ok(userInfoVo)
+            return ok(data = userInfoVo)
         }
 
     /**
@@ -94,7 +94,7 @@ class SysUserController(
             userInfoVo.user = sysUser
             userInfoVo.roleIds = sysUser.roles!!.map { obj: SysRoleVo -> obj.roleId!! }.toMutableList()
         }
-        return ok(userInfoVo)
+        return ok(data = userInfoVo)
     }
 
     /**
@@ -106,11 +106,11 @@ class SysUserController(
     fun add(@Validated @RequestBody user: SysUserBo): R<Unit> {
         deptService.checkDeptDataScope(user.deptId!!)
         if (!userService.checkUserNameUnique(user)) {
-            return fail("新增用户'" + user.userName + "'失败，登录账号已存在")
+            return fail(msg = "新增用户'${user.userName}'失败，登录账号已存在")
         } else if (StringUtils.isNotEmpty(user.phonenumber) && !userService.checkPhoneUnique(user)) {
-            return fail("新增用户'" + user.userName + "'失败，手机号码已存在")
+            return fail(msg = "新增用户'${user.userName}'失败，手机号码已存在")
         } else if (StringUtils.isNotEmpty(user.email) && !userService.checkEmailUnique(user)) {
-            return fail("新增用户'" + user.userName + "'失败，邮箱账号已存在")
+            return fail(msg = "新增用户'${user.userName}'失败，邮箱账号已存在")
         }
         user.password = BCrypt.hashpw(user.password)
         return toAjax(userService.insertUser(user))
@@ -127,11 +127,11 @@ class SysUserController(
         userService.checkUserDataScope(user.userId!!)
         deptService.checkDeptDataScope(user.deptId!!)
         if (!userService.checkUserNameUnique(user)) {
-            return fail("修改用户'" + user.userName + "'失败，登录账号已存在")
+            return fail(msg = "修改用户'${user.userName}'失败，登录账号已存在")
         } else if (StringUtils.isNotEmpty(user.phonenumber) && !userService.checkPhoneUnique(user)) {
-            return fail("修改用户'" + user.userName + "'失败，手机号码已存在")
+            return fail(msg = "修改用户'${user.userName}'失败，手机号码已存在")
         } else if (StringUtils.isNotEmpty(user.email) && !userService.checkEmailUnique(user)) {
-            return fail("修改用户'" + user.userName + "'失败，邮箱账号已存在")
+            return fail(msg = "修改用户'${user.userName}'失败，邮箱账号已存在")
         }
         return toAjax(userService.updateUser(user))
     }
@@ -146,7 +146,7 @@ class SysUserController(
     @DeleteMapping("/{userIds}")
     fun remove(@PathVariable userIds: Array<Long>): R<Unit> {
         return if (ArrayUtil.contains(userIds, getUserId())) {
-            fail("当前用户不能删除")
+            fail(msg = "当前用户不能删除")
         } else toAjax(userService.deleteUserByIds(userIds))
     }
 
@@ -188,7 +188,7 @@ class SysUserController(
         val userInfoVo = SysUserInfoVo()
         userInfoVo.user = user
         userInfoVo.roles = if (isSuperAdmin(userId)) roles else filter(roles!!) { r: SysRoleVo? -> !r!!.isSuperAdmin }
-        return ok(userInfoVo)
+        return ok(data = userInfoVo)
     }
 
     /**
@@ -212,7 +212,7 @@ class SysUserController(
     @SaCheckPermission("system:user:list")
     @GetMapping("/deptTree")
     fun deptTree(dept: SysDeptBo): R<MutableList<Tree<Long>>> {
-        return ok(deptService.selectDeptTreeList(dept))
+        return ok(data = deptService.selectDeptTreeList(dept))
     }
 
     /**
@@ -221,6 +221,6 @@ class SysUserController(
     @SaCheckPermission("system:user:list")
     @GetMapping("/list/dept/{deptId}")
     fun listByDept(@PathVariable deptId: @NotNull Long): R<MutableList<SysUserVo>> {
-        return ok(userService.selectUserListByDept(deptId))
+        return ok(data = userService.selectUserListByDept(deptId))
     }
 }

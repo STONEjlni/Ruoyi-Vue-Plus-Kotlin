@@ -58,10 +58,10 @@ class AuthController(
         // 查询不到 client 或 client 内不包含 grantType
         if (ObjectUtil.isNull(client) || !StringUtils.contains(client!!.grantType, grantType)) {
             log.info { "客户端id: $clientId 认证类型：$grantType 异常!." }
-            return fail(message("auth.grant.type.error"))
+            return fail(msg = message("auth.grant.type.error"))
         }
         // 登录
-        return ok(IAuthStrategy.login(loginBody, client))
+        return ok(data = IAuthStrategy.login(loginBody, client))
     }
 
     /**
@@ -74,11 +74,11 @@ class AuthController(
     fun authBinding(@PathVariable("source") source: String): R<String> {
         val obj = socialProperties.type!![source]
         if (ObjectUtil.isNull(obj)) {
-            return fail(source + "平台账号暂不支持")
+            return fail(msg = "${source}平台账号暂不支持")
         }
         val authRequest = getAuthRequest(source, socialProperties)
         val authorizeUrl = authRequest.authorize(AuthStateUtils.createState())
-        return ok("操作成功", authorizeUrl)
+        return ok(msg = "操作成功", data = authorizeUrl)
     }
 
     /**
@@ -94,7 +94,7 @@ class AuthController(
         val authUserData = response.data
         // 判断授权响应是否成功
         if (!response.ok()) {
-            return fail(response.msg)
+            return fail(msg = response.msg)
         }
         loginService.socialRegister(authUserData)
         return ok()
@@ -108,7 +108,7 @@ class AuthController(
     @DeleteMapping(value = ["/unlock/{socialId}"])
     fun unlockSocial(@PathVariable socialId: Long): R<Void> {
         val rows = socialUserService.deleteWithValidById(socialId)
-        return if (rows) ok() else fail("取消授权失败")
+        return if (rows) ok() else fail(msg = "取消授权失败")
     }
 
     /**
@@ -117,7 +117,7 @@ class AuthController(
     @PostMapping("/logout")
     fun logout(): R<Void> {
         loginService.logout()
-        return ok("退出成功")
+        return ok(msg = "退出成功")
     }
 
     /**

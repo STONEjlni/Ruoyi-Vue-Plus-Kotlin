@@ -32,17 +32,16 @@ class SysMenuController(
     private val menuService: ISysMenuService
 ) : BaseController() {
 
-    @get:GetMapping("/getRouters")
-    val routers: R<MutableList<RouterVo>>
-        /**
-         * 获取路由信息
-         *
-         * @return 路由信息
-         */
-        get() {
-            val menus = menuService.selectMenuTreeByUserId(getUserId()!!)!!
-            return ok(menuService.buildMenus(menus))
-        }
+    /**
+     * 获取路由信息
+     *
+     * @return 路由信息
+     */
+    @GetMapping("/getRouters")
+    fun getRouters(): R<MutableList<RouterVo>> {
+        val menus = menuService.selectMenuTreeByUserId(getUserId()!!)!!
+        return ok(data = menuService.buildMenus(menus))
+    }
 
     /**
      * 获取菜单列表
@@ -52,7 +51,7 @@ class SysMenuController(
     @GetMapping("/list")
     fun list(menu: SysMenuBo): R<MutableList<SysMenuVo>> {
         val menus = menuService.selectMenuList(menu, getUserId()!!)
-        return ok(menus)
+        return ok(data = menus)
     }
 
     /**
@@ -64,7 +63,7 @@ class SysMenuController(
     @SaCheckPermission("system:menu:query")
     @GetMapping(value = ["/{menuId}"])
     fun getInfo(@PathVariable menuId: Long): R<SysMenuVo> {
-        return ok(menuService.selectMenuById(menuId))
+        return ok(data = menuService.selectMenuById(menuId))
     }
 
     /**
@@ -74,7 +73,7 @@ class SysMenuController(
     @GetMapping("/treeselect")
     fun treeselect(menu: SysMenuBo): R<MutableList<Tree<Long>>> {
         val menus = menuService.selectMenuList(menu, getUserId()!!)!!
-        return ok(menuService.buildMenuTreeSelect(menus))
+        return ok(data = menuService.buildMenuTreeSelect(menus))
     }
 
     /**
@@ -89,7 +88,7 @@ class SysMenuController(
         val selectVo = MenuTreeSelectVo()
         selectVo.checkedKeys = menuService.selectMenuListByRoleId(roleId)
         selectVo.menus = menuService.buildMenuTreeSelect(menus)
-        return ok(selectVo)
+        return ok(data = selectVo)
     }
 
     /**
@@ -105,7 +104,7 @@ class SysMenuController(
         val selectVo = MenuTreeSelectVo()
         selectVo.checkedKeys = menuService.selectMenuListByPackageId(packageId)
         selectVo.menus = menuService.buildMenuTreeSelect(menus)
-        return ok(selectVo)
+        return ok(data = selectVo)
     }
 
     /**
@@ -117,9 +116,9 @@ class SysMenuController(
     @PostMapping
     fun add(@Validated @RequestBody menu: SysMenuBo): R<Unit> {
         if (!menuService.checkMenuNameUnique(menu)) {
-            return fail("新增菜单'" + menu.menuName + "'失败，菜单名称已存在")
+            return fail(msg = "新增菜单'${menu.menuName}'失败，菜单名称已存在")
         } else if (UserConstants.YES_FRAME == menu.isFrame && !ishttp(menu.path)) {
-            return fail("新增菜单'" + menu.menuName + "'失败，地址必须以http(s)://开头")
+            return fail(msg = "新增菜单'${menu.menuName}'失败，地址必须以http(s)://开头")
         }
         return toAjax(menuService.insertMenu(menu))
     }
@@ -133,11 +132,11 @@ class SysMenuController(
     @PutMapping
     fun edit(@Validated @RequestBody menu: SysMenuBo): R<Unit> {
         if (!menuService.checkMenuNameUnique(menu)) {
-            return fail("修改菜单'" + menu.menuName + "'失败，菜单名称已存在")
+            return fail(msg = "修改菜单'${menu.menuName}'失败，菜单名称已存在")
         } else if (UserConstants.YES_FRAME == menu.isFrame && !ishttp(menu.path)) {
-            return fail("修改菜单'" + menu.menuName + "'失败，地址必须以http(s)://开头")
+            return fail(msg = "修改菜单'${menu.menuName}'失败，地址必须以http(s)://开头")
         } else if (menu.menuId == menu.parentId) {
-            return fail("修改菜单'" + menu.menuName + "'失败，上级菜单不能选择自己")
+            return fail(msg = "修改菜单'${menu.menuName}'失败，上级菜单不能选择自己")
         }
         return toAjax(menuService.updateMenu(menu))
     }
@@ -153,10 +152,10 @@ class SysMenuController(
     @DeleteMapping("/{menuId}")
     fun remove(@PathVariable("menuId") menuId: Long): R<Unit> {
         if (menuService.hasChildByMenuId(menuId)) {
-            return warn("存在子菜单,不允许删除")
+            return warn(msg = "存在子菜单,不允许删除")
         }
         return if (menuService.checkMenuExistRole(menuId)) {
-            warn("菜单已分配,不允许删除")
+            warn(msg = "菜单已分配,不允许删除")
         } else toAjax(menuService.deleteMenuById(menuId))
     }
 }

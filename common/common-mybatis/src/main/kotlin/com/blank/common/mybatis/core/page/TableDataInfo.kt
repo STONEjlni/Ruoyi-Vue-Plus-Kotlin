@@ -25,7 +25,6 @@ class TableDataInfo<T> @JvmOverloads constructor(
         @Serial
         private const val serialVersionUID = 1L
 
-        @JvmStatic
         fun <T> build(page: Page<T>): TableDataInfo<T> {
             val rspData = TableDataInfo<T>()
             rspData.code = HttpStatus.HTTP_OK
@@ -35,7 +34,6 @@ class TableDataInfo<T> @JvmOverloads constructor(
             return rspData
         }
 
-        @JvmStatic
         fun <T> build(list: List<T>): TableDataInfo<T> {
             val rspData = TableDataInfo<T>()
             rspData.code = HttpStatus.HTTP_OK
@@ -45,7 +43,6 @@ class TableDataInfo<T> @JvmOverloads constructor(
             return rspData
         }
 
-        @JvmStatic
         fun <T> build(): TableDataInfo<T> {
             val rspData = TableDataInfo<T>()
             rspData.code = HttpStatus.HTTP_OK

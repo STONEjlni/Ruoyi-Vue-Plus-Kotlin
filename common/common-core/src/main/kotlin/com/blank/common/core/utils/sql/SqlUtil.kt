@@ -21,7 +21,6 @@ object SqlUtil {
     /**
      * 检查字符，防止注入绕过
      */
-    @JvmStatic
     fun escapeOrderBySql(value: String): String {
         if (StringUtils.isNotEmpty(value) && !isValidOrderBySql(value)) {
             throw UtilException("参数不符合规范，不能进行查询")
@@ -32,7 +31,6 @@ object SqlUtil {
     /**
      * 验证 order by 语法是否符合规范
      */
-    @JvmStatic
     fun isValidOrderBySql(value: String): Boolean {
         return value.matches(SQL_PATTERN.toRegex())
     }
@@ -40,7 +38,6 @@ object SqlUtil {
     /**
      * SQL关键字检查
      */
-    @JvmStatic
     fun filterKeyword(value: String?) {
         if (StringUtils.isEmpty(value!!)) {
             return

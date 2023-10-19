@@ -21,7 +21,6 @@ object StreamUtils {
      * @param function   过滤方法
      * @return 过滤后的list
      */
-    @JvmStatic
     fun <E> filter(collection: Collection<E>, function: Predicate<E>): MutableList<E> {
         return if (CollUtil.isEmpty(collection)) {
             CollUtil.newArrayList()
@@ -37,7 +36,6 @@ object StreamUtils {
      * @param function   拼接方法
      * @return 拼接后的list
      */
-    @JvmStatic
     fun <E> join(collection: Collection<E>, function: Function<E, String>): String {
         return join<E>(collection, function, StringUtilsExtend.SEPARATOR)
     }
@@ -50,7 +48,6 @@ object StreamUtils {
      * @param delimiter  拼接符
      * @return 拼接后的list
      */
-    @JvmStatic
     fun <E> join(collection: Collection<E>, function: Function<E, String>, delimiter: CharSequence): String {
         return if (CollUtil.isEmpty(collection)) {
             StringUtils.EMPTY
@@ -68,7 +65,6 @@ object StreamUtils {
      * @param comparing  排序方法
      * @return 排序后的list
      */
-    @JvmStatic
     fun <E> sorted(collection: Collection<E>, comparing: Comparator<E>): List<E> {
         return if (CollUtil.isEmpty(collection)) {
             CollUtil.newArrayList()
@@ -90,7 +86,6 @@ object StreamUtils {
      * @param <K>        map中的key类型
      * @return 转化后的map
     </K></V> */
-    @JvmStatic
     fun <V, K> toIdentityMap(collection: Collection<V>, key: Function<V, K>): Map<K, V> {
         return if (CollUtil.isEmpty(collection)) {
             MapUtil.newHashMap()
@@ -117,7 +112,6 @@ object StreamUtils {
      * @param <V>        map中的value类型
      * @return 转化后的map
     </V></K></E> */
-    @JvmStatic
     fun <E, K, V> toMap(collection: Collection<E>, key: Function<E, K>, value: Function<E, V>): Map<K, V> {
         return if (CollUtil.isEmpty(collection)) {
             MapUtil.newHashMap()
@@ -139,7 +133,6 @@ object StreamUtils {
      * @param <K>        map中的key类型
      * @return 分类后的map
     </K></E> */
-    @JvmStatic
     fun <E, K> groupByKey(collection: Collection<E>, key: Function<E, K>): Map<K, List<E>> {
         return if (CollUtil.isEmpty(collection)) {
             MapUtil.newHashMap()
@@ -166,7 +159,6 @@ object StreamUtils {
      * @param <U>        第二个map中的key类型
      * @return 分类后的map
     </U></K></E> */
-    @JvmStatic
     fun <E, K, U> groupBy2Key(
         collection: Collection<E>,
         key1: Function<E, K>,
@@ -201,7 +193,6 @@ object StreamUtils {
      * @param <E>        collection中的泛型
      * @return 分类后的map
     </E></U></T> */
-    @JvmStatic
     fun <E, T, U> group2Map(
         collection: Collection<E>,
         key1: Function<E, T>,
@@ -236,7 +227,6 @@ object StreamUtils {
      * @param <T>        List中的泛型
      * @return 转化后的list
     </T></E> */
-    @JvmStatic
     fun <E, T> toList(collection: Collection<E>, function: Function<E, T>): List<T> {
         return if (CollUtil.isEmpty(collection)) {
             CollUtil.newArrayList()
@@ -261,7 +251,6 @@ object StreamUtils {
      * @param <T>        Set中的泛型
      * @return 转化后的Set
     </T></E> */
-    @JvmStatic
     fun <E, T> toSet(collection: Collection<E>, function: Function<E, T>): Set<T> {
         return if (CollUtil.isEmpty(collection) || function == null) {
             CollUtil.newHashSet()
@@ -290,7 +279,6 @@ object StreamUtils {
      * @param <V>   最终map的value类型
      * @return 合并后的map
     </V></Y></X></K> */
-    @JvmStatic
     fun <K, X, Y, V> merge(map1: Map<K, X>, map2: Map<K, Y>, merge: BiFunction<X, Y, V>): Map<K, V> {
         var map1 = map1
         var map2 = map2

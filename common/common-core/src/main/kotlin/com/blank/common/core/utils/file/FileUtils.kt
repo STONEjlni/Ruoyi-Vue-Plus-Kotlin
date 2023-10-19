@@ -15,7 +15,6 @@ object FileUtils {
      * @param response     响应对象
      * @param realFileName 真实文件名
      */
-    @JvmStatic
     fun setAttachmentResponseHeader(response: HttpServletResponse, realFileName: String) {
         val percentEncodedFileName = percentEncode(realFileName)
         val contentDispositionValue =
@@ -31,7 +30,6 @@ object FileUtils {
      * @param s 需要百分号编码的字符串
      * @return 百分号编码后的字符串
      */
-    @JvmStatic
     fun percentEncode(s: String?): String {
         val encode = URLEncoder.encode(s, StandardCharsets.UTF_8)
         return encode.replace("\\+".toRegex(), "%20")

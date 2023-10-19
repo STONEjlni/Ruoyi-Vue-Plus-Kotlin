@@ -20,27 +20,22 @@ class OrderItem @JvmOverloads constructor(
     companion object {
         private const val serialVersionUID = 1L
 
-        @JvmStatic
         fun asc(column: String): OrderItem {
             return build(column, true)
         }
 
-        @JvmStatic
         fun desc(column: String): OrderItem {
             return build(column, false)
         }
 
-        @JvmStatic
         fun ascs(vararg columns: String): List<OrderItem> {
             return columns.toList().map { asc(it) }
         }
 
-        @JvmStatic
         fun descs(vararg columns: String): List<OrderItem> {
             return columns.toList().map { desc(it) }
         }
 
-        @JvmStatic
         private fun build(column: String, asc: Boolean): OrderItem {
             return OrderItem(column, asc)
         }

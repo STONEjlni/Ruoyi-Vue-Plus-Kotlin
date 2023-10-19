@@ -28,7 +28,7 @@ class SysSocialController(
      */
     @GetMapping("/list")
     fun list(): R<MutableList<SysSocialVo>> {
-        return ok(socialUserService.queryListByUserId(getUserId()!!))
+        return ok(data = socialUserService.queryListByUserId(getUserId()!!))
     }
 
     /**
@@ -38,6 +38,6 @@ class SysSocialController(
      */
     @GetMapping("/{id}")
     fun getInfo(@PathVariable id: @NotNull(message = "主键不能为空") String): R<SysSocialVo> {
-        return ok(socialUserService.queryById(id))
+        return ok(data = socialUserService.queryById(id))
     }
 }

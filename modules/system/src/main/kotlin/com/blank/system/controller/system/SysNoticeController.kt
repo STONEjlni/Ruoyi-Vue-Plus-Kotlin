@@ -41,7 +41,7 @@ class SysNoticeController(
     @SaCheckPermission("system:notice:query")
     @GetMapping(value = ["/{noticeId}"])
     fun getInfo(@PathVariable noticeId: Long): R<SysNoticeVo> {
-        return ok(noticeService.selectNoticeById(noticeId))
+        return ok(data = noticeService.selectNoticeById(noticeId))
     }
 
     /**

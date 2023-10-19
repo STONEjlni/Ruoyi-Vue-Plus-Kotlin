@@ -1,9 +1,18 @@
 package com.blank.common.mybatis.core.page
 
 import cn.hutool.core.util.ObjectUtil
+import cn.hutool.core.util.StrUtil
+import com.blank.common.core.exception.ServiceException
+import com.blank.common.core.utils.StringUtilsExtend
+import com.blank.common.core.utils.sql.SqlUtil
+import com.mybatisflex.core.constant.SqlConsts
 import com.mybatisflex.core.paginate.Page
+import com.mybatisflex.core.query.QueryColumn
+import com.mybatisflex.core.query.QueryOrderBy
+import org.apache.commons.lang3.StringUtils
 import java.io.Serial
 import java.io.Serializable
+
 
 /**
  * 分页查询实体类
@@ -58,41 +67,55 @@ class PageQuery : Serializable {
     /**
      * 构建排序
      *
+     *
      * 支持的用法如下:
      * {isAsc:"asc",orderByColumn:"id"} order by id asc
      * {isAsc:"asc",orderByColumn:"id,createTime"} order by id asc,create_time asc
      * {isAsc:"desc",orderByColumn:"id,createTime"} order by id desc,create_time desc
      * {isAsc:"asc,desc",orderByColumn:"id,createTime"} order by id asc,create_time desc
      */
-    /*private List<OrderItem> buildOrderItem() {
+    fun buildOrderBy(): Array<QueryOrderBy> {
         if (StrUtil.isBlank(orderByColumn) || StrUtil.isBlank(isAsc)) {
-            return null;
+            return arrayOf()
         }
-        String orderBy = SqlUtil.escapeOrderBySql(orderByColumn);
-        orderBy = StringUtils.toUnderScoreCase(orderBy);
+        var orderBy: String = SqlUtil.escapeOrderBySql(orderByColumn!!)
+        orderBy = StringUtilsExtend.toUnderScoreCase(orderBy)
 
         // 兼容前端排序类型
-        isAsc = StringUtils.replaceEach(isAsc, new String[]{"ascending", "descending"}, new String[]{"asc", "desc"});
-
-        String[] orderByArr = orderBy.split(StringUtilsExtend.SEPARATOR);
-        String[] isAscArr = isAsc.split(StringUtilsExtend.SEPARATOR);
-        if (isAscArr.length != 1 && isAscArr.length != orderByArr.length) {
-            throw new ServiceException("排序参数有误");
+        isAsc =
+            StringUtils.replaceEach(isAsc, arrayOf("ascending", "descending"), arrayOf("asc", "desc"))
+        val orderByArr: Array<String> = orderBy.split(StringUtilsExtend.SEPARATOR)
+            .toTypedArray()
+        val isAscArr: Array<String> = isAsc!!.split(StringUtilsExtend.SEPARATOR)
+            .toTypedArray()
+        if (isAscArr.size != 1 && isAscArr.size != orderByArr.size) {
+            throw ServiceException("排序参数有误")
         }
-
-        List<OrderItem> list = new ArrayList<>();
+        val orderBys = arrayOf<QueryOrderBy>() // orderByArr.size
         // 每个字段各自排序
-        for (int i = 0; i < orderByArr.length; i++) {
-            String orderByStr = orderByArr[i];
-            String isAscStr = isAscArr.length == 1 ? isAscArr[0] : isAscArr[i];
-            if ("asc".equals(isAscStr)) {
-                list.add(OrderItem.asc(orderByStr));
-            } else if ("desc".equals(isAscStr)) {
-                list.add(OrderItem.desc(orderByStr));
-            } else {
-                throw new ServiceException("排序参数有误");
+        for (i in orderByArr.indices) {
+            val orderByStr = orderByArr[i]
+            val isAscStr = if (isAscArr.size == 1) isAscArr[0] else isAscArr[i]
+            when (isAscStr) {
+                "asc" -> {
+                    orderBys[i] = QueryOrderBy(QueryColumn(orderByStr), SqlConsts.ASC)
+                }
+                "desc" -> {
+                    orderBys[i] = QueryOrderBy(QueryColumn(orderByStr), SqlConsts.DESC)
+                }
+                else -> {
+                    throw ServiceException("排序参数有误")
+                }
             }
+
+            /*if ("asc" == isAscStr) {
+                orderBys[i] = QueryOrderBy(QueryColumn(orderByStr), SqlConsts.ASC)
+            } else if ("desc" == isAscStr) {
+                orderBys[i] = QueryOrderBy(QueryColumn(orderByStr), SqlConsts.DESC)
+            } else {
+                throw ServiceException("排序参数有误")
+            }*/
         }
-        return list;
-    }*/
+        return orderBys
+    }
 }
