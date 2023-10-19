@@ -51,7 +51,6 @@ object QueueUtils {
     /**
      * 通用销毁队列 所有阻塞监听 报错(不支持延迟队列)
      */
-    @JvmStatic
     fun <T> destroyQueue(queueName: String): Boolean {
         val queue = CLIENT.getBlockingQueue<T>(queueName)
         return queue.delete()

@@ -30,7 +30,7 @@ class SecurityConfig(adminServerProperties: AdminServerProperties) {
         successHandler.setTargetUrlParameter("redirectTo")
         successHandler.setDefaultTargetUrl("$adminContextPath/")
         return httpSecurity
-            .headers { header: HeadersConfigurer<HttpSecurity?> ->
+            .headers { header: HeadersConfigurer<HttpSecurity> ->
                 header.frameOptions { it.disable() }
             }
             .authorizeHttpRequests { authorize: AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry ->
@@ -42,12 +42,12 @@ class SecurityConfig(adminServerProperties: AdminServerProperties) {
                 ).permitAll()
                     .anyRequest().authenticated()
             }
-            .formLogin { formLogin: FormLoginConfigurer<HttpSecurity?> ->
+            .formLogin { formLogin: FormLoginConfigurer<HttpSecurity> ->
                 formLogin.loginPage(
                     "$adminContextPath/login"
                 ).successHandler(successHandler)
             }
-            .logout { logout: LogoutConfigurer<HttpSecurity?> ->
+            .logout { logout: LogoutConfigurer<HttpSecurity> ->
                 logout.logoutUrl(
                     "$adminContextPath/logout"
                 )

@@ -11,7 +11,6 @@ object VelocityInitializer {
     /**
      * 初始化vm方法
      */
-    @JvmStatic
     fun initVelocity() {
         val p = Properties()
         try {

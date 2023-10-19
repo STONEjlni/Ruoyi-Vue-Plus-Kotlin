@@ -33,7 +33,7 @@ class MapReduceProcessorDemo : MapReduceProcessor {
         return if (isRootTask) {
             log.info { "==== MAP ====" }
             omsLogger.info("[DemoMRProcessor] start root task~")
-            val subTasks: MutableList<TestSubTask?> = Lists.newLinkedList()
+            val subTasks: MutableList<TestSubTask> = Lists.newLinkedList()
             for (j in 0 until batchNum) {
                 for (i in 0 until batchSize) {
                     val x = j * batchSize + i

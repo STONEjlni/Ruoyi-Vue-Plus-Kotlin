@@ -29,7 +29,6 @@ enum class DataBaseType(
     SQL_SERVER("Microsoft SQL Server");
 
     companion object {
-        @JvmStatic
         fun find(databaseProductName: String?): DataBaseType? {
             if (StrUtil.isBlank(databaseProductName)) {
                 return null

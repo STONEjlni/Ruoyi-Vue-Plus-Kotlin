@@ -25,7 +25,6 @@ interface IAuthStrategy {
         /**
          * 登录
          */
-        @JvmStatic
         fun login(loginBody: LoginBody, client: SysClient): LoginVo? {
             // 授权类型和客户端id
             val clientId = loginBody.clientId!!

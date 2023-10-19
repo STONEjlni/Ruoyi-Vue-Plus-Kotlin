@@ -35,7 +35,6 @@ enum class AccessPolicyType(
     CUSTOM("2", CannedAccessControlList.PublicRead, PolicyType.READ);
 
     companion object {
-        @JvmStatic
         fun getByType(type: String?): AccessPolicyType {
             for (value in entries) {
                 if (value.type == type) {

@@ -162,17 +162,14 @@ class GenTable : BaseEntity() {
     }
 
     companion object {
-        @JvmStatic
         fun isTree(tplCategory: String?): Boolean {
             return tplCategory != null && StringUtils.equals(GenConstants.TPL_TREE, tplCategory)
         }
 
-        @JvmStatic
         fun isCrud(tplCategory: String?): Boolean {
             return tplCategory != null && StringUtils.equals(GenConstants.TPL_CRUD, tplCategory)
         }
 
-        @JvmStatic
         fun isSuperColumn(tplCategory: String?, javaField: String?): Boolean {
             return StringUtils.equalsAnyIgnoreCase(javaField, *GenConstants.BASE_ENTITY)
         }

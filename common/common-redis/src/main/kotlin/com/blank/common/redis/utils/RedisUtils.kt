@@ -44,14 +44,12 @@ object RedisUtils {
      * @param msg        发送数据
      * @param consumer   自定义处理
      */
-    @JvmStatic
     fun <T> publish(channelKey: String?, msg: T, consumer: Consumer<T>) {
         val topic = CLIENT.getTopic(channelKey)
         topic.publish(msg)
         consumer.accept(msg)
     }
 
-    @JvmStatic
     fun <T> publish(channelKey: String?, msg: T) {
         val topic = CLIENT.getTopic(channelKey)
         topic.publish(msg)
@@ -64,7 +62,6 @@ object RedisUtils {
      * @param clazz      消息类型
      * @param consumer   自定义处理
      */
-    @JvmStatic
     fun <T> subscribe(channelKey: String?, clazz: Class<T>?, consumer: Consumer<T>) {
         val topic = CLIENT.getTopic(channelKey)
         topic.addListener(clazz) { _, msg ->
@@ -79,7 +76,6 @@ object RedisUtils {
      * @param key   缓存的键值
      * @param value 缓存的值
      */
-    @JvmStatic
     fun <T> setCacheObject(key: String?, value: T) {
         setCacheObject(key, value, false)
     }
@@ -92,7 +88,6 @@ object RedisUtils {
      * @param isSaveTtl 是否保留TTL有效期(例如: set之前ttl剩余90 set之后还是为90)
      * @since Redis 6.X 以上使用 setAndKeepTTL 兼容 5.X 方案
      */
-    @JvmStatic
     fun <T> setCacheObject(key: String?, value: T, isSaveTtl: Boolean) {
         val bucket = CLIENT.getBucket<T>(key)
         if (isSaveTtl) {
@@ -114,7 +109,6 @@ object RedisUtils {
      * @param value    缓存的值
      * @param duration 时间
      */
-    @JvmStatic
     fun <T> setCacheObject(key: String?, value: T, duration: Duration?) {
         val batch = CLIENT.createBatch()
         val bucket = batch.getBucket<T>(key)
@@ -130,7 +124,6 @@ object RedisUtils {
      * @param value 缓存的值
      * @return set成功或失败
      */
-    @JvmStatic
     fun <T> setObjectIfAbsent(key: String?, value: T, duration: Duration?): Boolean {
         val bucket = CLIENT.getBucket<T>(key)
         return bucket.setIfAbsent(value, duration)
@@ -145,7 +138,6 @@ object RedisUtils {
      * @param key      缓存的键值
      * @param listener 监听器配置
      */
-    @JvmStatic
     fun <T> addObjectListener(key: String?, listener: ObjectListener?) {
         val result = CLIENT.getBucket<T>(key)
         result.addListener(listener)
@@ -158,7 +150,6 @@ object RedisUtils {
      * @param timeout 超时时间
      * @return true=设置成功；false=设置失败
      */
-    @JvmStatic
     fun expire(key: String?, timeout: Long): Boolean {
         return expire(key, Duration.ofSeconds(timeout))
     }
@@ -170,7 +161,6 @@ object RedisUtils {
      * @param duration 超时时间
      * @return true=设置成功；false=设置失败
      */
-    @JvmStatic
     fun expire(key: String?, duration: Duration?): Boolean {
         val rBucket: RBucket<*> = CLIENT.getBucket<Any>(key)
         return rBucket.expire(duration)
@@ -182,7 +172,6 @@ object RedisUtils {
      * @param key 缓存键值
      * @return 缓存键值对应的数据
      */
-    @JvmStatic
     fun <T> getCacheObject(key: String?): T? {
         val rBucket = CLIENT.getBucket<T>(key)
         return rBucket.get()
@@ -194,7 +183,6 @@ object RedisUtils {
      * @param key 缓存键值
      * @return 剩余存活时间
      */
-    @JvmStatic
     fun <T> getTimeToLive(key: String?): Long {
         val rBucket = CLIENT.getBucket<T>(key)
         return rBucket.remainTimeToLive()
@@ -205,7 +193,6 @@ object RedisUtils {
      *
      * @param key 缓存的键值
      */
-    @JvmStatic
     fun deleteObject(key: String?): Boolean {
         return CLIENT.getBucket<Any>(key).delete()
     }
@@ -215,7 +202,6 @@ object RedisUtils {
      *
      * @param collection 多个对象
      */
-    @JvmStatic
     fun deleteObject(collection: Collection<*>) {
         val batch = CLIENT.createBatch()
         collection.forEach {
@@ -232,7 +218,6 @@ object RedisUtils {
      *
      * @param key 缓存的键值
      */
-    @JvmStatic
     fun isExistsObject(key: String?): Boolean {
         return CLIENT.getBucket<Any>(key).isExists
     }
@@ -244,7 +229,6 @@ object RedisUtils {
      * @param dataList 待缓存的List数据
      * @return 缓存的对象
      */
-    @JvmStatic
     fun <T> setCacheList(key: String?, dataList: List<T>?): Boolean {
         val rList = CLIENT.getList<T>(key)
         return rList.addAll(dataList!!)
@@ -259,7 +243,6 @@ object RedisUtils {
      * @param key      缓存的键值
      * @param listener 监听器配置
      */
-    @JvmStatic
     fun <T> addListListener(key: String?, listener: ObjectListener?) {
         val rList = CLIENT.getList<T>(key)
         rList.addListener(listener)
@@ -271,7 +254,6 @@ object RedisUtils {
      * @param key 缓存的键值
      * @return 缓存键值对应的数据
      */
-    @JvmStatic
     fun <T> getCacheList(key: String?): List<T> {
         val rList = CLIENT.getList<T>(key)
         return rList.readAll()
@@ -284,7 +266,6 @@ object RedisUtils {
      * @param dataSet 缓存的数据
      * @return 缓存数据的对象
      */
-    @JvmStatic
     fun <T> setCacheSet(key: String?, dataSet: Set<T>?): Boolean {
         val rSet = CLIENT.getSet<T>(key)
         return rSet.addAll(dataSet!!)
@@ -299,7 +280,6 @@ object RedisUtils {
      * @param key      缓存的键值
      * @param listener 监听器配置
      */
-    @JvmStatic
     fun <T> addSetListener(key: String?, listener: ObjectListener?) {
         val rSet = CLIENT.getSet<T>(key)
         rSet.addListener(listener)
@@ -311,7 +291,6 @@ object RedisUtils {
      * @param key 缓存的key
      * @return set对象
      */
-    @JvmStatic
     fun <T> getCacheSet(key: String?): Set<T> {
         val rSet = CLIENT.getSet<T>(key)
         return rSet.readAll()
@@ -323,7 +302,6 @@ object RedisUtils {
      * @param key     缓存的键值
      * @param dataMap 缓存的数据
      */
-    @JvmStatic
     fun <T> setCacheMap(key: String?, dataMap: Map<String, T>?) {
         if (dataMap != null) {
             val rMap = CLIENT.getMap<String, T>(key)
@@ -340,7 +318,6 @@ object RedisUtils {
      * @param key      缓存的键值
      * @param listener 监听器配置
      */
-    @JvmStatic
     fun <T> addMapListener(key: String?, listener: ObjectListener?) {
         val rMap = CLIENT.getMap<String, T>(key)
         rMap.addListener(listener)
@@ -352,7 +329,6 @@ object RedisUtils {
      * @param key 缓存的键值
      * @return map对象
      */
-    @JvmStatic
     fun <T> getCacheMap(key: String?): Map<String, T> {
         val rMap = CLIENT.getMap<String, T>(key)
         return rMap.getAll(rMap.keys)
@@ -364,7 +340,6 @@ object RedisUtils {
      * @param key 缓存的键值
      * @return key列表
      */
-    @JvmStatic
     fun <T> getCacheMapKeySet(key: String?): Set<String> {
         val rMap = CLIENT.getMap<String, T>(key)
         return rMap.keys
@@ -377,7 +352,6 @@ object RedisUtils {
      * @param hKey  Hash键
      * @param value 值
      */
-    @JvmStatic
     fun <T> setCacheMapValue(key: String?, hKey: String, value: T) {
         val rMap = CLIENT.getMap<String, T>(key)
         rMap[hKey] = value
@@ -390,7 +364,6 @@ object RedisUtils {
      * @param hKey Hash键
      * @return Hash中的对象
      */
-    @JvmStatic
     fun <T> getCacheMapValue(key: String?, hKey: String): T? {
         val rMap = CLIENT.getMap<String, T>(key)
         return rMap[hKey]
@@ -403,7 +376,6 @@ object RedisUtils {
      * @param hKey Hash键
      * @return Hash中的对象
      */
-    @JvmStatic
     fun <T> delCacheMapValue(key: String?, hKey: String): T? {
         val rMap = CLIENT.getMap<String, T>(key)
         return rMap.remove(hKey)
@@ -415,7 +387,6 @@ object RedisUtils {
      * @param key   Redis键
      * @param hKeys Hash键
      */
-    @JvmStatic
     fun <T> delMultiCacheMapValue(key: String?, hKeys: Set<String>) {
         val batch = CLIENT.createBatch()
         val rMap = batch.getMap<String, T>(key)
@@ -432,7 +403,6 @@ object RedisUtils {
      * @param hKeys Hash键集合
      * @return Hash对象集合
      */
-    @JvmStatic
     fun <K, V> getMultiCacheMapValue(key: String?, hKeys: Set<K>?): Map<K, V> {
         val rMap = CLIENT.getMap<K, V>(key)
         return rMap.getAll(hKeys)
@@ -444,7 +414,6 @@ object RedisUtils {
      * @param key   Redis键
      * @param value 值
      */
-    @JvmStatic
     fun setAtomicValue(key: String?, value: Long) {
         val atomic = CLIENT.getAtomicLong(key)
         atomic.set(value)
@@ -456,7 +425,6 @@ object RedisUtils {
      * @param key Redis键
      * @return 当前值
      */
-    @JvmStatic
     fun getAtomicValue(key: String?): Long {
         val atomic = CLIENT.getAtomicLong(key)
         return atomic.get()
@@ -468,7 +436,6 @@ object RedisUtils {
      * @param key Redis键
      * @return 当前值
      */
-    @JvmStatic
     fun incrAtomicValue(key: String?): Long {
         val atomic = CLIENT.getAtomicLong(key)
         return atomic.incrementAndGet()
@@ -480,7 +447,6 @@ object RedisUtils {
      * @param key Redis键
      * @return 当前值
      */
-    @JvmStatic
     fun decrAtomicValue(key: String?): Long {
         val atomic = CLIENT.getAtomicLong(key)
         return atomic.decrementAndGet()
@@ -492,7 +458,6 @@ object RedisUtils {
      * @param pattern 字符串前缀
      * @return 对象列表
      */
-    @JvmStatic
     fun keys(pattern: String?): Collection<String> {
         val stream = CLIENT.keys.getKeysStreamByPattern(pattern)
         return stream.collect(Collectors.toList())
@@ -503,7 +468,6 @@ object RedisUtils {
      *
      * @param pattern 字符串前缀
      */
-    @JvmStatic
     fun deleteKeys(pattern: String?) {
         CLIENT.keys.deleteByPattern(pattern)
     }
@@ -513,7 +477,6 @@ object RedisUtils {
      *
      * @param key 键
      */
-    @JvmStatic
     fun hasKey(key: String?): Boolean {
         val rKeys = CLIENT.keys
         return rKeys.countExists(key) > 0

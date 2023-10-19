@@ -152,8 +152,8 @@ class OpenApiHandler
         openAPI: OpenAPI,
         locale: Locale
     ): Operation {
-        val tags: MutableSet<Tag?> = HashSet()
-        var tagsStr: MutableSet<String?> = HashSet()
+        val tags: MutableSet<Tag> = HashSet()
+        var tagsStr: MutableSet<String> = HashSet()
         buildTagsFromMethod(handlerMethod.method, tags, tagsStr, locale)
         buildTagsFromClass(handlerMethod.beanType, tags, tagsStr, locale)
         if (!CollectionUtils.isEmpty(tagsStr)) tagsStr = tagsStr.stream()
@@ -173,7 +173,7 @@ class OpenApiHandler
         }
         if (!CollectionUtils.isEmpty(tagsStr)) {
             if (CollectionUtils.isEmpty(operation.tags)) operation.tags = ArrayList(tagsStr) else {
-                val operationTagsSet: MutableSet<String?> = HashSet(operation.tags)
+                val operationTagsSet: MutableSet<String> = HashSet(operation.tags)
                 operationTagsSet.addAll(tagsStr)
                 operation.tags.clear()
                 operation.tags.addAll(operationTagsSet)
@@ -218,8 +218,8 @@ class OpenApiHandler
 
     private fun buildTagsFromMethod(
         method: Method,
-        tags: MutableSet<Tag?>,
-        tagsStr: MutableSet<String?>,
+        tags: MutableSet<Tag>,
+        tagsStr: MutableSet<String>,
         locale: Locale
     ) {
         // method tags
@@ -243,18 +243,18 @@ class OpenApiHandler
                     tag!!.name, locale
                 )
             }.collect(Collectors.toSet()))
-            val allTags: List<io.swagger.v3.oas.annotations.tags.Tag?> = ArrayList(methodTags)
+            val allTags: List<io.swagger.v3.oas.annotations.tags.Tag> = ArrayList(methodTags)
             addTags(allTags, tags, locale)
         }
     }
 
     private fun addTags(
-        sourceTags: List<io.swagger.v3.oas.annotations.tags.Tag?>,
-        tags: MutableSet<Tag?>,
+        sourceTags: List<io.swagger.v3.oas.annotations.tags.Tag>,
+        tags: MutableSet<Tag>,
         locale: Locale
     ) {
         val optionalTagSet = AnnotationsUtils
-            .getTags(sourceTags.toTypedArray<io.swagger.v3.oas.annotations.tags.Tag?>(), true)
+            .getTags(sourceTags.toTypedArray<io.swagger.v3.oas.annotations.tags.Tag>(), true)
         optionalTagSet.ifPresent { tagsSet: Set<Tag> ->
             tagsSet.forEach(
                 Consumer { tag: Tag ->

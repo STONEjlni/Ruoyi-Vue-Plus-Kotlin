@@ -40,7 +40,6 @@ object WebSocketUtils {
      *
      * @param consumer 自定义处理
      */
-    @JvmStatic
     fun subscribeMessage(consumer: Consumer<WebSocketMessageDto>) {
         subscribe(
             WebSocketConstants.WEB_SOCKET_TOPIC,
@@ -53,7 +52,6 @@ object WebSocketUtils {
      *
      * @param webSocketMessage 消息对象
      */
-    @JvmStatic
     fun publishMessage(webSocketMessage: WebSocketMessageDto) {
         val unsentSessionKeys: MutableList<Long> = mutableListOf()
         // 当前服务内session,直接发送消息
@@ -85,7 +83,6 @@ object WebSocketUtils {
      *
      * @param message 消息内容
      */
-    @JvmStatic
     fun publishAll(message: String) {
         getSessionsAll().forEach(Consumer { key: Long ->
             sendMessage(
@@ -104,17 +101,14 @@ object WebSocketUtils {
         }
     }
 
-    @JvmStatic
     fun sendPongMessage(session: WebSocketSession) {
         sendMessage(session, PongMessage())
     }
 
-    @JvmStatic
     fun sendMessage(session: WebSocketSession, message: String) {
         sendMessage(session, TextMessage(message))
     }
 
-    @JvmStatic
     private fun sendMessage(session: WebSocketSession?, message: WebSocketMessage<*>) {
         if (session == null || !session.isOpen) {
             log.error { "[send] session会话已经关闭" }

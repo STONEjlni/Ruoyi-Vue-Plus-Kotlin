@@ -20,11 +20,11 @@ class XssHttpServletRequestWrapper(
     request: HttpServletRequest
 ) : HttpServletRequestWrapper(request) {
 
-    override fun getParameterValues(name: String?): Array<String?> {
+    override fun getParameterValues(name: String): Array<String> {
         val values = super.getParameterValues(name)
         if (values != null) {
             val length = values.size
-            val escapseValues = arrayOfNulls<String>(length)
+            val escapseValues = arrayOf<String>() // arrayOfNulls<String>(length)
             for (i in 0 until length) {
                 // 防xss攻击和过滤前后空格
                 escapseValues[i] = HtmlUtil.cleanHtmlTag(values[i]).trim { it <= ' ' }

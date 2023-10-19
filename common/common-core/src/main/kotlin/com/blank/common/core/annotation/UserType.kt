@@ -20,7 +20,6 @@ enum class UserType(
     APP_USER("app_user");
 
     companion object {
-        @JvmStatic
         fun getUserType(str: String): UserType {
             for (value in entries) {
                 if (StringUtils.contains(str, value.userType)) {

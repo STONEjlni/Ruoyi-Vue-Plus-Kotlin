@@ -19,7 +19,6 @@ object GenUtils {
     /**
      * 初始化表信息
      */
-    @JvmStatic
     fun initTable(genTable: GenTable, operId: Long?) {
         genTable.className = convertClassName(genTable.tableName!!)
         genTable.packageName = GenConfig.packageName
@@ -33,7 +32,6 @@ object GenUtils {
     /**
      * 初始化列属性字段
      */
-    @JvmStatic
     fun initColumnField(column: GenTableColumn, table: GenTable) {
         val dataType = getDbType(column.columnType)
         val columnName = column.columnName
@@ -125,7 +123,6 @@ object GenUtils {
      * @param targetValue 值
      * @return 是否包含
      */
-    @JvmStatic
     fun arraysContains(arr: Array<String>, targetValue: String?): Boolean {
         return Arrays.asList(*arr).contains(targetValue)
     }
@@ -136,7 +133,6 @@ object GenUtils {
      * @param packageName 包名
      * @return 模块名
      */
-    @JvmStatic
     fun getModuleName(packageName: String): String {
         val lastIndex = packageName.lastIndexOf(".")
         val nameLength = packageName.length
@@ -149,7 +145,6 @@ object GenUtils {
      * @param tableName 表名
      * @return 业务名
      */
-    @JvmStatic
     fun getBusinessName(tableName: String): String {
         val firstIndex = tableName.indexOf("_")
         val nameLength = tableName.length
@@ -164,7 +159,6 @@ object GenUtils {
      * @param tableName 表名称
      * @return 类名
      */
-    @JvmStatic
     fun convertClassName(tableName: String): String {
         var tableName = tableName
         val autoRemovePre: Boolean = GenConfig.autoRemovePre
@@ -182,7 +176,6 @@ object GenUtils {
      * @param replacementm 替换值
      * @param searchList   替换列表
      */
-    @JvmStatic
     fun replaceFirst(replacementm: String, searchList: Array<String>): String {
         var text = replacementm
         for (searchString in searchList) {
@@ -200,7 +193,6 @@ object GenUtils {
      * @param text 需要被替换的名字
      * @return 替换后的名字
      */
-    @JvmStatic
     fun replaceText(text: String?): String {
         return RegExUtils.replaceAll(text, "(?:表|若依)", "")
     }
@@ -211,7 +203,6 @@ object GenUtils {
      * @param columnType 列类型
      * @return 截取后的列类型
      */
-    @JvmStatic
     fun getDbType(columnType: String?): String? {
         return if (StringUtils.indexOf(columnType, "(") > 0) {
             StringUtils.substringBefore(columnType, "(")
@@ -226,7 +217,6 @@ object GenUtils {
      * @param columnType 列类型
      * @return 截取后的列类型
      */
-    @JvmStatic
     fun getColumnLength(columnType: String?): Int {
         return if (StringUtils.indexOf(columnType, "(") > 0) {
             val length = StringUtils.substringBetween(columnType, "(", ")")

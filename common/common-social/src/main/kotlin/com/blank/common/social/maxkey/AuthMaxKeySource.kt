@@ -35,7 +35,7 @@ enum class AuthMaxKeySource : AuthSource {
         /**
          * 平台对应的 AuthRequest 实现类，必须继承自 [AuthDefaultRequest]
          */
-        override fun getTargetClass(): Class<out AuthDefaultRequest?> {
+        override fun getTargetClass(): Class<out AuthDefaultRequest> {
             return AuthMaxKeyRequest::class.java
         }
     }

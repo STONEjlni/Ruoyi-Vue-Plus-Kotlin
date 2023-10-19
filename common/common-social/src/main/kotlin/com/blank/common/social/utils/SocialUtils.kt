@@ -31,7 +31,6 @@ object SocialUtils {
     }
 
     @Throws(AuthException::class)
-    @JvmStatic
     fun getAuthRequest(source: String?, socialProperties: SocialProperties): AuthRequest {
         val obj = socialProperties.type!![source!!]
         if (ObjectUtil.isNull(obj)) {

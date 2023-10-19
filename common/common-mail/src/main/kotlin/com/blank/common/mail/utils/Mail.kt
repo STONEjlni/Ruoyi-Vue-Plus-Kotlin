@@ -38,7 +38,6 @@ class Mail : Builder<MimeMessage> {
          * @param mailAccount 邮件帐号
          * @return Mail
          */
-        @JvmStatic
         fun create(mailAccount: MailAccount?) = Mail(mailAccount)
 
         /**
@@ -46,7 +45,6 @@ class Mail : Builder<MimeMessage> {
          *
          * @return Mail
          */
-        @JvmStatic
         fun create() = Mail()
     }
 
@@ -356,7 +354,7 @@ class Mail : Builder<MimeMessage> {
             )
         }
         // 密送人
-        if (ArrayUtil.isNotEmpty<String?>(bccs)) {
+        if (ArrayUtil.isNotEmpty<String>(bccs)) {
             msg.setRecipients(
                 MimeMessage.RecipientType.BCC, parseAddressFromStrs(
                     bccs, charset
@@ -364,7 +362,7 @@ class Mail : Builder<MimeMessage> {
             )
         }
         // 回复地址(reply-to)
-        if (ArrayUtil.isNotEmpty<String?>(reply)) {
+        if (ArrayUtil.isNotEmpty<String>(reply)) {
             msg.replyTo = parseAddressFromStrs(reply, charset)
         }
         return msg

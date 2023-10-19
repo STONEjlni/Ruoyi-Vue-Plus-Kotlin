@@ -28,7 +28,6 @@ object EncryptUtils {
      * @param data 待加密数据
      * @return 加密后字符串
      */
-    @JvmStatic
     fun encryptByBase64(data: String?): String {
         return Base64.encode(data, StandardCharsets.UTF_8)
     }
@@ -39,7 +38,6 @@ object EncryptUtils {
      * @param data 待解密数据
      * @return 解密后字符串
      */
-    @JvmStatic
     fun decryptByBase64(data: String?): String {
         return Base64.decodeStr(data, StandardCharsets.UTF_8)
     }
@@ -51,7 +49,6 @@ object EncryptUtils {
      * @param password 秘钥字符串
      * @return 加密后字符串, 采用Base64编码
      */
-    @JvmStatic
     fun encryptByAes(data: String?, password: String): String {
         require(!StrUtil.isBlank(password)) { "AES需要传入秘钥信息" }
         // aes算法的秘钥要求是16位、24位、32位
@@ -67,7 +64,6 @@ object EncryptUtils {
      * @param password 秘钥字符串
      * @return 加密后字符串, 采用Hex编码
      */
-    @JvmStatic
     fun encryptByAesHex(data: String?, password: String): String {
         require(!StrUtil.isBlank(password)) { "AES需要传入秘钥信息" }
         // aes算法的秘钥要求是16位、24位、32位
@@ -83,7 +79,6 @@ object EncryptUtils {
      * @param password 秘钥字符串
      * @return 解密后字符串
      */
-    @JvmStatic
     fun decryptByAes(data: String?, password: String): String {
         require(!StrUtil.isBlank(password)) { "AES需要传入秘钥信息" }
         // aes算法的秘钥要求是16位、24位、32位
@@ -99,7 +94,6 @@ object EncryptUtils {
      * @param password 秘钥字符串
      * @return 加密后字符串, 采用Base64编码
      */
-    @JvmStatic
     fun encryptBySm4(data: String?, password: String): String {
         require(!StrUtil.isBlank(password)) { "SM4需要传入秘钥信息" }
         // sm4算法的秘钥要求是16位长度
@@ -115,7 +109,6 @@ object EncryptUtils {
      * @param password 秘钥字符串
      * @return 加密后字符串, 采用Base64编码
      */
-    @JvmStatic
     fun encryptBySm4Hex(data: String?, password: String): String {
         require(!StrUtil.isBlank(password)) { "SM4需要传入秘钥信息" }
         // sm4算法的秘钥要求是16位长度
@@ -131,7 +124,6 @@ object EncryptUtils {
      * @param password 秘钥字符串
      * @return 解密后字符串
      */
-    @JvmStatic
     fun decryptBySm4(data: String?, password: String): String {
         require(!StrUtil.isBlank(password)) { "SM4需要传入秘钥信息" }
         // sm4算法的秘钥要求是16位长度
@@ -145,7 +137,6 @@ object EncryptUtils {
      *
      * @return 公私钥Map
      */
-    @JvmStatic
     fun generateSm2Key(): Map<String, String> {
         val keyMap: MutableMap<String, String> = HashMap(2)
         val sm2 = SmUtil.sm2()
@@ -161,7 +152,6 @@ object EncryptUtils {
      * @param publicKey 公钥
      * @return 加密后字符串, 采用Base64编码
      */
-    @JvmStatic
     fun encryptBySm2(data: String?, publicKey: String?): String {
         require(!StrUtil.isBlank(publicKey)) { "SM2需要传入公钥进行加密" }
         val sm2 = SmUtil.sm2(null, publicKey)
@@ -175,7 +165,6 @@ object EncryptUtils {
      * @param publicKey 公钥
      * @return 加密后字符串, 采用Hex编码
      */
-    @JvmStatic
     fun encryptBySm2Hex(data: String?, publicKey: String?): String {
         require(!StrUtil.isBlank(publicKey)) { "SM2需要传入公钥进行加密" }
         val sm2 = SmUtil.sm2(null, publicKey)
@@ -189,7 +178,6 @@ object EncryptUtils {
      * @param privateKey 私钥
      * @return 解密后字符串
      */
-    @JvmStatic
     fun decryptBySm2(data: String?, privateKey: String?): String {
         require(!StrUtil.isBlank(privateKey)) { "SM2需要传入私钥进行解密" }
         val sm2 = SmUtil.sm2(privateKey, null)
@@ -201,7 +189,6 @@ object EncryptUtils {
      *
      * @return 公私钥Map
      */
-    @JvmStatic
     fun generateRsaKey(): Map<String, String> {
         val keyMap: MutableMap<String, String> = HashMap(2)
         val rsa = SecureUtil.rsa()
@@ -217,7 +204,6 @@ object EncryptUtils {
      * @param publicKey 公钥
      * @return 加密后字符串, 采用Base64编码
      */
-    @JvmStatic
     fun encryptByRsa(data: String?, publicKey: String?): String {
         require(!StrUtil.isBlank(publicKey)) { "RSA需要传入公钥进行加密" }
         val rsa = SecureUtil.rsa(null, publicKey)
@@ -231,7 +217,6 @@ object EncryptUtils {
      * @param publicKey 公钥
      * @return 加密后字符串, 采用Hex编码
      */
-    @JvmStatic
     fun encryptByRsaHex(data: String?, publicKey: String?): String {
         require(!StrUtil.isBlank(publicKey)) { "RSA需要传入公钥进行加密" }
         val rsa = SecureUtil.rsa(null, publicKey)
@@ -245,7 +230,6 @@ object EncryptUtils {
      * @param privateKey 私钥
      * @return 解密后字符串
      */
-    @JvmStatic
     fun decryptByRsa(data: String?, privateKey: String?): String {
         require(!StrUtil.isBlank(privateKey)) { "RSA需要传入私钥进行解密" }
         val rsa = SecureUtil.rsa(privateKey, null)
@@ -258,7 +242,6 @@ object EncryptUtils {
      * @param data 待加密数据
      * @return 加密后字符串, 采用Hex编码
      */
-    @JvmStatic
     fun encryptByMd5(data: String?): String {
         return SecureUtil.md5(data)
     }
@@ -269,7 +252,6 @@ object EncryptUtils {
      * @param data 待加密数据
      * @return 加密后字符串, 采用Hex编码
      */
-    @JvmStatic
     fun encryptBySha256(data: String?): String {
         return SecureUtil.sha256(data)
     }
@@ -280,7 +262,6 @@ object EncryptUtils {
      * @param data 待加密数据
      * @return 加密后字符串, 采用Hex编码
      */
-    @JvmStatic
     fun encryptBySm3(data: String?): String {
         return SmUtil.sm3(data)
     }

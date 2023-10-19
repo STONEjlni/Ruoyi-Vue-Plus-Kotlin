@@ -54,7 +54,6 @@ enum class DataScopeType(
     SELF("5", " #{#userName} = #{#user.userId} ", " 1 = 0 ");
 
     companion object {
-        @JvmStatic
         fun findCode(code: String?): DataScopeType? {
             if (StrUtil.isBlank(code)) {
                 return null

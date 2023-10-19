@@ -166,7 +166,6 @@ class SysMenu : BaseEntity() {
         /**
          * 内链域名特殊字符替换
          */
-        @JvmStatic
         fun innerLinkReplaceEach(path: String?): String {
             return StringUtils.replaceEach(
                 path,

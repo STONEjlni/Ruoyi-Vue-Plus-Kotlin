@@ -40,7 +40,6 @@ object VelocityUtils {
      *
      * @return 模板列表
      */
-    @JvmStatic
     fun prepareContext(genTable: GenTable): VelocityContext {
         val moduleName = genTable.moduleName
         val businessName = genTable.businessName
@@ -76,7 +75,6 @@ object VelocityUtils {
         return velocityContext
     }
 
-    @JvmStatic
     fun setMenuVelocityContext(context: VelocityContext, genTable: GenTable) {
         val options = genTable.options
         val paramsObj = parseMap(options)
@@ -84,7 +82,6 @@ object VelocityUtils {
         context.put("parentMenuId", parentMenuId)
     }
 
-    @JvmStatic
     fun setTreeVelocityContext(context: VelocityContext, genTable: GenTable) {
         val options = genTable.options
         val paramsObj = parseMap(options)
@@ -108,7 +105,6 @@ object VelocityUtils {
      *
      * @return 模板列表
      */
-    @JvmStatic
     fun getTemplateList(tplCategory: String): List<String> {
         val templates: MutableList<String> = ArrayList()
         templates.add("vm/java/domain.java.vm")
@@ -141,7 +137,6 @@ object VelocityUtils {
     /**
      * 获取文件名
      */
-    @JvmStatic
     fun getFileName(template: String, genTable: GenTable): String {
         // 文件名称
         var fileName = ""
@@ -195,7 +190,6 @@ object VelocityUtils {
      * @param packageName 包名称
      * @return 包前缀名称
      */
-    @JvmStatic
     fun getPackagePrefix(packageName: String?): String {
         val lastIndex = packageName!!.lastIndexOf(".")
         return StringUtils.substring(packageName, 0, lastIndex)
@@ -207,7 +201,6 @@ object VelocityUtils {
      * @param genTable 业务表对象
      * @return 返回需要导入的包列表
      */
-    @JvmStatic
     fun getImportList(genTable: GenTable): HashSet<String> {
         val columns: List<GenTableColumn>? = genTable.columns
         val importList = HashSet<String>()
@@ -228,10 +221,9 @@ object VelocityUtils {
      * @param genTable 业务表对象
      * @return 返回字典组
      */
-    @JvmStatic
     fun getDicts(genTable: GenTable): String {
         val columns: List<GenTableColumn>? = genTable.columns
-        val dicts: MutableSet<String?> = HashSet()
+        val dicts: MutableSet<String> = HashSet()
         addDicts(dicts, columns)
         return StringUtils.join(dicts, ", ")
     }
@@ -242,8 +234,7 @@ object VelocityUtils {
      * @param dicts   字典列表
      * @param columns 列集合
      */
-    @JvmStatic
-    fun addDicts(dicts: MutableSet<String?>, columns: List<GenTableColumn>?) {
+    fun addDicts(dicts: MutableSet<String>, columns: List<GenTableColumn>?) {
         for (column in columns!!) {
             if (!column.isSuperColumn() && StringUtils.isNotEmpty(column.dictType) && StringUtils.equalsAny(
                     column.htmlType,
@@ -262,7 +253,6 @@ object VelocityUtils {
      * @param businessName 业务名称
      * @return 返回权限前缀
      */
-    @JvmStatic
     fun getPermissionPrefix(moduleName: String?, businessName: String?): String {
         return format("{}:{}", moduleName!!, businessName!!)
     }
@@ -273,7 +263,6 @@ object VelocityUtils {
      * @param paramsObj 生成其他选项
      * @return 上级菜单ID字段
      */
-    @JvmStatic
     fun getParentMenuId(paramsObj: Dict?): String {
         return if (CollUtil.isNotEmpty(paramsObj) && paramsObj!!.containsKey(GenConstants.PARENT_MENU_ID)
             && StringUtils.isNotEmpty(paramsObj.getStr(GenConstants.PARENT_MENU_ID))
@@ -288,8 +277,7 @@ object VelocityUtils {
      * @param paramsObj 生成其他选项
      * @return 树编码
      */
-    @JvmStatic
-    fun getTreecode(paramsObj: Map<String?, Any?>?): String {
+    fun getTreecode(paramsObj: Map<String, Any>?): String {
         return if (CollUtil.isNotEmpty(paramsObj) && paramsObj!!.containsKey(GenConstants.TREE_CODE)) {
             toCamelCase(Convert.toStr(paramsObj[GenConstants.TREE_CODE]))
         } else StringUtils.EMPTY
@@ -301,7 +289,6 @@ object VelocityUtils {
      * @param paramsObj 生成其他选项
      * @return 树父编码
      */
-    @JvmStatic
     fun getTreeParentCode(paramsObj: Dict?): String {
         return if (CollUtil.isNotEmpty(paramsObj) && paramsObj!!.containsKey(GenConstants.TREE_PARENT_CODE)) {
             toCamelCase(paramsObj.getStr(GenConstants.TREE_PARENT_CODE))
@@ -314,7 +301,6 @@ object VelocityUtils {
      * @param paramsObj 生成其他选项
      * @return 树名称
      */
-    @JvmStatic
     fun getTreeName(paramsObj: Dict?): String {
         return if (CollUtil.isNotEmpty(paramsObj) && paramsObj!!.containsKey(GenConstants.TREE_NAME)) {
             toCamelCase(paramsObj.getStr(GenConstants.TREE_NAME))
@@ -327,7 +313,6 @@ object VelocityUtils {
      * @param genTable 业务表对象
      * @return 展开按钮列序号
      */
-    @JvmStatic
     fun getExpandColumn(genTable: GenTable): Int {
         val options = genTable.options
         val paramsObj = parseMap(options)
