@@ -1,15 +1,19 @@
 package com.blank.system.service.impl
 
-import com.blank.common.core.utils.MapstructUtils.convert
+import cn.hutool.core.util.ObjectUtil
+import com.blank.common.core.utils.MapstructUtils
 import com.blank.common.mybatis.core.page.PageQuery
 import com.blank.common.mybatis.core.page.TableDataInfo
 import com.blank.system.domain.SysNotice
 import com.blank.system.domain.bo.SysNoticeBo
+import com.blank.system.domain.table.SysNoticeDef.SYS_NOTICE
 import com.blank.system.domain.vo.SysNoticeVo
+import com.blank.system.domain.vo.SysUserVo
 import com.blank.system.mapper.SysNoticeMapper
 import com.blank.system.mapper.SysUserMapper
 import com.blank.system.service.ISysNoticeService
 import com.mybatisflex.core.query.QueryWrapper
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
 
 /**
@@ -21,11 +25,10 @@ class SysNoticeServiceImpl(
     private val userMapper: SysUserMapper
 ) : ISysNoticeService {
 
-    override fun selectPageNoticeList(notice: SysNoticeBo, pageQuery: PageQuery): TableDataInfo<SysNoticeVo>? {
-        /*LambdaQueryWrapper<SysNotice> lqw = buildQueryWrapper(notice);
-        Page<SysNoticeVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
-        return TableDataInfo.build(page);*/
-        return null
+    override fun selectPageNoticeList(notice: SysNoticeBo, pageQuery: PageQuery): TableDataInfo<SysNoticeVo> {
+        val lqw = buildQueryWrapper(notice)
+        val page = baseMapper.paginateAs(pageQuery, lqw, SysNoticeVo::class.java)
+        return TableDataInfo.build(page)
     }
 
     /**
@@ -34,8 +37,8 @@ class SysNoticeServiceImpl(
      * @param noticeId 公告ID
      * @return 公告信息
      */
-    override fun selectNoticeById(noticeId: Long): SysNoticeVo? {
-        return baseMapper.selectVoById(noticeId)!!
+    override fun selectNoticeById(noticeId: Long): SysNoticeVo {
+        return baseMapper.selectOneWithRelationsByIdAs(noticeId, SysNoticeVo::class.java)
     }
 
     /**
@@ -44,23 +47,21 @@ class SysNoticeServiceImpl(
      * @param notice 公告信息
      * @return 公告集合
      */
-    override fun selectNoticeList(notice: SysNoticeBo): MutableList<SysNoticeVo>? {
-        /*LambdaQueryWrapper<SysNotice> lqw = buildQueryWrapper(notice);
-        return baseMapper.selectVoList(lqw);*/
-        return null
+    override fun selectNoticeList(notice: SysNoticeBo): MutableList<SysNoticeVo> {
+        val lqw = buildQueryWrapper(notice)
+        return baseMapper.selectListByQueryAs(lqw, SysNoticeVo::class.java)
     }
 
-    private fun  /*<SysNotice>*/buildQueryWrapper(bo: SysNoticeBo): QueryWrapper? {
-        /*LambdaQueryWrapper<SysNotice> lqw = Wrappers.lambdaQuery();
-        lqw.like(StrUtil.isNotBlank(bo.getNoticeTitle()), SysNotice::getNoticeTitle, bo.getNoticeTitle());
-        lqw.eq(StrUtil.isNotBlank(bo.getNoticeType()), SysNotice::getNoticeType, bo.getNoticeType());
-        if (StrUtil.isNotBlank(bo.getCreateByName())) {
-            SysUserVo sysUser = userMapper.selectUserByUserName(bo.getCreateByName());
-            lqw.eq(SysNotice::getCreateBy, ObjectUtil.isNotNull(sysUser) ? sysUser.getUserId() : null);
+    private fun buildQueryWrapper(bo: SysNoticeBo): QueryWrapper {
+        val queryWrapper: QueryWrapper = QueryWrapper.create().from(SYS_NOTICE)
+            .where(SYS_NOTICE.NOTICE_TITLE.like(bo.noticeTitle))
+            .and(SYS_NOTICE.NOTICE_TYPE.eq(bo.noticeType))
+        if (StringUtils.isNotBlank(bo.createByName)) {
+            val sysUser: SysUserVo = userMapper.selectUserByUserName(bo.createByName!!)
+            queryWrapper.and(SYS_NOTICE.CREATE_BY.eq(if (ObjectUtil.isNotNull(sysUser)) sysUser.userId else null))
         }
-        lqw.orderByAsc(SysNotice::getNoticeId);
-        return lqw;*/
-        return null
+        queryWrapper.orderBy(SYS_NOTICE.NOTICE_ID, true)
+        return queryWrapper
     }
 
     /**
@@ -70,8 +71,8 @@ class SysNoticeServiceImpl(
      * @return 结果
      */
     override fun insertNotice(bo: SysNoticeBo): Int {
-        val notice = convert(bo, SysNotice::class.java)!!
-        return baseMapper!!.insert(notice)
+        val notice: SysNotice? = MapstructUtils.convert(bo, SysNotice::class.java)
+        return baseMapper.insert(notice, true)
     }
 
     /**
@@ -81,9 +82,8 @@ class SysNoticeServiceImpl(
      * @return 结果
      */
     override fun updateNotice(bo: SysNoticeBo): Int {
-        /*SysNotice notice = MapstructUtils.convert(bo, SysNotice.class);
-        return baseMapper.updateById(notice);*/
-        return 0
+        val notice: SysNotice? = MapstructUtils.convert(bo, SysNotice::class.java)
+        return baseMapper.update(notice)
     }
 
     /**
@@ -93,7 +93,7 @@ class SysNoticeServiceImpl(
      * @return 结果
      */
     override fun deleteNoticeById(noticeId: Long): Int {
-        return baseMapper!!.deleteById(noticeId)
+        return baseMapper.deleteById(noticeId)
     }
 
     /**
@@ -103,7 +103,6 @@ class SysNoticeServiceImpl(
      * @return 结果
      */
     override fun deleteNoticeByIds(noticeIds: Array<Long>): Int {
-        /*return baseMapper.deleteBatchIds(Arrays.asList(noticeIds));*/
-        return 0
+        return baseMapper.deleteBatchByIds(listOf(*noticeIds))
     }
 }

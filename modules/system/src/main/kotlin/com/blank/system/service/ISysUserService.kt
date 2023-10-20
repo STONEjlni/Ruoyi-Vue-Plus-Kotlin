@@ -9,7 +9,7 @@ import com.blank.system.domain.vo.SysUserVo
  * 用户 业务层
  */
 interface ISysUserService {
-    fun selectPageUserList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo>?
+    fun selectPageUserList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo>
 
     /**
      * 根据条件分页查询用户列表
@@ -17,7 +17,7 @@ interface ISysUserService {
      * @param user 用户信息
      * @return 用户信息集合信息
      */
-    fun selectUserList(user: SysUserBo): MutableList<SysUserVo>?
+    fun selectUserList(user: SysUserBo): MutableList<SysUserVo>
 
     /**
      * 根据条件分页查询已分配用户角色列表
@@ -25,7 +25,7 @@ interface ISysUserService {
      * @param user 用户信息
      * @return 用户信息集合信息
      */
-    fun selectAllocatedList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo>?
+    fun selectAllocatedList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo>
 
     /**
      * 根据条件分页查询未分配用户角色列表
@@ -33,7 +33,7 @@ interface ISysUserService {
      * @param user 用户信息
      * @return 用户信息集合信息
      */
-    fun selectUnallocatedList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo>?
+    fun selectUnallocatedList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo>
 
     /**
      * 通过用户名查询用户
@@ -66,14 +66,6 @@ interface ISysUserService {
      * @return 结果
      */
     fun selectUserRoleGroup(userName: String): String?
-
-    /**
-     * 根据用户ID查询用户所属岗位组
-     *
-     * @param userName 用户名
-     * @return 结果
-     */
-    fun selectUserPostGroup(userName: String): String?
 
     /**
      * 校验用户名称是否唯一
@@ -152,7 +144,7 @@ interface ISysUserService {
      * @param status 帐号状态
      * @return 结果
      */
-    fun updateUserStatus(userId: Long, status: String): Int
+    fun updateUserStatus(userId: Long, status: String): Boolean
 
     /**
      * 修改用户基本信息
@@ -178,7 +170,7 @@ interface ISysUserService {
      * @param password 密码
      * @return 结果
      */
-    fun resetUserPwd(userId: Long, password: String): Int
+    fun resetUserPwd(userId: Long, password: String): Boolean
 
     /**
      * 通过用户ID删除用户
@@ -202,5 +194,5 @@ interface ISysUserService {
      * @param deptId
      * @return
      */
-    fun selectUserListByDept(deptId: Long): MutableList<SysUserVo>?
+    fun selectUserListByDept(deptId: Long): MutableList<SysUserVo>
 }

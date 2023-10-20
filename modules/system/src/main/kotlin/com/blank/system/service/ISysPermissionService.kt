@@ -10,7 +10,7 @@ interface ISysPermissionService {
      * @param userId 用户id
      * @return 角色权限信息
      */
-    fun getRolePermission(userId: Long): MutableSet<String>?
+    fun getRolePermission(userId: Long): MutableSet<String>
 
     /**
      * 获取菜单数据权限
@@ -18,5 +18,5 @@ interface ISysPermissionService {
      * @param userId 用户id
      * @return 菜单权限信息
      */
-    fun getMenuPermission(userId: Long): MutableSet<String>?
+    fun getMenuPermission(userId: Long): MutableSet<String>
 }

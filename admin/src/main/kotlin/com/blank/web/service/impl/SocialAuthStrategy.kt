@@ -96,10 +96,10 @@ class SocialAuthStrategy(
                     def.USER_ID.eq(userId)
                 })
         if (ObjectUtil.isNull(user)) {
-            log.info{"登录用户：$userId 不存在."}
+            log.info { "登录用户：$userId 不存在." }
             throw UserException("user.not.exists", "");
         } else if (UserStatus.DISABLE.code == user.status) {
-            log.info{"登录用户：$userId 已被停用."}
+            log.info { "登录用户：$userId 已被停用." }
             throw UserException("user.blocked", "")
         }
         return userMapper.selectUserByUserName(user.userName!!)

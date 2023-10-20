@@ -110,10 +110,10 @@ class PasswordAuthStrategy(
                     def.USER_NAME.eq(username)
                 })
         if (ObjectUtil.isNull(user)) {
-            log.info{"登录用户：$username 不存在."}
+            log.info { "登录用户：$username 不存在." }
             throw UserException("user.not.exists", username)
         } else if (UserStatus.DISABLE.code == user.status) {
-            log.info{"登录用户：$username 已被停用."}
+            log.info { "登录用户：$username 已被停用." }
             throw UserException("user.blocked", username);
         }
         return userMapper.selectUserByUserName(username)

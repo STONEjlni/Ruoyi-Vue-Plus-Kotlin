@@ -227,12 +227,13 @@ object StreamUtils {
      * @param <T>        List中的泛型
      * @return 转化后的list
     </T></E> */
-    fun <E, T> toList(collection: Collection<E>, function: Function<E, T>): List<T> {
+    fun <E, T> toList(collection: Collection<E>, function: Function<E, T>): MutableList<T> {
         return if (CollUtil.isEmpty(collection)) {
             CollUtil.newArrayList()
         } else collection
             .map { function.apply(it) }
             .filter { Objects.nonNull(it) }
+            .toMutableList()
 
         /*collection
         .stream()

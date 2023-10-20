@@ -5,24 +5,32 @@ import cn.hutool.core.io.FileUtil
 import cn.hutool.core.io.IoUtil
 import cn.hutool.core.lang.Snowflake
 import cn.hutool.core.util.ObjectUtil
+import cn.hutool.core.util.StrUtil
 import com.blank.common.core.annotation.Slf4j
 import com.blank.common.core.annotation.Slf4j.Companion.log
 import com.blank.common.core.constant.Constants
 import com.blank.common.core.exception.ServiceException
+import com.blank.common.core.utils.StreamUtils
 import com.blank.common.json.utils.JsonUtils.parseMap
 import com.blank.common.json.utils.JsonUtils.toJsonString
 import com.blank.common.mybatis.core.page.PageQuery
 import com.blank.common.mybatis.core.page.TableDataInfo
-import com.blank.common.satoken.utils.LoginHelper.getUserId
+import com.blank.common.mybatis.helper.DataBaseHelper
+import com.blank.common.satoken.utils.LoginHelper
 import com.blank.generator.constant.GenConstants
 import com.blank.generator.domain.GenTable
 import com.blank.generator.domain.GenTableColumn
+import com.blank.generator.domain.table.GenTableColumnDef.GEN_TABLE_COLUMN
+import com.blank.generator.domain.table.GenTableDef.GEN_TABLE
 import com.blank.generator.mapper.GenTableColumnMapper
 import com.blank.generator.mapper.GenTableMapper
 import com.blank.generator.util.GenUtils
 import com.blank.generator.util.VelocityInitializer
 import com.blank.generator.util.VelocityUtils
-import com.mybatisflex.core.query.QueryWrapper
+import com.mybatisflex.core.datasource.DataSourceKey
+import com.mybatisflex.core.keygen.impl.SnowFlakeIDKeyGenerator
+import com.mybatisflex.core.paginate.Page
+import com.mybatisflex.core.query.*
 import org.apache.commons.lang3.StringUtils
 import org.apache.velocity.app.Velocity
 import org.springframework.stereotype.Service
@@ -32,6 +40,7 @@ import java.io.File
 import java.io.IOException
 import java.io.StringWriter
 import java.nio.charset.StandardCharsets
+import java.util.function.Consumer
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -54,11 +63,12 @@ class GenTableServiceImpl(
      * @param tableId 业务字段编号
      * @return 业务字段集合
      */
-    override fun selectGenTableColumnListByTableId(tableId: Long): MutableList<GenTableColumn>? {
-        /*return genTableColumnMapper.selectList(new LambdaQueryWrapper<GenTableColumn>()
-            .eq(GenTableColumn::getTableId, tableId)
-            .orderByAsc(GenTableColumn::getSort));*/
-        return null
+    override fun selectGenTableColumnListByTableId(tableId: Long): MutableList<GenTableColumn> {
+        return genTableColumnMapper.selectListByQuery(QueryWrapper.create().select()
+            .where {
+                GEN_TABLE_COLUMN.TABLE_ID.eq(tableId)
+            }
+            .orderBy(GEN_TABLE_COLUMN.SORT, true))
     }
 
     /**
@@ -68,35 +78,155 @@ class GenTableServiceImpl(
      * @return 业务信息
      */
     override fun selectGenTableById(id: Long): GenTable? {
-        val genTable = baseMapper.selectGenTableById(id)
+        val genTable = baseMapper.selectOneWithRelationsById(id)
         setTableFromOptions(genTable)
         return genTable
     }
 
-    override fun selectPageGenTableList(genTable: GenTable, pageQuery: PageQuery): TableDataInfo<GenTable>? {
-        /*Page<GenTable> page = baseMapper.selectPage(pageQuery.build(), this.buildGenTableQueryWrapper(genTable));
-        return TableDataInfo.build(page);*/
-        return null
+    override fun selectPageGenTableList(genTable: GenTable, pageQuery: PageQuery): TableDataInfo<GenTable> {
+        val queryWrapper = buildGenTableQueryWrapper(genTable)
+        val page = baseMapper.paginate(pageQuery, queryWrapper)
+        return TableDataInfo.build(page)
     }
 
-    private fun  /*<GenTable>*/ buildGenTableQueryWrapper(genTable: GenTable): QueryWrapper? {
-        /*Map<String, Object> params = genTable.getParams();
-        QueryWrapper<GenTable> wrapper = Wrappers.query();
-        wrapper
-            .eq(StringUtils.isNotEmpty(genTable.getDataName()),"data_name", genTable.getDataName())
-            .like(StrUtil.isNotBlank(genTable.getTableName()), "lower(table_name)", StringUtils.lowerCase(genTable.getTableName()))
-            .like(StrUtil.isNotBlank(genTable.getTableComment()), "lower(table_comment)", StringUtils.lowerCase(genTable.getTableComment()))
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                "create_time", params.get("beginTime"), params.get("endTime"));
-        return wrapper;*/
-        return null
+    private fun buildGenTableQueryWrapper(genTable: GenTable): QueryWrapper {
+        val params = genTable.params
+
+        return QueryWrapper.create().from(GEN_TABLE)
+            .where {
+                GEN_TABLE.DATA_NAME.eq(genTable.dataName, StrUtil.isNotBlank(genTable.dataName))
+                QueryMethods.lower(GEN_TABLE.TABLE_NAME).like(StringUtils.lowerCase(genTable.tableName), StrUtil.isNotBlank(genTable.tableName))
+                QueryMethods.lower(GEN_TABLE.TABLE_COMMENT).like(StringUtils.lowerCase(genTable.tableComment), StrUtil.isNotBlank(genTable.tableComment))
+                /*GEN_TABLE.DATA_NAME.like("lower(${genTable.tableName})", StrUtil.isNotBlank(genTable.tableName))
+                GEN_TABLE.DATA_NAME.like("lower(${genTable.tableComment})", StrUtil.isNotBlank(genTable.tableComment))*/
+                GEN_TABLE.CREATE_TIME.between(params["beginTime"], params["endTime"],
+                    params["beginTime"] != null && params["endTime"] != null)
+            }
     }
 
-    override fun selectPageDbTableList(genTable: GenTable, pageQuery: PageQuery): TableDataInfo<GenTable>? {
-        /*genTable.getParams().put("genTableNames",baseMapper.selectTableNameList(genTable.getDataName()));
-        Page<GenTable> page = baseMapper.selectPageDbTableList(pageQuery.build(), genTable);
-        return TableDataInfo.build(page);*/
-        return null
+    override fun selectPageDbTableList(genTable: GenTable, pageQuery: PageQuery): TableDataInfo<GenTable> {
+        return try {
+            DataSourceKey.use(genTable.dataName)
+            val value: List<String> = baseMapper.selectTableNameList(genTable.dataName!!)
+            genTable.params["genTableNames"] = value
+            val page = selectPageDbTableList(pageQuery.build(), genTable)
+            TableDataInfo.build(page)
+        } finally {
+            DataSourceKey.clear()
+        }
+    }
+
+    private fun selectPageDbTableList(page: Page<GenTable>, genTable: GenTable): Page<GenTable> {
+        val genTableNames = genTable.params["genTableNames"] as List<String>
+        val tableName = StringUtils.lowerCase(genTable.tableName)
+        val tableComment = StringUtils.lowerCase(genTable.tableComment)
+        if (DataBaseHelper.isMySql()) {
+            val queryWrapper = QueryWrapper.create()
+                .select("table_name", "table_comment", "create_time", "update_time")
+                .from("information_schema.tables")
+                .where("table_schema = (select database())")
+                .and("table_name NOT LIKE 'pj_%' AND table_name NOT LIKE 'gen_%'")
+                .and(QueryMethods.column("table_name").notIn(
+                    genTableNames
+                ) { collection: List<String?>? ->
+                    If.isNotEmpty(
+                        collection
+                    )
+                })
+                .and(QueryMethods.column("lower(table_name)").like(tableName))
+                .and(QueryMethods.column("lower(table_comment)").like(tableComment))
+                .orderBy("create_time", false)
+            return baseMapper.paginate(page, queryWrapper)
+        }
+        if (DataBaseHelper.isOracle()) {
+            val queryWrapper = QueryWrapper.create()
+                .select(
+                    QueryColumn("lower(dt.table_name)").`as`("table_name"),
+                    QueryColumn("dtc.comments").`as`("table_comment"),
+                    QueryColumn("uo.created").`as`("create_time"),
+                    QueryColumn("uo.last_ddl_time").`as`("update_time")
+                )
+                .from(
+                    QueryTable("user_tables").`as`("dt"),
+                    QueryTable("user_tab_comments").`as`("dtc"),
+                    QueryTable("user_objects").`as`("uo")
+                )
+                .where("dt.table_name = dtc.table_name and dt.table_name = uo.object_name and uo.object_type = 'TABLE'")
+                .and("dt.table_name NOT LIKE 'pj_%' AND dt.table_name NOT LIKE 'GEN_%'")
+                .and(QueryMethods.column("lower(dt.table_name)").notIn(
+                    genTableNames
+                ) { collection: List<String?>? ->
+                    If.isNotEmpty(
+                        collection
+                    )
+                })
+                .and(QueryMethods.column("lower(dt.table_name)").like(tableName))
+                .and(QueryMethods.column("lower(dtc.comments)").like(tableComment))
+                .orderBy("create_time", false)
+            return baseMapper.paginate(page, queryWrapper)
+        }
+        if (DataBaseHelper.isPostgerSql()) {
+            val queryWrapper = QueryWrapper.create()
+                .with<QueryWrapper>("list_table").asRaw(
+                    """
+                    SELECT c.relname AS table_name,
+                                            obj_description(c.oid) AS table_comment,
+                                            CURRENT_TIMESTAMP AS create_time,
+                                            CURRENT_TIMESTAMP AS update_time
+                                    FROM pg_class c
+                                        LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
+                                    WHERE (c.relkind = ANY (ARRAY ['r'::"char", 'p'::"char"]))
+                                        AND c.relname != 'spatial_%'::text
+                                        AND n.nspname = 'public'::name
+                                        AND n.nspname <![CDATA[ <> ]]> ''::name
+
+                    """.trimIndent()
+                )
+                .select(
+                    QueryColumn("c.relname").`as`("table_name"),
+                    QueryColumn("obj_description(c.oid)").`as`("table_comment"),
+                    QueryColumn("CURRENT_TIMESTAMP").`as`("create_time"),
+                    QueryColumn("CURRENT_TIMESTAMP").`as`("update_time")
+                )
+                .from("list_table")
+                .where("table_name NOT LIKE 'pj_%' AND table_name NOT LIKE 'gen_%'")
+                .and(QueryMethods.column("table_name").notIn(
+                    genTableNames
+                ) { collection: List<String>? ->
+                    If.isNotEmpty(
+                        collection
+                    )
+                })
+                .and(QueryMethods.lower("table_name").like(tableName))
+                .and(QueryMethods.lower("table_comment").like(tableComment))
+                .orderBy("create_time", false)
+            return baseMapper.paginate(page, queryWrapper)
+        }
+        if (DataBaseHelper.isSqlServer()) {
+            val queryWrapper = QueryWrapper.create()
+                .select(
+                    QueryColumn("cast(D.NAME as nvarchar)").`as`("table_name"),
+                    QueryColumn("cast(F.VALUE as nvarchar)").`as`("table_comment"),
+                    QueryColumn("crdate").`as`("create_time"),
+                    QueryColumn("refdate").`as`("update_time")
+                )
+                .from(QueryTable("SYSOBJECTS").`as`("D"))
+                .innerJoin<QueryWrapper>("SYS.EXTENDED_PROPERTIES F")
+                .on("D.ID = F.MAJOR_ID")
+                .where("F.MINOR_ID = 0 AND D.XTYPE = 'U' AND D.NAME != 'DTPROPERTIES' AND D.NAME NOT LIKE 'pj_%' AND D.NAME NOT LIKE 'gen_%'")
+                .and(QueryMethods.column("D.NAME").notIn(
+                    genTableNames
+                ) { collection: List<String>? ->
+                    If.isNotEmpty(
+                        collection
+                    )
+                })
+                .and(QueryMethods.lower("D.NAME").like(tableName))
+                .and(QueryMethods.lower("CAST(F.VALUE AS nvarchar)").like(tableComment))
+                .orderBy("crdate", false)
+            return baseMapper.paginate(page, queryWrapper)
+        }
+        throw ServiceException("不支持的数据库类型")
     }
 
     /**
@@ -106,8 +236,13 @@ class GenTableServiceImpl(
      * @param dataName   数据源名称
      * @return 数据库表集合
      */
-    override fun selectDbTableListByNames(tableNames: Array<String>, dataName: String): MutableList<GenTable>? {
-        return baseMapper.selectDbTableListByNames(tableNames).toMutableList()
+    override fun selectDbTableListByNames(tableNames: Array<String>, dataName: String): MutableList<GenTable> {
+        return try {
+            DataSourceKey.use(dataName)
+            baseMapper.selectDbTableListByNames(tableNames)
+        } finally {
+            DataSourceKey.clear()
+        }
     }
 
     /**
@@ -115,8 +250,8 @@ class GenTableServiceImpl(
      *
      * @return 表信息集合
      */
-    override fun selectGenTableAll(): MutableList<GenTable>? {
-        return baseMapper.selectGenTableAll().toMutableList()
+    override fun selectGenTableAll(): MutableList<GenTable> {
+        return baseMapper.selectGenTableAll()
     }
 
     /**
@@ -126,14 +261,14 @@ class GenTableServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun updateGenTable(genTable: GenTable) {
-        /*String options = JsonUtils.toJsonString(genTable.getParams());
-        genTable.setOptions(options);
-        int row = baseMapper.updateById(genTable);
+        val options: String? = toJsonString(genTable.params)
+        genTable.options = options
+        val row = baseMapper.update(genTable)
         if (row > 0) {
-            for (GenTableColumn cenTableColumn : genTable.getColumns()) {
-                genTableColumnMapper.updateById(cenTableColumn);
+            for (cenTableColumn in genTable.columns!!) {
+                genTableColumnMapper.update(cenTableColumn)
             }
-        }*/
+        }
     }
 
     /**
@@ -143,9 +278,14 @@ class GenTableServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun deleteGenTableByIds(tableIds: Array<Long>) {
-        /*List<Long> ids = Arrays.asList(tableIds);
-        baseMapper.deleteBatchIds(ids);
-        genTableColumnMapper.delete(new LambdaQueryWrapper<GenTableColumn>().in(GenTableColumn::getTableId, ids));*/
+        val ids = listOf(*tableIds)
+        baseMapper.deleteBatchByIds(ids)
+        genTableColumnMapper.deleteByQuery(
+            QueryWrapper.create().from(GEN_TABLE_COLUMN)
+                .where {
+                    GEN_TABLE_COLUMN.TABLE_ID.`in`(ids)
+                }
+        )
     }
 
     /**
@@ -156,30 +296,34 @@ class GenTableServiceImpl(
      */
     @Transactional
     override fun importGenTable(tableList: MutableList<GenTable>, dataName: String) {
-        val operId = getUserId()
+        val operId: Long = LoginHelper.getUserId()!!
         try {
             for (table in tableList) {
-                val tableName = table.tableName
+                val tableName: String = table.tableName!!
                 GenUtils.initTable(table, operId)
                 table.dataName = dataName
-                val row = baseMapper.insert(table)
+                val row = baseMapper.insert(table, true)
                 if (row > 0) {
                     // 保存列信息
-                    val genTableColumns = genTableColumnMapper.selectDbTableColumnsByName(tableName, dataName)
-                    val saveColumns: MutableList<GenTableColumn> = ArrayList()
-                    if (genTableColumns != null) {
+                    try {
+                        DataSourceKey.use(dataName)
+                        val genTableColumns: MutableList<GenTableColumn> =
+                            genTableColumnMapper.selectDbTableColumnsByName(tableName)
+                        val saveColumns: MutableList<GenTableColumn> = ArrayList()
                         for (column in genTableColumns) {
                             GenUtils.initColumnField(column, table)
                             saveColumns.add(column)
                         }
-                    }
-                    if (CollUtil.isNotEmpty(saveColumns)) {
-                        genTableColumnMapper.insertBatch(saveColumns)
+                        if (CollUtil.isNotEmpty(saveColumns)) {
+                            genTableColumnMapper.insertBatch(saveColumns)
+                        }
+                    } finally {
+                        DataSourceKey.clear()
                     }
                 }
             }
-        } catch (e: Exception) {
-            throw ServiceException("导入失败：" + e.message)
+        } catch (e: java.lang.Exception) {
+            throw ServiceException("导入失败：${e.message}")
         }
     }
 
@@ -192,15 +336,16 @@ class GenTableServiceImpl(
     override fun previewCode(tableId: Long): Map<String, String> {
         val dataMap: MutableMap<String, String> = LinkedHashMap()
         // 查询表信息
-        val table = baseMapper.selectGenTableById(tableId)
+        val table = baseMapper.selectOneWithRelationsById(tableId)
         val menuIds: MutableList<Long> = ArrayList()
         for (i in 0..5) {
-            menuIds.add(snowflake.nextId())
+            menuIds.add(SnowFlakeIDKeyGenerator().nextId())
         }
         table.menuIds = menuIds
         // 设置主键列信息
         setPkColumn(table)
         VelocityInitializer.initVelocity()
+
         val context = VelocityUtils.prepareContext(table)
 
         // 获取模板列表
@@ -236,7 +381,7 @@ class GenTableServiceImpl(
      */
     override fun generatorCode(tableId: Long) {
         // 查询表信息
-        val table = baseMapper.selectGenTableById(tableId)
+        val table = baseMapper.selectOneWithRelationsById(tableId)
         // 设置主键列信息
         setPkColumn(table)
         VelocityInitializer.initVelocity()
@@ -262,7 +407,7 @@ class GenTableServiceImpl(
                     val path = getGenPath(table, template)
                     FileUtil.writeUtf8String(sw.toString(), path)
                 } catch (e: Exception) {
-                    throw ServiceException("渲染模板失败，表名：" + table.tableName)
+                    throw ServiceException("渲染模板失败，表名：${table.tableName}")
                 }
             }
         }
@@ -275,47 +420,57 @@ class GenTableServiceImpl(
      */
     @Transactional
     override fun synchDb(tableId: Long) {
-        /*GenTable table = baseMapper.selectGenTableById(tableId);
-        List<GenTableColumn> tableColumns = table.getColumns();
-        Map<String, GenTableColumn> tableColumnMap = StreamUtils.toIdentityMap(tableColumns, GenTableColumn::getColumnName);
-
-        List<GenTableColumn> dbTableColumns = genTableColumnMapper.selectDbTableColumnsByName(table.getTableName(), table.getDataName());
-        if (CollUtil.isEmpty(dbTableColumns)) {
-            throw new ServiceException("同步数据失败，原表结构不存在");
+        val table = baseMapper.selectOneWithRelationsById(tableId)
+        val tableColumns: MutableList<GenTableColumn> = table.columns!!
+        val tableColumnMap: Map<String?, GenTableColumn> =
+            StreamUtils.toIdentityMap(tableColumns, GenTableColumn::columnName)
+        val dbTableColumns: MutableList<GenTableColumn>? = try {
+            DataSourceKey.use(table.dataName)
+            genTableColumnMapper.selectDbTableColumnsByName(table.tableName!!)
+        } finally {
+            DataSourceKey.clear()
         }
-        List<String> dbTableColumnNames = StreamUtils.toList(dbTableColumns, GenTableColumn::getColumnName);
+        if (CollUtil.isEmpty(dbTableColumns)) {
+            throw ServiceException("同步数据失败，原表结构不存在")
+        }
+        val dbTableColumnNames: MutableList<String?> = StreamUtils.toList(dbTableColumns!!, GenTableColumn::columnName)
 
-        List<GenTableColumn> saveColumns = new ArrayList<>();
-        dbTableColumns.forEach(column -> {
-            GenUtils.initColumnField(column, table);
-            if (tableColumnMap.containsKey(column.getColumnName())) {
-                GenTableColumn prevColumn = tableColumnMap.get(column.getColumnName());
-                column.setColumnId(prevColumn.getColumnId());
+        val saveColumns: MutableList<GenTableColumn> = ArrayList()
+        dbTableColumns.forEach(Consumer { column: GenTableColumn ->
+            GenUtils.initColumnField(column, table)
+            if (tableColumnMap.containsKey(column.columnName)) {
+                val prevColumn = tableColumnMap[column.columnName]!!
+                column.columnId = prevColumn.columnId
                 if (column.isList()) {
                     // 如果是列表，继续保留查询方式/字典类型选项
-                    column.setDictType(prevColumn.getDictType());
-                    column.setQueryType(prevColumn.getQueryType());
+                    column.dictType = prevColumn.dictType
+                    column.queryType = prevColumn.queryType
                 }
-                if (StringUtils.isNotEmpty(prevColumn.getIsRequired()) && !column.isPk()
+                if (StringUtils.isNotEmpty(prevColumn.isRequired) && !column.isPk()
                     && (column.isInsert() || column.isEdit())
-                    && ((column.isUsableColumn()) || (!column.isSuperColumn()))) {
+                    && (column.isUsableColumn() || !column.isSuperColumn())
+                ) {
                     // 如果是(新增/修改&非主键/非忽略及父属性)，继续保留必填/显示类型选项
-                    column.setIsRequired(prevColumn.getIsRequired());
-                    column.setHtmlType(prevColumn.getHtmlType());
+                    column.isRequired = prevColumn.isRequired
+                    column.htmlType = prevColumn.htmlType
                 }
             }
-            saveColumns.add(column);
-        });
+            saveColumns.add(column)
+        })
         if (CollUtil.isNotEmpty(saveColumns)) {
-            genTableColumnMapper.insertOrUpdateBatch(saveColumns);
+            genTableColumnMapper.insertBatch(saveColumns)
         }
-        List<GenTableColumn> delColumns = StreamUtils.filter(tableColumns, column -> !dbTableColumnNames.contains(column.getColumnName()));
+        val delColumns: MutableList<GenTableColumn> = StreamUtils.filter(tableColumns) { column ->
+            !dbTableColumnNames.contains(
+                column.columnName
+            )
+        }
         if (CollUtil.isNotEmpty(delColumns)) {
-            List<Long> ids = StreamUtils.toList(delColumns, GenTableColumn::getColumnId);
+            val ids: MutableList<Long?> = StreamUtils.toList(delColumns, GenTableColumn::columnId)
             if (CollUtil.isNotEmpty(ids)) {
-                genTableColumnMapper.deleteBatchIds(ids);
+                genTableColumnMapper.deleteBatchByIds(ids)
             }
-        }*/
+        }
     }
 
     /**
@@ -339,7 +494,7 @@ class GenTableServiceImpl(
      */
     private fun generatorCode(tableId: Long, zip: ZipOutputStream) {
         // 查询表信息
-        val table = baseMapper.selectGenTableById(tableId)
+        val table = baseMapper.selectOneWithRelationsById(tableId)
         val menuIds: MutableList<Long> = ArrayList()
         for (i in 0..5) {
             menuIds.add(snowflake.nextId())
@@ -419,6 +574,7 @@ class GenTableServiceImpl(
             val treeName = paramsObj.getStr(GenConstants.TREE_NAME)
             val parentMenuId = paramsObj.getStr(GenConstants.PARENT_MENU_ID)
             val parentMenuName = paramsObj.getStr(GenConstants.PARENT_MENU_NAME)
+
             genTable.treeCode = treeCode
             genTable.treeParentCode = treeParentCode
             genTable.treeName = treeName

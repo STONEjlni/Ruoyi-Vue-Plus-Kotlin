@@ -5,16 +5,19 @@ import cn.hutool.http.useragent.UserAgentUtil
 import com.blank.common.core.annotation.Slf4j
 import com.blank.common.core.annotation.Slf4j.Companion.log
 import com.blank.common.core.constant.Constants
-import com.blank.common.core.utils.MapstructUtils.convert
+import com.blank.common.core.utils.MapstructUtils
 import com.blank.common.core.utils.ip.AddressUtils.getRealAddressByIP
 import com.blank.common.log.event.LogininforEvent
 import com.blank.common.mybatis.core.page.PageQuery
 import com.blank.common.mybatis.core.page.TableDataInfo
 import com.blank.system.domain.SysLogininfor
 import com.blank.system.domain.bo.SysLogininforBo
+import com.blank.system.domain.table.SysLogininforDef.SYS_LOGININFOR
 import com.blank.system.domain.vo.SysLogininforVo
 import com.blank.system.mapper.SysLogininforMapper
 import com.blank.system.service.ISysLogininforService
+import com.mybatisflex.core.query.QueryWrapper
+import jakarta.servlet.http.HttpServletRequest
 import org.apache.commons.lang3.StringUtils
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
@@ -30,7 +33,6 @@ class SysLogininforServiceImpl(
     private val baseMapper: SysLogininforMapper
 ) : ISysLogininforService {
 
-
     /**
      * 记录登录信息
      *
@@ -39,10 +41,10 @@ class SysLogininforServiceImpl(
     @Async
     @EventListener
     fun recordLogininfor(logininforEvent: LogininforEvent) {
-        val request = logininforEvent.request
-        val userAgent = UserAgentUtil.parse(request!!.getHeader("User-Agent"))
-        val ip = JakartaServletUtil.getClientIP(request)
-        val address = getRealAddressByIP(ip)
+        val request: HttpServletRequest = logininforEvent.request!!
+        val userAgent = UserAgentUtil.parse(request.getHeader("User-Agent"))
+        val ip: String = JakartaServletUtil.getClientIP(request)
+        val address: String = getRealAddressByIP(ip)
         val s = StringBuilder()
         s.append(getBlock(ip))
         s.append(address)
@@ -50,7 +52,7 @@ class SysLogininforServiceImpl(
         s.append(getBlock(logininforEvent.status))
         s.append(getBlock(logininforEvent.message))
         // 打印信息到日志
-        log.info { "${s.toString()} ${logininforEvent.args}" }
+        log.info { "$s ${logininforEvent.args}" }
         // 获取客户端操作系统
         val os = userAgent.os.name
         // 获取客户端浏览器
@@ -80,7 +82,7 @@ class SysLogininforServiceImpl(
     }
 
     private fun getBlock(msg: Any?): String {
-        var msg = msg
+        var msg: Any? = msg
         if (msg == null) {
             msg = ""
         }
@@ -90,21 +92,29 @@ class SysLogininforServiceImpl(
     override fun selectPageLogininforList(
         logininfor: SysLogininforBo,
         pageQuery: PageQuery
-    ): TableDataInfo<SysLogininforVo>? {
-        /*Map<String, Object> params = logininfor.getParams();
-        LambdaQueryWrapper<SysLogininfor> lqw = new LambdaQueryWrapper<SysLogininfor>()
-            .like(StrUtil.isNotBlank(logininfor.getIpaddr()), SysLogininfor::getIpaddr, logininfor.getIpaddr())
-            .eq(StrUtil.isNotBlank(logininfor.getStatus()), SysLogininfor::getStatus, logininfor.getStatus())
-            .like(StrUtil.isNotBlank(logininfor.getUserName()), SysLogininfor::getUserName, logininfor.getUserName())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                SysLogininfor::getLoginTime, params.get("beginTime"), params.get("endTime"));
-        if (StrUtil.isBlank(pageQuery.getOrderByColumn())) {
-            pageQuery.setOrderByColumn("info_id");
-            pageQuery.setIsAsc("desc");
+    ): TableDataInfo<SysLogininforVo> {
+        val params: Map<String, Any?> = logininfor.params
+        val lqw: QueryWrapper = QueryWrapper.create().from(SYS_LOGININFOR)
+            .where(SYS_LOGININFOR.IPADDR.like(logininfor.ipaddr))
+            .and(SYS_LOGININFOR.STATUS.eq(logininfor.status))
+            .and(SYS_LOGININFOR.USER_NAME.like(logininfor.userName))
+            .and(
+                SYS_LOGININFOR.LOGIN_TIME.between(
+                    params["beginTime"],
+                    params["endTime"],
+                    params["beginTime"] != null && params["endTime"] != null
+                )
+            )
+        if (StringUtils.isBlank(pageQuery.orderByColumn)) {
+            lqw.orderBy(SYS_LOGININFOR.INFO_ID, false)
+        } else {
+            lqw.orderBy(*pageQuery.buildOrderBy())
         }
-        Page<SysLogininforVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
-        return TableDataInfo.build(page);*/
-        return null
+        val page = baseMapper.paginateAs(
+            pageQuery.build(), lqw,
+            SysLogininforVo::class.java
+        )
+        return TableDataInfo.build(page)
     }
 
     /**
@@ -113,9 +123,9 @@ class SysLogininforServiceImpl(
      * @param bo 访问日志对象
      */
     override fun insertLogininfor(bo: SysLogininforBo) {
-        val logininfor = convert(bo, SysLogininfor::class.java)!!
+        val logininfor: SysLogininfor = MapstructUtils.convert(bo, SysLogininfor::class.java)!!
         logininfor.loginTime = Date()
-        baseMapper.insert(logininfor)
+        baseMapper.insert(logininfor, true)
     }
 
     /**
@@ -124,16 +134,22 @@ class SysLogininforServiceImpl(
      * @param logininfor 访问日志对象
      * @return 登录记录集合
      */
-    override fun selectLogininforList(logininfor: SysLogininforBo): MutableList<SysLogininforVo>? {
-        /*Map<String, Object> params = logininfor.getParams();
-        return baseMapper.selectVoList(new LambdaQueryWrapper<SysLogininfor>()
-            .like(StrUtil.isNotBlank(logininfor.getIpaddr()), SysLogininfor::getIpaddr, logininfor.getIpaddr())
-            .eq(StrUtil.isNotBlank(logininfor.getStatus()), SysLogininfor::getStatus, logininfor.getStatus())
-            .like(StrUtil.isNotBlank(logininfor.getUserName()), SysLogininfor::getUserName, logininfor.getUserName())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                SysLogininfor::getLoginTime, params.get("beginTime"), params.get("endTime"))
-            .orderByDesc(SysLogininfor::getInfoId));*/
-        return null
+    override fun selectLogininforList(logininfor: SysLogininforBo): MutableList<SysLogininforVo> {
+        val params: Map<String, Any> = logininfor.params
+        return baseMapper.selectListByQueryAs(
+            QueryWrapper.create().from(SYS_LOGININFOR)
+                .where(SYS_LOGININFOR.IPADDR.like(logininfor.ipaddr))
+                .and(SYS_LOGININFOR.STATUS.eq(logininfor.status))
+                .and(SYS_LOGININFOR.USER_NAME.like(logininfor.userName))
+                .and(
+                    SYS_LOGININFOR.LOGIN_TIME.between(
+                        params["beginTime"],
+                        params["endTime"],
+                        params["beginTime"] != null && params["endTime"] != null
+                    )
+                )
+                .orderBy(SYS_LOGININFOR.INFO_ID, false), SysLogininforVo::class.java
+        )
     }
 
     /**
@@ -143,14 +159,14 @@ class SysLogininforServiceImpl(
      * @return 结果
      */
     override fun deleteLogininforByIds(infoIds: Array<Long>): Int {
-        /*return baseMapper.deleteBatchIds(Arrays.asList(infoIds));*/
-        return 0
+        return baseMapper.deleteBatchByIds(listOf(*infoIds))
     }
 
     /**
      * 清空系统登录日志
      */
     override fun cleanLogininfor() {
-        /*baseMapper.delete(new LambdaQueryWrapper<>());*/
+        baseMapper.deleteByQuery(QueryWrapper())
     }
+
 }

@@ -10,7 +10,7 @@ import com.blank.system.domain.vo.SysDictTypeVo
  * 字典 业务层
  */
 interface ISysDictTypeService {
-    fun selectPageDictTypeList(dictType: SysDictTypeBo, pageQuery: PageQuery): TableDataInfo<SysDictTypeVo>?
+    fun selectPageDictTypeList(dictType: SysDictTypeBo, pageQuery: PageQuery): TableDataInfo<SysDictTypeVo>
 
     /**
      * 根据条件分页查询字典类型
@@ -18,14 +18,14 @@ interface ISysDictTypeService {
      * @param dictType 字典类型信息
      * @return 字典类型集合信息
      */
-    fun selectDictTypeList(dictType: SysDictTypeBo): MutableList<SysDictTypeVo>?
+    fun selectDictTypeList(dictType: SysDictTypeBo): MutableList<SysDictTypeVo>
 
     /**
      * 根据所有字典类型
      *
      * @return 字典类型集合信息
      */
-    fun selectDictTypeAll(): MutableList<SysDictTypeVo>?
+    fun selectDictTypeAll(): MutableList<SysDictTypeVo>
 
     /**
      * 根据字典类型查询字典数据
@@ -69,7 +69,7 @@ interface ISysDictTypeService {
      * @param bo 字典类型信息
      * @return 结果
      */
-    fun insertDictType(bo: SysDictTypeBo): MutableList<SysDictDataVo>?
+    fun insertDictType(bo: SysDictTypeBo): MutableList<SysDictDataVo>
 
     /**
      * 修改保存字典类型信息
@@ -77,7 +77,7 @@ interface ISysDictTypeService {
      * @param bo 字典类型信息
      * @return 结果
      */
-    fun updateDictType(bo: SysDictTypeBo): MutableList<SysDictDataVo>?
+    fun updateDictType(bo: SysDictTypeBo): MutableList<SysDictDataVo>
 
     /**
      * 校验字典类型称是否唯一

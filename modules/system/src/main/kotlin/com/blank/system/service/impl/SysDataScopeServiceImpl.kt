@@ -1,8 +1,17 @@
 package com.blank.system.service.impl
 
+import cn.hutool.core.collection.CollUtil
+import cn.hutool.core.convert.Convert
+import com.blank.common.core.utils.StreamUtils
+import com.blank.common.mybatis.helper.DataBaseHelper
+import com.blank.system.domain.SysDept
+import com.blank.system.domain.SysRoleDept
+import com.blank.system.domain.table.SysDeptDef.SYS_DEPT
+import com.blank.system.domain.table.SysRoleDeptDef.SYS_ROLE_DEPT
 import com.blank.system.mapper.SysDeptMapper
 import com.blank.system.mapper.SysRoleDeptMapper
 import com.blank.system.service.ISysDataScopeService
+import com.mybatisflex.core.query.QueryWrapper
 import org.springframework.stereotype.Service
 
 /**
@@ -19,27 +28,24 @@ class SysDataScopeServiceImpl(
 ) : ISysDataScopeService {
 
     override fun getRoleCustom(roleId: Long): String? {
-        /*List<SysRoleDept> list = roleDeptMapper.selectList(
-            new LambdaQueryWrapper<SysRoleDept>()
-                .select(SysRoleDept::getDeptId)
-                .eq(SysRoleDept::getRoleId, roleId));
-        if (CollUtil.isNotEmpty(list)) {
-            return StreamUtils.join(list, rd -> Convert.toStr(rd.getDeptId()));
-        }
-        return null;*/
-        return null
+        val list: MutableList<SysRoleDept> = roleDeptMapper.selectListByQuery(
+            QueryWrapper.create().from(SYS_ROLE_DEPT).select(SYS_ROLE_DEPT.DEPT_ID)
+                .where(SYS_ROLE_DEPT.ROLE_ID.eq(roleId))
+        )
+        return if (CollUtil.isNotEmpty(list)) {
+            StreamUtils.join(list) { rd -> Convert.toStr(rd.deptId) }
+        } else null
     }
 
     override fun getDeptAndChild(deptId: Long): String? {
-        /*List<SysDept> deptList = deptMapper.selectList(new LambdaQueryWrapper<SysDept>()
-            .select(SysDept::getDeptId)
-            .apply(DataBaseHelper.findInSet(deptId, "ancestors")));
-        List<Long> ids = StreamUtils.toList(deptList, SysDept::getDeptId);
-        ids.add(deptId);
-        if (CollUtil.isNotEmpty(ids)) {
-            return StreamUtils.join(ids, Convert::toStr);
-        }
-        return null;*/
-        return null
+        val deptList: MutableList<SysDept> = deptMapper.selectListByQuery(
+            QueryWrapper.create().from(SYS_DEPT).select(SYS_DEPT.DEPT_ID)
+                .where(DataBaseHelper.findInSet(deptId, "ancestors"))
+        )
+        val ids: MutableList<Long?> = StreamUtils.toList(deptList, SysDept::deptId)
+        ids.add(deptId)
+        return if (CollUtil.isNotEmpty(ids)) {
+            StreamUtils.join(ids, Convert::toStr)
+        } else null
     }
 }

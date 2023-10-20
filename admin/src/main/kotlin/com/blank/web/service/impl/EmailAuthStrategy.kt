@@ -93,10 +93,10 @@ class EmailAuthStrategy(
         )
 
         if (ObjectUtil.isNull(user)) {
-            log.info{"登录用户：$email 不存在."}
+            log.info { "登录用户：$email 不存在." }
             throw UserException("user.not.exists", email)
         } else if (UserStatus.DISABLE.code == user.status) {
-            log.info{"登录用户：$email 已被停用."}
+            log.info { "登录用户：$email 已被停用." }
             throw UserException("user.blocked", email)
         }
 

@@ -4,22 +4,31 @@ import cn.hutool.core.collection.CollUtil
 import cn.hutool.core.convert.Convert
 import cn.hutool.core.lang.tree.Tree
 import cn.hutool.core.util.ObjectUtil
+import cn.hutool.core.util.StrUtil
 import com.blank.common.core.constant.CacheNames
+import com.blank.common.core.constant.UserConstants
 import com.blank.common.core.exception.ServiceException
 import com.blank.common.core.service.DeptService
+import com.blank.common.core.utils.MapstructUtils
 import com.blank.common.core.utils.SpringUtilExtend.getAopProxy
 import com.blank.common.core.utils.StringUtilsExtend
 import com.blank.common.core.utils.StringUtilsExtend.splitTo
 import com.blank.common.core.utils.TreeBuildUtils.build
+import com.blank.common.mybatis.helper.DataBaseHelper
+import com.blank.common.redis.utils.CacheUtils
 import com.blank.common.satoken.utils.LoginHelper.isSuperAdmin
 import com.blank.system.domain.SysDept
+import com.blank.system.domain.SysRole
 import com.blank.system.domain.bo.SysDeptBo
+import com.blank.system.domain.table.SysDeptDef.SYS_DEPT
 import com.blank.system.domain.vo.SysDeptVo
 import com.blank.system.mapper.SysDeptMapper
 import com.blank.system.mapper.SysRoleMapper
 import com.blank.system.mapper.SysUserMapper
 import com.blank.system.service.ISysDeptService
 import com.mybatisflex.core.query.QueryWrapper
+import com.mybatisflex.core.row.Db
+import com.mybatisflex.core.update.UpdateWrapper
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
@@ -41,10 +50,8 @@ class SysDeptServiceImpl(
      * @param dept 部门信息
      * @return 部门信息集合
      */
-    override fun selectDeptList(dept: SysDeptBo): MutableList<SysDeptVo>? {
-        /*LambdaQueryWrapper<SysDept> lqw = buildQueryWrapper(dept);
-        return baseMapper.selectDeptList(lqw);*/
-        return null
+    override fun selectDeptList(dept: SysDeptBo): MutableList<SysDeptVo> {
+        return baseMapper.selectDeptList(buildQueryWrapper(dept))
     }
 
     /**
@@ -53,27 +60,24 @@ class SysDeptServiceImpl(
      * @param bo 部门信息
      * @return 部门树信息集合
      */
-    override fun selectDeptTreeList(bo: SysDeptBo): MutableList<Tree<Long>>? {
+    override fun selectDeptTreeList(bo: SysDeptBo): MutableList<Tree<Long>> {
         // 只查询未禁用部门
-        /*bo.setStatus(UserConstants.DEPT_NORMAL);
-        LambdaQueryWrapper<SysDept> lqw = buildQueryWrapper(bo);
-        List<SysDeptVo> depts = baseMapper.selectDeptList(lqw);
-        return buildDeptTreeSelect(depts);*/
-        return null
+        bo.status = UserConstants.DEPT_NORMAL
+        val depts: MutableList<SysDeptVo> = baseMapper.selectDeptList(buildQueryWrapper(bo))
+        return buildDeptTreeSelect(depts)
     }
 
-    private fun  /*<SysDept>*/buildQueryWrapper(bo: SysDeptBo): QueryWrapper? {
-        /*LambdaQueryWrapper<SysDept> lqw = Wrappers.lambdaQuery();
-        lqw.eq(SysDept::getDelFlag, "0");
-        lqw.eq(ObjectUtil.isNotNull(bo.getDeptId()), SysDept::getDeptId, bo.getDeptId());
-        lqw.eq(ObjectUtil.isNotNull(bo.getParentId()), SysDept::getParentId, bo.getParentId());
-        lqw.like(StrUtil.isNotBlank(bo.getDeptName()), SysDept::getDeptName, bo.getDeptName());
-        lqw.eq(StrUtil.isNotBlank(bo.getStatus()), SysDept::getStatus, bo.getStatus());
-        lqw.orderByAsc(SysDept::getDeptId);
-        lqw.orderByAsc(SysDept::getParentId);
-        lqw.orderByAsc(SysDept::getOrderNum);
-        return lqw;*/
-        return null
+    private fun buildQueryWrapper(bo: SysDeptBo): QueryWrapper {
+        return QueryWrapper.create()
+            .select()
+            .from(SYS_DEPT)
+            .where(SYS_DEPT.DEPT_ID.eq(bo.deptId))
+            .and(SYS_DEPT.PARENT_ID.eq(bo.parentId))
+            .and(SYS_DEPT.DEPT_NAME.like(bo.deptName))
+            .and(SYS_DEPT.STATUS.eq(bo.status))
+            .orderBy(SYS_DEPT.DEPT_ID, true)
+            .orderBy(SYS_DEPT.PARENT_ID, true)
+            .orderBy(SYS_DEPT.ORDER_NUM, true)
     }
 
     /**
@@ -82,15 +86,15 @@ class SysDeptServiceImpl(
      * @param depts 部门列表
      * @return 下拉树结构列表
      */
-    override fun buildDeptTreeSelect(depts: MutableList<SysDeptVo>): MutableList<Tree<Long>>? {
+    override fun buildDeptTreeSelect(depts: MutableList<SysDeptVo>): MutableList<Tree<Long>> {
         return if (CollUtil.isEmpty(depts)) {
             CollUtil.newArrayList()
-        } else build(depts) { dept: SysDeptVo, tree: Tree<Long> ->
+        } else build(depts) { dept, tree: Tree<Long> ->
             tree.setId(dept.deptId)
                 .setParentId(dept.parentId)
                 .setName(dept.deptName)
                 .setWeight(dept.orderNum)
-        }?.toMutableList()
+        }
     }
 
     /**
@@ -99,10 +103,9 @@ class SysDeptServiceImpl(
      * @param roleId 角色ID
      * @return 选中部门列表
      */
-    override fun selectDeptListByRoleId(roleId: Long): MutableList<Long>? {
-        /*SysRole role = roleMapper.selectById(roleId);
-        return baseMapper.selectDeptListByRoleId(roleId, role.getDeptCheckStrictly());*/
-        return null
+    override fun selectDeptListByRoleId(roleId: Long): MutableList<Long> {
+        val role: SysRole = roleMapper.selectOneById(roleId)
+        return baseMapper.selectDeptListByRoleId(roleId, role.deptCheckStrictly!!)
     }
 
     /**
@@ -113,15 +116,19 @@ class SysDeptServiceImpl(
      */
     @Cacheable(cacheNames = [CacheNames.SYS_DEPT], key = "#deptId")
     override fun selectDeptById(deptId: Long): SysDeptVo? {
-        /*SysDeptVo dept = baseMapper.selectVoById(deptId);
+        val dept = baseMapper.selectOneWithRelationsByIdAs(deptId, SysDeptVo::class.java)
         if (ObjectUtil.isNull(dept)) {
-            return null;
+            return null
         }
-        SysDeptVo parentDept = baseMapper.selectVoOne(new LambdaQueryWrapper<SysDept>()
-            .select(SysDept::getDeptName).eq(SysDept::getDeptId, dept.getParentId()));
-        dept.setParentName(ObjectUtil.isNotNull(parentDept) ? parentDept.getDeptName() : null);
-        return dept;*/
-        return null
+        val parentDept = baseMapper.selectOneByQueryAs(
+            QueryWrapper.create()
+                .from(SYS_DEPT)
+                .select(SYS_DEPT.DEPT_NAME)
+                .where(SYS_DEPT.DEPT_ID.eq(dept.parentId)),
+            SysDeptVo::class.java
+        )
+        dept.parentName = if (ObjectUtil.isNotNull(parentDept)) parentDept.deptName else null
+        return dept
     }
 
     /**
@@ -130,12 +137,12 @@ class SysDeptServiceImpl(
      * @param deptIds 部门ID串逗号分隔
      * @return 部门名称串逗号分隔
      */
-    override fun selectDeptNameByIds(deptIds: String): String? {
+    override fun selectDeptNameByIds(deptIds: String): String {
         val list: MutableList<String> = ArrayList()
-        for (id in splitTo<Long>(deptIds) { value: Any? -> Convert.toLong(value) }) {
-            val vo = getAopProxy(this).selectDeptById(id)
+        for (id in splitTo(deptIds, Convert::toLong)) {
+            val vo: SysDeptVo = getAopProxy(this).selectDeptById(id)!!
             if (ObjectUtil.isNotNull(vo)) {
-                list.add(vo!!.deptName!!)
+                list.add(vo.deptName!!)
             }
         }
         return java.lang.String.join(StringUtilsExtend.SEPARATOR, list)
@@ -148,10 +155,14 @@ class SysDeptServiceImpl(
      * @return 子部门数
      */
     override fun selectNormalChildrenDeptById(deptId: Long): Long {
-        /*return baseMapper.selectCount(new LambdaQueryWrapper<SysDept>()
-            .eq(SysDept::getStatus, UserConstants.DEPT_NORMAL)
-            .apply(DataBaseHelper.findInSet(deptId, "ancestors")));*/
-        return 0
+        return baseMapper.selectCountByQuery(
+            QueryWrapper.create()
+                .from(SYS_DEPT)
+                .where(
+                    SYS_DEPT.STATUS.eq(UserConstants.DEPT_NORMAL)
+                        .and(DataBaseHelper.findInSet(deptId, "ancestors"))
+                )
+        )
     }
 
     /**
@@ -161,9 +172,9 @@ class SysDeptServiceImpl(
      * @return 结果
      */
     override fun hasChildByDeptId(deptId: Long): Boolean {
-        /*return baseMapper.exists(new LambdaQueryWrapper<SysDept>()
-            .eq(SysDept::getParentId, deptId));*/
-        return false
+        return baseMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_DEPT).where(SYS_DEPT.PARENT_ID.eq(deptId))
+        ) > 0
     }
 
     /**
@@ -173,9 +184,9 @@ class SysDeptServiceImpl(
      * @return 结果 true 存在 false 不存在
      */
     override fun checkDeptExistUser(deptId: Long): Boolean {
-        /*return userMapper.exists(new LambdaQueryWrapper<SysUser>()
-            .eq(SysUser::getDeptId, deptId));*/
-        return false
+        return userMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_DEPT).where(SYS_DEPT.DEPT_ID.eq(deptId))
+        ) > 0
     }
 
     /**
@@ -185,12 +196,17 @@ class SysDeptServiceImpl(
      * @return 结果
      */
     override fun checkDeptNameUnique(dept: SysDeptBo): Boolean {
-        /*boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysDept>()
-            .eq(SysDept::getDeptName, dept.getDeptName())
-            .eq(SysDept::getParentId, dept.getParentId())
-            .ne(ObjectUtil.isNotNull(dept.getDeptId()), SysDept::getDeptId, dept.getDeptId()));
-        return !exist;*/
-        return false
+        return baseMapper.selectCountByQuery(
+            QueryWrapper.create()
+                .from(SYS_DEPT)
+                .where(
+                    SYS_DEPT.DEPT_NAME.eq(dept.deptName)
+                        .and(
+                            SYS_DEPT.PARENT_ID.eq(dept.parentId)
+                                .and(SYS_DEPT.DEPT_ID.ne(dept.deptId))
+                        )
+                )
+        ) <= 0
     }
 
     /**
@@ -218,15 +234,14 @@ class SysDeptServiceImpl(
      * @return 结果
      */
     override fun insertDept(bo: SysDeptBo): Int {
-        /*SysDept info = baseMapper.selectById(bo.getParentId());
+        val info = baseMapper.selectOneById(bo.parentId)
         // 如果父节点不为正常状态,则不允许新增子节点
-        if (!UserConstants.DEPT_NORMAL.equals(info.getStatus())) {
-            throw new ServiceException("部门停用，不允许新增");
+        if (UserConstants.DEPT_NORMAL != info.status) {
+            throw ServiceException("部门停用，不允许新增")
         }
-        SysDept dept = MapstructUtils.convert(bo, SysDept.class);
-        dept.setAncestors(info.getAncestors() + StringUtilsExtend.SEPARATOR + dept.getParentId());
-        return baseMapper.insert(dept);*/
-        return 0
+        val dept: SysDept = MapstructUtils.convert(bo, SysDept::class.java)!!
+        dept.ancestors = info.ancestors + StringUtilsExtend.SEPARATOR + dept.parentId
+        return baseMapper.insert(dept, true)
     }
 
     /**
@@ -237,27 +252,28 @@ class SysDeptServiceImpl(
      */
     @CacheEvict(cacheNames = [CacheNames.SYS_DEPT], key = "#bo.deptId")
     override fun updateDept(bo: SysDeptBo): Int {
-        /*SysDept dept = MapstructUtils.convert(bo, SysDept.class);
-        SysDept oldDept = baseMapper.selectById(dept.getDeptId());
-        if (!oldDept.getParentId().equals(dept.getParentId())) {
+        val dept: SysDept = MapstructUtils.convert(bo, SysDept::class.java)!!
+        val oldDept = baseMapper.selectOneById(dept.deptId)
+        if (oldDept.parentId != dept.parentId) {
             // 如果是新父部门 则校验是否具有新父部门权限 避免越权
-            this.checkDeptDataScope(dept.getParentId());
-            SysDept newParentDept = baseMapper.selectById(dept.getParentId());
+            this.checkDeptDataScope(dept.parentId!!)
+            val newParentDept = baseMapper.selectOneById(dept.parentId)
             if (ObjectUtil.isNotNull(newParentDept) && ObjectUtil.isNotNull(oldDept)) {
-                String newAncestors = newParentDept.getAncestors() + StringUtilsExtend.SEPARATOR + newParentDept.getDeptId();
-                String oldAncestors = oldDept.getAncestors();
-                dept.setAncestors(newAncestors);
-                updateDeptChildren(dept.getDeptId(), newAncestors, oldAncestors);
+                val newAncestors: String =
+                    newParentDept.ancestors + StringUtilsExtend.SEPARATOR + newParentDept.deptId
+                val oldAncestors: String = oldDept.ancestors!!
+                dept.ancestors = newAncestors
+                updateDeptChildren(dept.deptId!!, newAncestors, oldAncestors)
             }
         }
-        int result = baseMapper.updateById(dept);
-        if (UserConstants.DEPT_NORMAL.equals(dept.getStatus()) && StringUtils.isNotEmpty(dept.getAncestors())
-            && !StringUtils.equals(UserConstants.DEPT_NORMAL, dept.getAncestors())) {
+        val result = baseMapper.update(dept)
+        if (UserConstants.DEPT_NORMAL == dept.status && StrUtil.isNotEmpty(dept.ancestors)
+            && !StrUtil.equals(UserConstants.DEPT_NORMAL, dept.ancestors)
+        ) {
             // 如果该部门是启用状态，则启用该部门的所有上级部门
-            updateParentDeptStatusNormal(dept);
+            updateParentDeptStatusNormal(dept)
         }
-        return result;*/
-        return 0
+        return result
     }
 
     /**
@@ -266,11 +282,14 @@ class SysDeptServiceImpl(
      * @param dept 当前部门
      */
     private fun updateParentDeptStatusNormal(dept: SysDept) {
-        /*String ancestors = dept.getAncestors();
-        Long[] deptIds = Convert.toLongArray(ancestors);
-        baseMapper.update(null, new LambdaUpdateWrapper<SysDept>()
-            .set(SysDept::getStatus, UserConstants.DEPT_NORMAL)
-            .in(SysDept::getDeptId, Arrays.asList(deptIds)));*/
+        val ancestors: String? = dept.ancestors
+        val deptIds = Convert.toLongArray(ancestors)
+        val sysDept = UpdateWrapper.of(SysDept::class.java)
+            .set(SysDept::status, UserConstants.DEPT_NORMAL).toEntity()
+        baseMapper.updateByQuery(
+            sysDept,
+            QueryWrapper.create().from(SYS_DEPT).where(SYS_DEPT.DEPT_ID.`in`(listOf(*deptIds)))
+        )
     }
 
     /**
@@ -281,20 +300,27 @@ class SysDeptServiceImpl(
      * @param oldAncestors 旧的父ID集合
      */
     private fun updateDeptChildren(deptId: Long, newAncestors: String, oldAncestors: String) {
-        /*List<SysDept> children = baseMapper.selectList(new LambdaQueryWrapper<SysDept>()
-            .apply(DataBaseHelper.findInSet(deptId, "ancestors")));
-        List<SysDept> list = new ArrayList<>();
-        for (SysDept child : children) {
-            SysDept dept = new SysDept();
-            dept.setDeptId(child.getDeptId());
-            dept.setAncestors(child.getAncestors().replaceFirst(oldAncestors, newAncestors));
-            list.add(dept);
+        val children = baseMapper.selectListByQuery(
+            QueryWrapper.create().from(SYS_DEPT)
+                .where(DataBaseHelper.findInSet(deptId, "ancestors"))
+        )
+        val list: MutableList<SysDept> = ArrayList()
+        for (child in children) {
+            val dept = SysDept()
+            dept.deptId = child.deptId
+            dept.ancestors = child.ancestors?.replaceFirst(oldAncestors, newAncestors)
+            list.add(dept)
         }
         if (CollUtil.isNotEmpty(list)) {
-            if (baseMapper.updateBatchById(list)) {
-                list.forEach(dept -> CacheUtils.evict(CacheNames.SYS_DEPT, dept.getDeptId()));
+            if (Db.updateEntitiesBatch(list) > 0) {
+                list.forEach{ dept: SysDept ->
+                    CacheUtils.evict(
+                        CacheNames.SYS_DEPT,
+                        dept.deptId
+                    )
+                }
             }
-        }*/
+        }
     }
 
     /**

@@ -9,7 +9,6 @@ import com.blank.generator.domain.GenTable
 import com.blank.generator.domain.GenTableColumn
 import org.apache.commons.lang3.RegExUtils
 import org.apache.commons.lang3.StringUtils
-import java.util.*
 
 /**
  * 代码生成器 工具类
@@ -124,7 +123,7 @@ object GenUtils {
      * @return 是否包含
      */
     fun arraysContains(arr: Array<String>, targetValue: String?): Boolean {
-        return Arrays.asList(*arr).contains(targetValue)
+        return listOf(*arr).contains(targetValue)
     }
 
     /**

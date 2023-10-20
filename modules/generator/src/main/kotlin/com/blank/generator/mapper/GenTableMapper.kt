@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param
 /**
  * 代码生成 数据层
  */
-interface GenTableMapper : BaseMapperPlus<GenTable, GenTable> {
+interface GenTableMapper : BaseMapperPlus<GenTable> {
     /**
      * 查询据库列表
      *
@@ -36,20 +36,12 @@ interface GenTableMapper : BaseMapperPlus<GenTable, GenTable> {
     fun selectGenTableAll(): MutableList<GenTable>
 
     /**
-     * 查询表ID业务信息
-     *
-     * @param id 业务ID
-     * @return 业务信息
-     */
-    fun selectGenTableById(id: Long): GenTable
-
-    /**
      * 查询表名称业务信息
      *
      * @param tableName 表名称
      * @return 业务信息
      */
-    fun selectGenTableByName(tableName: String): GenTable
+    fun selectGenTableByName(tableName: String): GenTable?
 
     fun selectTableNameList(dataName: String): MutableList<String>
 }

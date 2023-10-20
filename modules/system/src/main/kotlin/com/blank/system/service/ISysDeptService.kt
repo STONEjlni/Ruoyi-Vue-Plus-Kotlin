@@ -14,7 +14,7 @@ interface ISysDeptService {
      * @param dept 部门信息
      * @return 部门信息集合
      */
-    fun selectDeptList(dept: SysDeptBo): MutableList<SysDeptVo>?
+    fun selectDeptList(dept: SysDeptBo): MutableList<SysDeptVo>
 
     /**
      * 查询部门树结构信息
@@ -22,7 +22,7 @@ interface ISysDeptService {
      * @param dept 部门信息
      * @return 部门树信息集合
      */
-    fun selectDeptTreeList(dept: SysDeptBo): MutableList<Tree<Long>>?
+    fun selectDeptTreeList(dept: SysDeptBo): MutableList<Tree<Long>>
 
     /**
      * 构建前端所需要下拉树结构
@@ -30,7 +30,7 @@ interface ISysDeptService {
      * @param depts 部门列表
      * @return 下拉树结构列表
      */
-    fun buildDeptTreeSelect(depts: MutableList<SysDeptVo>): MutableList<Tree<Long>>?
+    fun buildDeptTreeSelect(depts: MutableList<SysDeptVo>): MutableList<Tree<Long>>
 
     /**
      * 根据角色ID查询部门树信息
@@ -38,7 +38,7 @@ interface ISysDeptService {
      * @param roleId 角色ID
      * @return 选中部门列表
      */
-    fun selectDeptListByRoleId(roleId: Long): MutableList<Long>?
+    fun selectDeptListByRoleId(roleId: Long): MutableList<Long>
 
     /**
      * 根据部门ID查询信息

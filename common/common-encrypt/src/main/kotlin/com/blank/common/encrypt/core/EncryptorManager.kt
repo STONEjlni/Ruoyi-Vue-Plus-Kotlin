@@ -4,7 +4,6 @@ import cn.hutool.core.util.ReflectUtil
 import com.blank.common.core.annotation.Slf4j
 import com.blank.common.encrypt.annotation.EncryptField
 import java.lang.reflect.Field
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.stream.Collectors
 
@@ -36,7 +35,7 @@ class EncryptorManager {
                 HashSet()
             while (clazz != null) {
                 val fields = clazz.getDeclaredFields()
-                fieldSet.addAll(Arrays.asList(*fields))
+                fieldSet.addAll(listOf(*fields))
                 clazz = clazz.superclass
             }
             fieldSet = fieldSet.stream()

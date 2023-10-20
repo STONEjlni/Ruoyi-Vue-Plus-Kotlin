@@ -9,7 +9,7 @@ import com.blank.system.domain.vo.SysDictDataVo
  * 字典 业务层
  */
 interface ISysDictDataService {
-    fun selectPageDictDataList(dictData: SysDictDataBo, pageQuery: PageQuery): TableDataInfo<SysDictDataVo>?
+    fun selectPageDictDataList(dictData: SysDictDataBo, pageQuery: PageQuery): TableDataInfo<SysDictDataVo>
 
     /**
      * 根据条件分页查询字典数据
@@ -17,7 +17,7 @@ interface ISysDictDataService {
      * @param dictData 字典数据信息
      * @return 字典数据集合信息
      */
-    fun selectDictDataList(dictData: SysDictDataBo): MutableList<SysDictDataVo>?
+    fun selectDictDataList(dictData: SysDictDataBo): MutableList<SysDictDataVo>
 
     /**
      * 根据字典类型和字典键值查询字典数据信息
@@ -49,7 +49,7 @@ interface ISysDictDataService {
      * @param bo 字典数据信息
      * @return 结果
      */
-    fun insertDictData(bo: SysDictDataBo): MutableList<SysDictDataVo>?
+    fun insertDictData(bo: SysDictDataBo): MutableList<SysDictDataVo>
 
     /**
      * 修改保存字典数据信息
@@ -57,5 +57,5 @@ interface ISysDictDataService {
      * @param bo 字典数据信息
      * @return 结果
      */
-    fun updateDictData(bo: SysDictDataBo): MutableList<SysDictDataVo>?
+    fun updateDictData(bo: SysDictDataBo): MutableList<SysDictDataVo>
 }

@@ -6,4 +6,4 @@ import com.blank.system.domain.SysRoleDept
 /**
  * 角色与部门关联表 数据层
  */
-interface SysRoleDeptMapper : BaseMapperPlus<SysRoleDept, SysRoleDept>
+interface SysRoleDeptMapper : BaseMapperPlus<SysRoleDept>

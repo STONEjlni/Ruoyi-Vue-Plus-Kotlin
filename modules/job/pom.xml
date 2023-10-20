@@ -27,7 +27,7 @@
             <groupId>com.blank</groupId>
             <artifactId>common-job</artifactId>
         </dependency>
-        
+
     </dependencies>
 
 </project>

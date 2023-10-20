@@ -110,7 +110,7 @@ services:
       # 配置文件
       - /docker/server1/logs/:/opt/server/logs/
       # skywalking 探针
-#      - /docker/skywalking/agent/:/opt/skywalking/agent
+    #      - /docker/skywalking/agent/:/opt/skywalking/agent
     privileged: true
     network_mode: "host"
 
@@ -125,7 +125,7 @@ services:
       # 配置文件
       - /docker/server2/logs/:/opt/server/logs/
       # skywalking 探针
-#      - /docker/skywalking/agent/:/opt/skywalking/agent
+    #      - /docker/skywalking/agent/:/opt/skywalking/agent
     privileged: true
     network_mode: "host"
 

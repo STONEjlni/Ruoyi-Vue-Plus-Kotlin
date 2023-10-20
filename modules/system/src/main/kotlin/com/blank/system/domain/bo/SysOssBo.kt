@@ -12,30 +12,30 @@ class SysOssBo : BaseEntity() {
     /**
      * ossId
      */
-    private val ossId: Long? = null
+    var ossId: Long? = null
 
     /**
      * 文件名
      */
-    private val fileName: String? = null
+    var fileName: String? = null
 
     /**
      * 原名
      */
-    private val originalName: String? = null
+    var originalName: String? = null
 
     /**
      * 文件后缀名
      */
-    private val fileSuffix: String? = null
+    var fileSuffix: String? = null
 
     /**
      * URL地址
      */
-    private val url: String? = null
+    var url: String? = null
 
     /**
      * 服务商
      */
-    private val service: String? = null
+    var service: String? = null
 }

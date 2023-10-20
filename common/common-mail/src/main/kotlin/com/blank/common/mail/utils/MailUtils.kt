@@ -50,10 +50,12 @@ object MailUtils {
      * @return message-id
      * @since 3.2.0
      */
-    fun sendText(to: String,
-                 subject: String,
-                 content: String,
-                 vararg files: File): String {
+    fun sendText(
+        to: String,
+        subject: String,
+        content: String,
+        vararg files: File
+    ): String {
         return send(to, subject, content, false, files = files)
     }
 
@@ -68,10 +70,12 @@ object MailUtils {
      * @return message-id
      * @since 3.2.0
      */
-    fun sendHtml(to: String,
-                 subject: String,
-                 content: String,
-                 vararg files: File): String {
+    fun sendHtml(
+        to: String,
+        subject: String,
+        content: String,
+        vararg files: File
+    ): String {
         return send(to, subject, content, true, files = files)
     }
 
@@ -86,11 +90,13 @@ object MailUtils {
      * @param files   附件列表
      * @return message-id
      */
-    fun send(to: String,
-             subject: String,
-             content: String,
-             isHtml: Boolean,
-             vararg files: File): String {
+    fun send(
+        to: String,
+        subject: String,
+        content: String,
+        isHtml: Boolean,
+        vararg files: File
+    ): String {
         return send(splitAddress(to)!!, subject, content, isHtml, files = files)
     }
 
@@ -117,11 +123,13 @@ object MailUtils {
         isHtml: Boolean,
         vararg files: File
     ): String {
-        return send(splitAddress(to)!!,
+        return send(
+            splitAddress(to)!!,
             splitAddress(cc),
             splitAddress(bcc),
             subject, content, isHtml,
-            files = files)
+            files = files
+        )
     }
 
     /**
@@ -133,10 +141,12 @@ object MailUtils {
      * @param files   附件列表
      * @return message-id
      */
-    fun sendText(tos: Collection<String>,
-                 subject: String,
-                 content: String,
-                 vararg files: File): String {
+    fun sendText(
+        tos: Collection<String>,
+        subject: String,
+        content: String,
+        vararg files: File
+    ): String {
         return send(tos, subject, content, false, files = files)
     }
 
@@ -150,10 +160,12 @@ object MailUtils {
      * @return message-id
      * @since 3.2.0
      */
-    fun sendHtml(tos: Collection<String>,
-                 subject: String,
-                 content: String,
-                 vararg files: File): String {
+    fun sendHtml(
+        tos: Collection<String>,
+        subject: String,
+        content: String,
+        vararg files: File
+    ): String {
         return send(tos, subject, content, true, files = files)
     }
 
@@ -202,7 +214,8 @@ object MailUtils {
         return send(
             getMailAccount(), true,
             tos, ccs, bccs,
-            subject, content, null, isHtml, files = files)
+            subject, content, null, isHtml, files = files
+        )
     }
 
     // ------------------------------------------------------------------------------------------------------------------------------- Custom MailAccount
@@ -279,7 +292,8 @@ object MailUtils {
     ): String {
         return send(
             mailAccount, false, tos, ccs, bccs, subject,
-            content, null, isHtml, files = files)
+            content, null, isHtml, files = files
+        )
     }
 
     /**
@@ -429,7 +443,8 @@ object MailUtils {
     ): String {
         return send(
             getMailAccount(), true, tos, ccs, bccs,
-            subject, content, imageMap, isHtml, files = files)
+            subject, content, imageMap, isHtml, files = files
+        )
     }
 
     // ------------------------------------------------------------------------------------------------------------------------------- Custom MailAccount
@@ -511,9 +526,11 @@ object MailUtils {
         isHtml: Boolean,
         vararg files: File
     ): String {
-        return send(mailAccount,
+        return send(
+            mailAccount,
             false,
-            tos, ccs, bccs, subject, content, imageMap, isHtml, files = files)
+            tos, ccs, bccs, subject, content, imageMap, isHtml, files = files
+        )
     }
 
     /**

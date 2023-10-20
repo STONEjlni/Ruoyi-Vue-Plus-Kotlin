@@ -1,18 +1,26 @@
 package com.blank.system.service.impl
 
 import cn.hutool.core.collection.CollUtil
+import cn.hutool.core.util.ArrayUtil
 import cn.hutool.core.util.ObjectUtil
 import com.blank.common.core.annotation.Slf4j
 import com.blank.common.core.constant.CacheNames
+import com.blank.common.core.constant.UserConstants
 import com.blank.common.core.exception.ServiceException
 import com.blank.common.core.service.UserService
 import com.blank.common.core.utils.MapstructUtils.convert
-import com.blank.common.core.utils.StreamUtils.join
+import com.blank.common.core.utils.StreamUtils
 import com.blank.common.mybatis.core.page.PageQuery
 import com.blank.common.mybatis.core.page.TableDataInfo
+import com.blank.common.mybatis.helper.DataBaseHelper
 import com.blank.common.satoken.utils.LoginHelper.isSuperAdmin
+import com.blank.system.domain.SysDept
 import com.blank.system.domain.SysUser
+import com.blank.system.domain.SysUserRole
 import com.blank.system.domain.bo.SysUserBo
+import com.blank.system.domain.table.SysDeptDef.SYS_DEPT
+import com.blank.system.domain.table.SysRoleDef.SYS_ROLE
+import com.blank.system.domain.table.SysUserDef.SYS_USER
 import com.blank.system.domain.vo.SysRoleVo
 import com.blank.system.domain.vo.SysUserVo
 import com.blank.system.mapper.SysDeptMapper
@@ -20,7 +28,11 @@ import com.blank.system.mapper.SysRoleMapper
 import com.blank.system.mapper.SysUserMapper
 import com.blank.system.mapper.SysUserRoleMapper
 import com.blank.system.service.ISysUserService
+import com.mybatisflex.core.paginate.Page
+import com.mybatisflex.core.query.If
+import com.mybatisflex.core.query.QueryMethods
 import com.mybatisflex.core.query.QueryWrapper
+import com.mybatisflex.core.util.UpdateEntity
 import org.apache.commons.lang3.StringUtils
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
@@ -38,10 +50,36 @@ class SysUserServiceImpl(
     private val userRoleMapper: SysUserRoleMapper
 ) : ISysUserService, UserService {
 
-    override fun selectPageUserList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo>? {
-        /*Page<SysUserVo> page = baseMapper.selectPageUserList(pageQuery.build(), this.buildQueryWrapper(user));
-        return TableDataInfo.build(page);*/
-        return null
+    override fun selectPageUserList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo> {
+        val page = selectPageUserList(pageQuery, buildQueryWrapper(user))
+        return TableDataInfo.build(page)
+    }
+
+    private fun selectPageUserList(pageQuery: PageQuery, queryWrapper: QueryWrapper): Page<SysUserVo> {
+        queryWrapper
+            .select(
+                SYS_USER.USER_ID,
+                SYS_USER.DEPT_ID,
+                SYS_USER.USER_NAME,
+                SYS_USER.NICK_NAME,
+                SYS_USER.EMAIL,
+                SYS_USER.AVATAR,
+                SYS_USER.PHONENUMBER,
+                SYS_USER.SEX,
+                SYS_USER.STATUS,
+                SYS_USER.DEL_FLAG,
+                SYS_USER.LOGIN_IP,
+                SYS_USER.LOGIN_DATE,
+                SYS_USER.CREATE_BY,
+                SYS_USER.CREATE_TIME,
+                SYS_USER.REMARK,
+                SYS_DEPT.DEPT_NAME,
+                SYS_DEPT.LEADER,
+                QueryMethods.column("u1.user_name as leaderName")
+            )
+            /*.leftJoin(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
+            .leftJoin(SYS_USER).`as`("u1").on(SYS_USER.USER_ID.eq(SYS_DEPT.LEADER))*/
+        return baseMapper.selectPageUserList(pageQuery, queryWrapper)
     }
 
     /**
@@ -50,31 +88,36 @@ class SysUserServiceImpl(
      * @param user 用户信息
      * @return 用户信息集合信息
      */
-    override fun selectUserList(user: SysUserBo): MutableList<SysUserVo>? {
-        /*return baseMapper.selectUserList(this.buildQueryWrapper(user));*/
-        return null
+    override fun selectUserList(user: SysUserBo): MutableList<SysUserVo> {
+        return baseMapper.selectUserList(buildQueryWrapper(user))
     }
 
-    private fun  /*<SysUser>*/buildQueryWrapper(user: SysUserBo): QueryWrapper? {
-        /*Map<String, Object> params = user.getParams();
-        QueryWrapper<SysUser> wrapper = Wrappers.query();
-        wrapper.eq("u.del_flag", UserConstants.USER_NORMAL)
-                .eq(ObjectUtil.isNotNull(user.getUserId()), "u.user_id", user.getUserId())
-                .like(StrUtil.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
-                .eq(StrUtil.isNotBlank(user.getStatus()), "u.status", user.getStatus())
-                .like(StrUtil.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
-                .between(params.get("beginTime") != null && params.get("endTime") != null,
-                        "u.create_time", params.get("beginTime"), params.get("endTime"))
-                .and(ObjectUtil.isNotNull(user.getDeptId()), w -> {
-                    List<SysDept> deptList = deptMapper.selectList(new LambdaQueryWrapper<SysDept>()
-                            .select(SysDept::getDeptId)
-                            .apply(DataBaseHelper.findInSet(user.getDeptId(), "ancestors")));
-                    List<Long> ids = StreamUtils.toList(deptList, SysDept::getDeptId);
-                    ids.add(user.getDeptId());
-                    w.in("u.dept_id", ids);
-                }).orderByAsc("u.user_id");
-        return wrapper;*/
-        return null
+    private fun buildQueryWrapper(user: SysUserBo): QueryWrapper {
+        val params: Map<String, Any> = user.params
+        val queryWrapper: QueryWrapper = QueryWrapper.create().from(SYS_USER.`as`("u"))
+            .where(SYS_USER.DEL_FLAG.eq(UserConstants.USER_NORMAL))
+            .and(SYS_USER.USER_ID.eq(user.userId))
+            .and(SYS_USER.USER_NAME.like(user.userName))
+            .and(SYS_USER.STATUS.eq(user.status))
+            .and(SYS_USER.PHONENUMBER.eq(user.phonenumber))
+            .and(
+                SYS_USER.CREATE_TIME.between(
+                    params["beginTime"],
+                    params["endTime"],
+                    params["beginTime"] != null && params["endTime"] != null
+                )
+            )
+        if (ObjectUtil.isNotNull(user.deptId)) {
+            val deptList: MutableList<SysDept> = deptMapper.selectListByQuery(
+                QueryWrapper.create().select(SYS_DEPT.DEPT_ID).from(SYS_DEPT)
+                    .and(DataBaseHelper.findInSet(user.deptId!!, "ancestors"))
+            )
+            val ids: MutableList<Long?> = StreamUtils.toList(deptList, SysDept::deptId)
+            ids.add(user.deptId)
+            queryWrapper.and(SYS_USER.DEPT_ID.`in`(ids))
+        }
+        queryWrapper.orderBy(SYS_USER.USER_ID, true)
+        return queryWrapper
     }
 
     /**
@@ -83,17 +126,32 @@ class SysUserServiceImpl(
      * @param user 用户信息
      * @return 用户信息集合信息
      */
-    override fun selectAllocatedList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo>? {
-        /*QueryWrapper<SysUser> wrapper = Wrappers.query();
-        wrapper.eq("u.del_flag", UserConstants.USER_NORMAL)
-                .eq(ObjectUtil.isNotNull(user.getRoleId()), "r.role_id", user.getRoleId())
-                .like(StrUtil.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
-                .eq(StrUtil.isNotBlank(user.getStatus()), "u.status", user.getStatus())
-                .like(StrUtil.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
-                .orderByAsc("u.user_id");
-        Page<SysUserVo> page = baseMapper.selectAllocatedList(pageQuery.build(), wrapper);
-        return TableDataInfo.build(page);*/
-        return null
+    override fun selectAllocatedList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo> {
+        val queryWrapper: QueryWrapper = QueryWrapper.create()
+            .select(
+                QueryMethods.distinct(
+                    SYS_USER.USER_ID,
+                    SYS_USER.DEPT_ID,
+                    SYS_USER.USER_NAME,
+                    SYS_USER.NICK_NAME,
+                    SYS_USER.EMAIL,
+                    SYS_USER.PHONENUMBER,
+                    SYS_USER.STATUS,
+                    SYS_USER.CREATE_TIME
+                )
+            )
+            .from(SYS_USER).`as`("u")
+            /*.leftJoin(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
+            .leftJoin(SYS_USER_ROLE).on(SYS_USER.USER_ID.eq(SYS_USER_ROLE.USER_ID))
+            .leftJoin(SYS_ROLE).on(SYS_ROLE.ROLE_ID.eq(SYS_USER_ROLE.ROLE_ID))*/
+            .where(SYS_USER.DEL_FLAG.eq(UserConstants.USER_NORMAL))
+            .and(SYS_ROLE.ROLE_ID.eq(user.roleId))
+            .and(SYS_USER.USER_NAME.like(user.userName))
+            .and(SYS_USER.STATUS.eq(user.status))
+            .and(SYS_USER.PHONENUMBER.eq(user.phonenumber))
+            .orderBy(SYS_USER.USER_ID, true)
+        val page = baseMapper.selectAllocatedList(pageQuery, queryWrapper)
+        return TableDataInfo.build(page)
     }
 
     /**
@@ -102,18 +160,33 @@ class SysUserServiceImpl(
      * @param user 用户信息
      * @return 用户信息集合信息
      */
-    override fun selectUnallocatedList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo>? {
-        /*List<Long> userIds = userRoleMapper.selectUserIdsByRoleId(user.getRoleId());
-        QueryWrapper<SysUser> wrapper = Wrappers.query();
-        wrapper.eq("u.del_flag", UserConstants.USER_NORMAL)
-                .and(w -> w.ne("r.role_id", user.getRoleId()).or().isNull("r.role_id"))
-                .notIn(CollUtil.isNotEmpty(userIds), "u.user_id", userIds)
-                .like(StrUtil.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
-                .like(StrUtil.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
-                .orderByAsc("u.user_id");
-        Page<SysUserVo> page = baseMapper.selectUnallocatedList(pageQuery.build(), wrapper);
-        return TableDataInfo.build(page);*/
-        return null
+    override fun selectUnallocatedList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo> {
+        val userIds: MutableList<Long> = userRoleMapper.selectUserIdsByRoleId(user.roleId!!)
+        val queryWrapper: QueryWrapper = QueryWrapper.create()
+            .select(
+                QueryMethods.distinct(
+                    SYS_USER.USER_ID,
+                    SYS_USER.DEPT_ID,
+                    SYS_USER.USER_NAME,
+                    SYS_USER.NICK_NAME,
+                    SYS_USER.EMAIL,
+                    SYS_USER.PHONENUMBER,
+                    SYS_USER.STATUS,
+                    SYS_USER.CREATE_TIME
+                )
+            )
+            .from(SYS_USER).`as`("u")
+            /*.leftJoin(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
+            .leftJoin(SYS_USER_ROLE).on(SYS_USER.USER_ID.eq(SYS_USER_ROLE.USER_ID))
+            .leftJoin(SYS_ROLE).on(SYS_ROLE.ROLE_ID.eq(SYS_USER_ROLE.ROLE_ID))*/
+            .where(SYS_USER.DEL_FLAG.eq(UserConstants.USER_NORMAL))
+            .and(SYS_ROLE.ROLE_ID.eq(user.roleId).or(SYS_ROLE.ROLE_ID.isNull()))
+            .and(SYS_USER.USER_ID.notIn(userIds, If::isNotEmpty))
+            .and(SYS_USER.USER_NAME.like(user.userName))
+            .and(SYS_USER.PHONENUMBER.eq(user.phonenumber))
+            .orderBy(SYS_USER.USER_ID, true)
+        val page = baseMapper.selectAllocatedList(pageQuery, queryWrapper)
+        return TableDataInfo.build(page)
     }
 
     /**
@@ -153,25 +226,10 @@ class SysUserServiceImpl(
      * @return 结果
      */
     override fun selectUserRoleGroup(userName: String): String? {
-        val list = roleMapper.selectRolesByUserName(userName)!!
+        val list: MutableList<SysRoleVo> = roleMapper.selectRolesByUserName(userName)
         return if (CollUtil.isEmpty(list)) {
             StringUtils.EMPTY
-        } else join(list) { obj: SysRoleVo -> obj.roleName!! }
-    }
-
-    /**
-     * 查询用户所属岗位组
-     *
-     * @param userName 用户名
-     * @return 结果
-     */
-    override fun selectUserPostGroup(userName: String): String? {
-        /*List<SysPostVo> list = postMapper.selectPostsByUserName(userName);
-        if (CollUtil.isEmpty(list)) {
-            return StringUtils.EMPTY;
-        }
-        return StreamUtils.join(list, SysPostVo::getPostName);*/
-        return null
+        } else list.joinToString { it.roleName!! }
     }
 
     /**
@@ -181,11 +239,10 @@ class SysUserServiceImpl(
      * @return 结果
      */
     override fun checkUserNameUnique(user: SysUserBo): Boolean {
-        /*boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysUser>()
-                .eq(SysUser::getUserName, user.getUserName())
-                .ne(ObjectUtil.isNotNull(user.getUserId()), SysUser::getUserId, user.getUserId()));
-        return !exist;*/
-        return false
+        return baseMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_USER)
+                .where(SYS_USER.USER_NAME.eq(user.userName)).and(SYS_USER.USER_ID.ne(user.userId))
+        ) === 0.toLong()
     }
 
     /**
@@ -194,11 +251,10 @@ class SysUserServiceImpl(
      * @param user 用户信息
      */
     override fun checkPhoneUnique(user: SysUserBo): Boolean {
-        /*boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysUser>()
-                .eq(SysUser::getPhonenumber, user.getPhonenumber())
-                .ne(ObjectUtil.isNotNull(user.getUserId()), SysUser::getUserId, user.getUserId()));
-        return !exist;*/
-        return false
+        return baseMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_USER)
+                .where(SYS_USER.PHONENUMBER.eq(user.phonenumber)).and(SYS_USER.USER_ID.ne(user.userId))
+        ) === 0.toLong()
     }
 
     /**
@@ -207,11 +263,10 @@ class SysUserServiceImpl(
      * @param user 用户信息
      */
     override fun checkEmailUnique(user: SysUserBo): Boolean {
-        /*boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysUser>()
-                .eq(SysUser::getEmail, user.getEmail())
-                .ne(ObjectUtil.isNotNull(user.getUserId()), SysUser::getUserId, user.getUserId()));
-        return !exist;*/
-        return false
+        return baseMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_USER)
+                .where(SYS_USER.EMAIL.eq(user.email)).and(SYS_USER.USER_ID.ne(user.userId))
+        ) === 0.toLong()
     }
 
     /**
@@ -237,7 +292,7 @@ class SysUserServiceImpl(
         if (isSuperAdmin()) {
             return
         }
-        if (ObjectUtil.isNull(baseMapper.selectUserById(userId))) {
+        if (ObjectUtil.isNull(selectUserById(userId))) {
             throw ServiceException("没有权限访问用户数据！")
         }
     }
@@ -250,12 +305,10 @@ class SysUserServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun insertUser(user: SysUserBo): Int {
-        val sysUser = convert(user, SysUser::class.java)!!
+        val sysUser: SysUser = convert(user, SysUser::class.java)!!
         // 新增用户信息
-        val rows = baseMapper.insert(sysUser)
+        val rows = baseMapper.insert(sysUser, true)
         user.userId = sysUser.userId
-        // 新增用户岗位关联
-        insertUserPost(user, false)
         // 新增用户与角色管理
         insertUserRole(user, false)
         return rows
@@ -270,8 +323,8 @@ class SysUserServiceImpl(
     override fun registerUser(user: SysUserBo): Boolean {
         user.createBy = user.userId
         user.updateBy = user.userId
-        val sysUser = convert(user, SysUser::class.java)!!
-        return baseMapper.insert(sysUser) > 0
+        val sysUser: SysUser? = convert(user, SysUser::class.java)
+        return baseMapper.insert(sysUser, true) > 0
     }
 
     /**
@@ -282,18 +335,18 @@ class SysUserServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun updateUser(user: SysUserBo): Int {
-        /*// 新增用户与角色管理
-        insertUserRole(user, true);
-        // 新增用户与岗位管理
-        insertUserPost(user, true);
-        SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
-        // 防止错误更新后导致的数据误删除
-        int flag = baseMapper.updateById(sysUser);
-        if (flag < 1) {
-            throw new ServiceException("修改用户" + user.getUserName() + "信息失败");
+        // 新增用户与角色管理
+        insertUserRole(user, true)
+        if (StringUtils.isBlank(user.password)) {
+            user.password = null
         }
-        return flag;*/
-        return 0
+        val sysUser: SysUser = convert(user, SysUser::class.java)!!
+        // 防止错误更新后导致的数据误删除
+        val flag = baseMapper.update(sysUser)
+        if (flag < 1) {
+            throw ServiceException("修改用户${user.userName}信息失败")
+        }
+        return flag
     }
 
     /**
@@ -314,12 +367,10 @@ class SysUserServiceImpl(
      * @param status 帐号状态
      * @return 结果
      */
-    override fun updateUserStatus(userId: Long, status: String): Int {
-        /*return baseMapper.update(null,
-                new LambdaUpdateWrapper<SysUser>()
-                        .set(SysUser::getStatus, status)
-                        .eq(SysUser::getUserId, userId));*/
-        return 0
+    override fun updateUserStatus(userId: Long, status: String): Boolean {
+        val sysUser = UpdateEntity.of(SysUser::class.java, userId)
+        sysUser.status = status
+        return baseMapper.update(sysUser, true) > 0
     }
 
     /**
@@ -329,14 +380,14 @@ class SysUserServiceImpl(
      * @return 结果
      */
     override fun updateUserProfile(user: SysUserBo): Int {
-        /*return baseMapper.update(null,
-                new LambdaUpdateWrapper<SysUser>()
-                        .set(ObjectUtil.isNotNull(user.getNickName()), SysUser::getNickName, user.getNickName())
-                        .set(SysUser::getPhonenumber, user.getPhonenumber())
-                        .set(SysUser::getEmail, user.getEmail())
-                        .set(SysUser::getSex, user.getSex())
-                        .eq(SysUser::getUserId, user.getUserId()));*/
-        return 0
+        val sysUser = UpdateEntity.of(SysUser::class.java, user.userId)
+        if (StringUtils.isNotBlank(user.nickName)) {
+            sysUser.nickName = user.nickName
+        }
+        sysUser.phonenumber = user.phonenumber
+        sysUser.email = user.email
+        sysUser.sex = user.sex
+        return baseMapper.update(sysUser, true)
     }
 
     /**
@@ -347,11 +398,9 @@ class SysUserServiceImpl(
      * @return 结果
      */
     override fun updateUserAvatar(userId: Long, avatar: Long): Boolean {
-        /*return baseMapper.update(null,
-                new LambdaUpdateWrapper<SysUser>()
-                        .set(SysUser::getAvatar, avatar)
-                        .eq(SysUser::getUserId, userId)) > 0;*/
-        return false
+        val sysUser = UpdateEntity.of(SysUser::class.java, userId)
+        sysUser.avatar = avatar
+        return baseMapper.update(sysUser, true) > 0
     }
 
     /**
@@ -361,12 +410,10 @@ class SysUserServiceImpl(
      * @param password 密码
      * @return 结果
      */
-    override fun resetUserPwd(userId: Long, password: String): Int {
-        /*return baseMapper.update(null,
-                new LambdaUpdateWrapper<SysUser>()
-                        .set(SysUser::getPassword, password)
-                        .eq(SysUser::getUserId, userId));*/
-        return 0
+    override fun resetUserPwd(userId: Long, password: String): Boolean {
+        val sysUser = UpdateEntity.of(SysUser::class.java, userId)
+        sysUser.password = password
+        return baseMapper.update(sysUser, true) > 0
     }
 
     /**
@@ -380,30 +427,6 @@ class SysUserServiceImpl(
     }
 
     /**
-     * 新增用户岗位信息
-     *
-     * @param user  用户对象
-     * @param clear 清除已存在的关联数据
-     */
-    private fun insertUserPost(user: SysUserBo, clear: Boolean) {
-        /*Long[] posts = user.getPostIds();
-        if (ArrayUtil.isNotEmpty(posts)) {
-            if (clear) {
-                // 删除用户与岗位关联
-                userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().eq(SysUserPost::getUserId, user.getUserId()));
-            }
-            // 新增用户与岗位管理
-            List<SysUserPost> list = StreamUtils.toList(List.of(posts), postId -> {
-                SysUserPost up = new SysUserPost();
-                up.setUserId(user.getUserId());
-                up.setPostId(postId);
-                return up;
-            });
-            userPostMapper.insertBatch(list);
-        }*/
-    }
-
-    /**
      * 新增用户角色信息
      *
      * @param userId  用户ID
@@ -411,33 +434,35 @@ class SysUserServiceImpl(
      * @param clear   清除已存在的关联数据
      */
     private fun insertUserRole(userId: Long, roleIds: Array<Long>, clear: Boolean) {
-        /*if (ArrayUtil.isNotEmpty(roleIds)) {
+        if (ArrayUtil.isNotEmpty(roleIds)) {
             // 判断是否具有此角色的操作权限
-            List<SysRoleVo> roles = roleMapper.selectRoleList(new LambdaQueryWrapper<>());
+            val roles: List<SysRoleVo> = roleMapper.selectRoleList(QueryWrapper.create())
             if (CollUtil.isEmpty(roles)) {
-                throw new ServiceException("没有权限访问角色的数据");
+                throw ServiceException("没有权限访问角色的数据")
             }
-            List<Long> roleList = StreamUtils.toList(roles, SysRoleVo::getRoleId);
-            if (!LoginHelper.isSuperAdmin(userId)) {
-                roleList.remove(UserConstants.SUPER_ADMIN_ID);
+            val roleList: MutableList<Long?> = StreamUtils.toList(roles, SysRoleVo::roleId)
+            if (!isSuperAdmin(userId)) {
+                roleList.remove(UserConstants.SUPER_ADMIN_ID)
             }
-            List<Long> canDoRoleList = StreamUtils.filter(List.of(roleIds), roleList::contains);
+            val canDoRoleList: List<Long?> = StreamUtils.filter(listOf(*roleIds), roleList::contains)
             if (CollUtil.isEmpty(canDoRoleList)) {
-                throw new ServiceException("没有权限访问角色的数据");
+                throw ServiceException("没有权限访问角色的数据")
             }
             if (clear) {
                 // 删除用户与角色关联
-                userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, userId));
+                userRoleMapper.deleteByQuery(
+                    QueryWrapper().from(SysUserRole::class.java).where(SysUserRole::userId).eq(userId)
+                )
             }
             // 新增用户与角色管理
-            List<SysUserRole> list = StreamUtils.toList(canDoRoleList, roleId -> {
-                SysUserRole ur = new SysUserRole();
-                ur.setUserId(userId);
-                ur.setRoleId(roleId);
-                return ur;
-            });
-            userRoleMapper.insertBatch(list);
-        }*/
+            val list: List<SysUserRole> = StreamUtils.toList(canDoRoleList) { roleId ->
+                val ur = SysUserRole()
+                ur.userId = userId
+                ur.roleId = roleId
+                ur
+            }
+            /*Db.executeBatch(list, 1000, SysUserRoleMapper::class.java, BaseMapper::insertWithPk)*/
+        }
     }
 
     /**
@@ -448,17 +473,17 @@ class SysUserServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun deleteUserById(userId: Long): Int {
-        /* // 删除用户与角色关联
-        userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, userId));
-        // 删除用户与岗位表
-        userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().eq(SysUserPost::getUserId, userId));
+        // 删除用户与角色关联
+        userRoleMapper.deleteByQuery(
+            QueryWrapper().from(SysUserRole::class.java).where(SysUserRole::userId).eq(userId)
+        )
+
         // 防止更新失败导致的数据删除
-        int flag = baseMapper.deleteById(userId);
+        val flag = baseMapper.deleteById(userId)
         if (flag < 1) {
-            throw new ServiceException("删除用户失败!");
+            throw ServiceException("删除用户失败!")
         }
-        return flag;*/
-        return 0
+        return flag
     }
 
     /**
@@ -469,22 +494,22 @@ class SysUserServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun deleteUserByIds(userIds: Array<Long>): Int {
-        /*for (Long userId : userIds) {
-            checkUserAllowed(userId);
-            checkUserDataScope(userId);
+        for (userId in userIds) {
+            checkUserAllowed(userId)
+            checkUserDataScope(userId)
         }
-        List<Long> ids = List.of(userIds);
+        val ids = listOf(*userIds)
         // 删除用户与角色关联
-        userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getUserId, ids));
-        // 删除用户与岗位表
-        userPostMapper.delete(new LambdaQueryWrapper<SysUserPost>().in(SysUserPost::getUserId, ids));
+        userRoleMapper.deleteByQuery(
+            QueryWrapper().from(SysUserRole::class.java).where(SysUserRole::userId).`in`(ids)
+        )
+
         // 防止更新失败导致的数据删除
-        int flag = baseMapper.deleteBatchIds(ids);
+        val flag = baseMapper.deleteBatchByIds(ids)
         if (flag < 1) {
-            throw new ServiceException("删除用户失败!");
+            throw ServiceException("删除用户失败!")
         }
-        return flag;*/
-        return 0
+        return flag
     }
 
     /**
@@ -493,19 +518,19 @@ class SysUserServiceImpl(
      * @param deptId
      * @return
      */
-    override fun selectUserListByDept(deptId: Long): MutableList<SysUserVo>? {
-        /*LambdaQueryWrapper<SysUser> lqw = Wrappers.lambdaQuery();
-        lqw.eq(SysUser::getDeptId, deptId);
-        lqw.orderByAsc(SysUser::getUserId);
-        return baseMapper.selectVoList(lqw);*/
-        return null
+    override fun selectUserListByDept(deptId: Long): MutableList<SysUserVo> {
+        val queryWrapper: QueryWrapper = QueryWrapper.create().from(SysUser::class.java)
+            .where(SysUser::deptId).eq(deptId)
+            .orderBy(SysUser::userId, true)
+        return baseMapper.selectListByQueryAs(queryWrapper, SysUserVo::class.java)
     }
 
     @Cacheable(cacheNames = [CacheNames.SYS_USER_NAME], key = "#userId")
     override fun selectUserNameById(userId: Long): String? {
-        /*SysUser sysUser = baseMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-                .select(SysUser::getUserName).eq(SysUser::getUserId, userId));
-        return ObjectUtil.isNull(sysUser) ? null : sysUser.getUserName();*/
-        return null
+        val sysUser = baseMapper.selectOneByQuery(
+            QueryWrapper.create().select(SysUser::userName).from(SysUser::class.java)
+                .where(SysUser::userId).eq(userId)
+        )
+        return if (ObjectUtil.isNull(sysUser)) null else sysUser.userName
     }
 }

@@ -9,7 +9,7 @@ import com.blank.system.domain.vo.SysConfigVo
  * 参数配置 服务层
  */
 interface ISysConfigService {
-    fun selectPageConfigList(config: SysConfigBo, pageQuery: PageQuery): TableDataInfo<SysConfigVo>?
+    fun selectPageConfigList(config: SysConfigBo, pageQuery: PageQuery): TableDataInfo<SysConfigVo>
 
     /**
      * 查询参数配置信息
@@ -41,7 +41,7 @@ interface ISysConfigService {
      * @param config 参数配置信息
      * @return 参数配置集合
      */
-    fun selectConfigList(config: SysConfigBo): MutableList<SysConfigVo>?
+    fun selectConfigList(config: SysConfigBo): MutableList<SysConfigVo>
 
     /**
      * 新增参数配置

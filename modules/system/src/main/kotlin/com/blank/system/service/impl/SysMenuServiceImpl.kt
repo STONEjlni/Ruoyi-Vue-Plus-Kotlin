@@ -9,7 +9,11 @@ import com.blank.common.core.utils.StringUtilsExtend.splitList
 import com.blank.common.core.utils.TreeBuildUtils.build
 import com.blank.common.satoken.utils.LoginHelper.isSuperAdmin
 import com.blank.system.domain.SysMenu
+import com.blank.system.domain.SysRole
 import com.blank.system.domain.bo.SysMenuBo
+import com.blank.system.domain.table.SysMenuDef.SYS_MENU
+import com.blank.system.domain.table.SysRoleMenuDef.SYS_ROLE_MENU
+import com.blank.system.domain.table.SysUserRoleDef.SYS_USER_ROLE
 import com.blank.system.domain.vo.MetaVo
 import com.blank.system.domain.vo.RouterVo
 import com.blank.system.domain.vo.SysMenuVo
@@ -17,10 +21,10 @@ import com.blank.system.mapper.SysMenuMapper
 import com.blank.system.mapper.SysRoleMapper
 import com.blank.system.mapper.SysRoleMenuMapper
 import com.blank.system.service.ISysMenuService
+import com.mybatisflex.core.query.QueryMethods.distinct
+import com.mybatisflex.core.query.QueryWrapper
 import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
-import java.util.*
-import java.util.function.Predicate
 
 /**
  * 菜单 业务层处理
@@ -39,7 +43,7 @@ class SysMenuServiceImpl(
      * @param userId 用户ID
      * @return 菜单列表
      */
-    override fun selectMenuList(userId: Long): MutableList<SysMenuVo>? {
+    override fun selectMenuList(userId: Long): MutableList<SysMenuVo> {
         return selectMenuList(SysMenuBo(), userId)
     }
 
@@ -49,29 +53,35 @@ class SysMenuServiceImpl(
      * @param menu 菜单信息
      * @return 菜单列表
      */
-    override fun selectMenuList(menu: SysMenuBo, userId: Long): MutableList<SysMenuVo>? {
-        /*List<SysMenuVo> menuList;
+    override fun selectMenuList(menu: SysMenuBo, userId: Long): MutableList<SysMenuVo> {
         // 管理员显示所有菜单信息
-        if (LoginHelper.isSuperAdmin(userId)) {
-            menuList = baseMapper.selectVoList(new LambdaQueryWrapper<SysMenu>()
-                .like(StrUtil.isNotBlank(menu.getMenuName()), SysMenu::getMenuName, menu.getMenuName())
-                .eq(StrUtil.isNotBlank(menu.getVisible()), SysMenu::getVisible, menu.getVisible())
-                .eq(StrUtil.isNotBlank(menu.getStatus()), SysMenu::getStatus, menu.getStatus())
-                .orderByAsc(SysMenu::getParentId)
-                .orderByAsc(SysMenu::getOrderNum));
+        val menuList = if (isSuperAdmin(userId)) {
+            baseMapper.selectListByQueryAs(
+                QueryWrapper.create().from(SYS_MENU)
+                    .where(SYS_MENU.MENU_NAME.like(menu.menuName))
+                    .and(SYS_MENU.VISIBLE.eq(menu.visible))
+                    .and(SYS_MENU.STATUS.eq(menu.status))
+                    .orderBy(SYS_MENU.PARENT_ID, true)
+                    .orderBy(SYS_MENU.ORDER_NUM, true),
+                SysMenuVo::class.java
+            )
         } else {
-            QueryWrapper<SysMenu> wrapper = Wrappers.query();
-            wrapper.eq("sur.user_id", userId)
-                .like(StrUtil.isNotBlank(menu.getMenuName()), "m.menu_name", menu.getMenuName())
-                .eq(StrUtil.isNotBlank(menu.getVisible()), "m.visible", menu.getVisible())
-                .eq(StrUtil.isNotBlank(menu.getStatus()), "m.status", menu.getStatus())
-                .orderByAsc("m.parent_id")
-                .orderByAsc("m.order_num");
-            List<SysMenu> list = baseMapper.selectMenuListByUserId(wrapper);
-            menuList = MapstructUtils.convert(list, SysMenuVo.class);
+            val queryWrapper: QueryWrapper = QueryWrapper.create()
+                .select(distinct(SYS_MENU.ALL_COLUMNS))
+                .from(SYS_MENU)
+                /*.leftJoin(SYS_ROLE_MENU).on(SYS_MENU.MENU_ID.eq(SYS_ROLE_MENU.MENU_ID))
+                .leftJoin(SYS_USER_ROLE).on(SYS_ROLE_MENU.ROLE_ID.eq(SYS_USER_ROLE.ROLE_ID))
+                .leftJoin(SYS_ROLE).on(SYS_USER_ROLE.ROLE_ID.eq(SYS_ROLE.ROLE_ID))*/
+                .where(SYS_USER_ROLE.USER_ID.eq(userId))
+                .and(SYS_MENU.MENU_NAME.like(menu.menuName))
+                .and(SYS_MENU.VISIBLE.like(menu.visible))
+                .and(SYS_MENU.STATUS.like(menu.status))
+                .orderBy(SYS_MENU.PARENT_ID, true)
+                .orderBy(SYS_MENU.ORDER_NUM, true)
+            val list = baseMapper.selectListByQueryAs(queryWrapper, SysMenu::class.java)
+            convert(list, SysMenuVo::class.java)!!
         }
-        return menuList;*/
-        return null
+        return menuList
     }
 
     /**
@@ -80,10 +90,10 @@ class SysMenuServiceImpl(
      * @param userId 用户ID
      * @return 权限列表
      */
-    override fun selectMenuPermsByUserId(userId: Long): MutableSet<String>? {
-        val perms = baseMapper.selectMenuPermsByUserId(userId)
-        val permsSet: MutableSet<String> = HashSet()
-        for (perm in perms!!) {
+    override fun selectMenuPermsByUserId(userId: Long): MutableSet<String> {
+        val perms: MutableList<String> = baseMapper.selectMenuPermsByUserId(userId)
+        val permsSet: MutableSet<String> = mutableSetOf()
+        for (perm in perms) {
             if (StringUtils.isNotEmpty(perm)) {
                 permsSet.addAll(splitList(perm.trim { it <= ' ' }))
             }
@@ -97,10 +107,10 @@ class SysMenuServiceImpl(
      * @param roleId 角色ID
      * @return 权限列表
      */
-    override fun selectMenuPermsByRoleId(roleId: Long): MutableSet<String>? {
-        val perms = baseMapper.selectMenuPermsByRoleId(roleId)
-        val permsSet: MutableSet<String> = HashSet()
-        for (perm in perms!!) {
+    override fun selectMenuPermsByRoleId(roleId: Long): MutableSet<String> {
+        val perms: MutableList<String> = baseMapper.selectMenuPermsByRoleId(roleId)
+        val permsSet: MutableSet<String> = mutableSetOf()
+        for (perm in perms) {
             if (StringUtils.isNotEmpty(perm)) {
                 permsSet.addAll(splitList(perm.trim { it <= ' ' }))
             }
@@ -114,11 +124,11 @@ class SysMenuServiceImpl(
      * @param userId 用户名称
      * @return 菜单列表
      */
-    override fun selectMenuTreeByUserId(userId: Long): MutableList<SysMenu>? {
-        val menus: MutableList<SysMenu> = if (isSuperAdmin(userId)) {
-            baseMapper.selectMenuTreeAll()!!
+    override fun selectMenuTreeByUserId(userId: Long): MutableList<SysMenu> {
+        val menus = if (isSuperAdmin(userId)) {
+            baseMapper.selectMenuTreeAll()
         } else {
-            baseMapper.selectMenuTreeByUserId(userId)!!
+            baseMapper.selectMenuTreeByUserId(userId)
         }
         return getChildPerms(menus, 0)
     }
@@ -129,34 +139,9 @@ class SysMenuServiceImpl(
      * @param roleId 角色ID
      * @return 选中菜单列表
      */
-    override fun selectMenuListByRoleId(roleId: Long): MutableList<Long>? {
-        /*SysRole role = roleMapper.selectById(roleId);
-        return baseMapper.selectMenuListByRoleId(roleId, role.getMenuCheckStrictly());*/
-        return null
-    }
-
-    /**
-     * 根据租户套餐ID查询菜单树信息
-     *
-     * @param packageId 租户套餐ID
-     * @return 选中菜单列表
-     */
-    override fun selectMenuListByPackageId(packageId: Long): MutableList<Long>? {
-        /*SysTenantPackage tenantPackage = tenantPackageMapper.selectById(packageId);
-        List<Long> menuIds = StringUtils.splitTo(tenantPackage.getMenuIds(), Convert::toLong);
-        if (CollUtil.isEmpty(menuIds)) {
-            return List.of();
-        }
-        List<Long> parentIds = null;
-        if (tenantPackage.getMenuCheckStrictly()) {
-            parentIds = baseMapper.selectObjs(new LambdaQueryWrapper<SysMenu>()
-                .select(SysMenu::getParentId)
-                .in(SysMenu::getMenuId, menuIds), Convert::toLong);
-        }
-        return baseMapper.selectObjs(new LambdaQueryWrapper<SysMenu>()
-            .in(SysMenu::getMenuId, menuIds)
-            .notIn(CollUtil.isNotEmpty(parentIds), SysMenu::getMenuId, parentIds), Convert::toLong);*/
-        return null
+    override fun selectMenuListByRoleId(roleId: Long): MutableList<Long> {
+        val role: SysRole? = roleMapper.selectOneById(roleId)
+        return baseMapper.selectMenuListByRoleId(roleId, role?.menuCheckStrictly!!)
     }
 
     /**
@@ -165,8 +150,8 @@ class SysMenuServiceImpl(
      * @param menus 菜单列表
      * @return 路由列表
      */
-    override fun buildMenus(menus: MutableList<SysMenu>): MutableList<RouterVo>? {
-        val routers: MutableList<RouterVo> = LinkedList()
+    override fun buildMenus(menus: MutableList<SysMenu>): MutableList<RouterVo> {
+        val routers: MutableList<RouterVo> = mutableListOf()
         for (menu in menus) {
             val router = RouterVo()
             router.hidden = "1" == menu.visible
@@ -174,24 +159,35 @@ class SysMenuServiceImpl(
             router.path = menu.routerPath
             router.component = menu.componentInfo
             router.query = menu.queryParam
-            router.meta = MetaVo(menu.menuName!!, menu.icon!!, StringUtils.equals("1", menu.isCache), menu.path)
-            val cMenus = menu.children
+            router.meta = MetaVo(
+                menu.menuName!!,
+                menu.icon!!,
+                StringUtils.equals("1", menu.isCache),
+                menu.path
+            )
+
+            val cMenus: MutableList<SysMenu> = menu.children
             if (CollUtil.isNotEmpty(cMenus) && UserConstants.TYPE_DIR == menu.menuType) {
                 router.alwaysShow = true
                 router.redirect = "noRedirect"
                 router.children = buildMenus(cMenus)
             } else if (menu.isMenuFrame) {
                 router.meta = null
-                val childrenList: MutableList<RouterVo> = ArrayList()
+                val childrenList: MutableList<RouterVo> = mutableListOf()
                 val children = RouterVo()
                 children.path = menu.path
                 children.component = menu.component
                 children.name = StringUtils.capitalize(menu.path)
-                children.meta = MetaVo(menu.menuName!!, menu.icon!!, StringUtils.equals("1", menu.isCache), menu.path)
+                children.meta = MetaVo(
+                        menu.menuName!!,
+                        menu.icon!!,
+                        StringUtils.equals("1", menu.isCache),
+                        menu.path
+                    )
                 children.query = menu.queryParam
                 childrenList.add(children)
                 router.children = childrenList
-            } else if (menu.parentId == 0.toLong() && menu.isInnerLink) {
+            } else if (menu.parentId?.toInt() == 0 && menu.isInnerLink) {
                 router.meta = MetaVo(menu.menuName!!, menu.icon!!)
                 router.path = "/"
                 val childrenList: MutableList<RouterVo> = ArrayList()
@@ -215,15 +211,15 @@ class SysMenuServiceImpl(
      * @param menus 菜单列表
      * @return 下拉树结构列表
      */
-    override fun buildMenuTreeSelect(menus: MutableList<SysMenuVo>): MutableList<Tree<Long>>? {
+    override fun buildMenuTreeSelect(menus: MutableList<SysMenuVo>): MutableList<Tree<Long>> {
         return if (CollUtil.isEmpty(menus)) {
             CollUtil.newArrayList()
-        } else build(menus) { menu: SysMenuVo, tree: Tree<Long> ->
+        } else build(menus) { menu, tree ->
             tree.setId(menu.menuId)
                 .setParentId(menu.parentId)
                 .setName(menu.menuName)
                 .setWeight(menu.orderNum)
-        }?.toMutableList()
+        }
     }
 
     /**
@@ -233,7 +229,7 @@ class SysMenuServiceImpl(
      * @return 菜单信息
      */
     override fun selectMenuById(menuId: Long): SysMenuVo? {
-        return baseMapper.selectVoById(menuId)!!
+        return baseMapper.selectOneWithRelationsByIdAs(menuId, SysMenuVo::class.java)
     }
 
     /**
@@ -243,8 +239,9 @@ class SysMenuServiceImpl(
      * @return 结果
      */
     override fun hasChildByMenuId(menuId: Long): Boolean {
-        /*return baseMapper.exists(new LambdaQueryWrapper<SysMenu>().eq(SysMenu::getParentId, menuId));*/
-        return false
+        return baseMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_MENU).where(SYS_MENU.PARENT_ID.eq(menuId))
+        ) > 0
     }
 
     /**
@@ -254,8 +251,9 @@ class SysMenuServiceImpl(
      * @return 结果
      */
     override fun checkMenuExistRole(menuId: Long): Boolean {
-        /*return roleMenuMapper.exists(new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getMenuId, menuId));*/
-        return false
+        return baseMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_ROLE_MENU).where(SYS_ROLE_MENU.MENU_ID.eq(menuId))
+        ) > 0
     }
 
     /**
@@ -265,8 +263,8 @@ class SysMenuServiceImpl(
      * @return 结果
      */
     override fun insertMenu(bo: SysMenuBo): Int {
-        val menu = convert(bo, SysMenu::class.java)!!
-        return baseMapper.insert(menu)
+        val menu: SysMenu? = convert(bo, SysMenu::class.java)
+        return baseMapper.insert(menu, true)
     }
 
     /**
@@ -276,9 +274,8 @@ class SysMenuServiceImpl(
      * @return 结果
      */
     override fun updateMenu(bo: SysMenuBo): Int {
-        /*SysMenu menu = MapstructUtils.convert(bo, SysMenu.class);
-        return baseMapper.updateById(menu);*/
-        return 0
+        val menu: SysMenu? = convert(bo, SysMenu::class.java)
+        return baseMapper.update(menu)
     }
 
     /**
@@ -298,12 +295,11 @@ class SysMenuServiceImpl(
      * @return 结果
      */
     override fun checkMenuNameUnique(menu: SysMenuBo): Boolean {
-        /*boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysMenu>()
-            .eq(SysMenu::getMenuName, menu.getMenuName())
-            .eq(SysMenu::getParentId, menu.getParentId())
-            .ne(ObjectUtil.isNotNull(menu.getMenuId()), SysMenu::getMenuId, menu.getMenuId()));
-        return !exist;*/
-        return false
+        return baseMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_MENU).where(SYS_MENU.MENU_NAME.eq(menu.menuName))
+                .and(SYS_MENU.PARENT_ID.eq(menu.parentId))
+                .and(SYS_MENU.MENU_ID.ne(menu.menuId))
+        ) == 0.toLong()
     }
 
     /**
@@ -330,11 +326,15 @@ class SysMenuServiceImpl(
      */
     private fun recursionFn(list: MutableList<SysMenu>, t: SysMenu) {
         // 得到子节点列表
-        val childList = filter(list, Predicate { n: SysMenu -> n.parentId == t.menuId })
+        val childList: MutableList<SysMenu> = filter(list) { n ->
+            n.parentId?.equals(t.menuId)!!
+        }
         t.children = childList
         for (tChild in childList) {
             // 判断是否有子节点
-            if (list.stream().anyMatch { n: SysMenu -> n.parentId == tChild.menuId }) {
+            if (list.stream().anyMatch { n: SysMenu ->
+                    n.parentId?.equals(tChild.menuId)!!
+                }) {
                 recursionFn(list, tChild)
             }
         }

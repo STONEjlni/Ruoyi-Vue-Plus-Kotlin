@@ -15,12 +15,12 @@ interface ISysSocialService {
     /**
      * 查询社会化关系列表
      */
-    fun queryList(): MutableList<SysSocialVo>?
+    fun queryList(): MutableList<SysSocialVo>
 
     /**
      * 查询社会化关系列表
      */
-    fun queryListByUserId(userId: Long): MutableList<SysSocialVo>?
+    fun queryListByUserId(userId: Long): MutableList<SysSocialVo>
 
     /**
      * 新增授权关系

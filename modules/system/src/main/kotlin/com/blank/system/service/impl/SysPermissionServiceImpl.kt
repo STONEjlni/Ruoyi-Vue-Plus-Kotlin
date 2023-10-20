@@ -20,16 +20,16 @@ class SysPermissionServiceImpl(
     /**
      * 获取角色数据权限
      *
-     * @param userId 用户id
+     * @param userId  用户id
      * @return 角色权限信息
      */
-    override fun getRolePermission(userId: Long): MutableSet<String>? {
-        val roles: MutableSet<String> = HashSet()
+    override fun getRolePermission(userId: Long): MutableSet<String> {
+        val roles: MutableSet<String> = mutableSetOf()
         // 管理员拥有所有权限
         if (isSuperAdmin(userId)) {
             roles.add(UserConstants.SUPER_ADMIN_ROLE_KEY)
         } else {
-            roles.addAll(roleService.selectRolePermissionByUserId(userId)!!)
+            roles.addAll(roleService.selectRolePermissionByUserId(userId))
         }
         return roles
     }
@@ -37,16 +37,16 @@ class SysPermissionServiceImpl(
     /**
      * 获取菜单数据权限
      *
-     * @param userId 用户id
+     * @param userId  用户id
      * @return 菜单权限信息
      */
-    override fun getMenuPermission(userId: Long): MutableSet<String>? {
-        val perms: MutableSet<String> = HashSet()
+    override fun getMenuPermission(userId: Long): MutableSet<String> {
+        val perms: MutableSet<String> = mutableSetOf()
         // 管理员拥有所有权限
         if (isSuperAdmin(userId)) {
             perms.add("*:*:*")
         } else {
-            perms.addAll(menuService.selectMenuPermsByUserId(userId)!!)
+            perms.addAll(menuService.selectMenuPermsByUserId(userId))
         }
         return perms
     }

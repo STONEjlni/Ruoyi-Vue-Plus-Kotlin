@@ -39,7 +39,7 @@ class SysMenuController(
      */
     @GetMapping("/getRouters")
     fun getRouters(): R<MutableList<RouterVo>> {
-        val menus = menuService.selectMenuTreeByUserId(getUserId()!!)!!
+        val menus = menuService.selectMenuTreeByUserId(getUserId()!!)
         return ok(data = menuService.buildMenus(menus))
     }
 
@@ -72,7 +72,7 @@ class SysMenuController(
     @SaCheckPermission("system:menu:query")
     @GetMapping("/treeselect")
     fun treeselect(menu: SysMenuBo): R<MutableList<Tree<Long>>> {
-        val menus = menuService.selectMenuList(menu, getUserId()!!)!!
+        val menus = menuService.selectMenuList(menu, getUserId()!!)
         return ok(data = menuService.buildMenuTreeSelect(menus))
     }
 
@@ -84,25 +84,9 @@ class SysMenuController(
     @SaCheckPermission("system:menu:query")
     @GetMapping(value = ["/roleMenuTreeselect/{roleId}"])
     fun roleMenuTreeselect(@PathVariable("roleId") roleId: Long): R<MenuTreeSelectVo> {
-        val menus = menuService.selectMenuList(getUserId()!!)!!
+        val menus = menuService.selectMenuList(getUserId()!!)
         val selectVo = MenuTreeSelectVo()
         selectVo.checkedKeys = menuService.selectMenuListByRoleId(roleId)
-        selectVo.menus = menuService.buildMenuTreeSelect(menus)
-        return ok(data = selectVo)
-    }
-
-    /**
-     * 加载对应租户套餐菜单列表树
-     *
-     * @param packageId 租户套餐ID
-     */
-    @SaCheckRole(UserConstants.SUPER_ADMIN_ROLE_KEY)
-    @SaCheckPermission("system:menu:query")
-    @GetMapping(value = ["/tenantPackageMenuTreeselect/{packageId}"])
-    fun tenantPackageMenuTreeselect(@PathVariable("packageId") packageId: Long): R<MenuTreeSelectVo> {
-        val menus = menuService.selectMenuList(getUserId()!!)!!
-        val selectVo = MenuTreeSelectVo()
-        selectVo.checkedKeys = menuService.selectMenuListByPackageId(packageId)
         selectVo.menus = menuService.buildMenuTreeSelect(menus)
         return ok(data = selectVo)
     }

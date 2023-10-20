@@ -23,12 +23,12 @@ interface ISysClientService {
     /**
      * 查询客户端管理列表
      */
-    fun queryPageList(bo: SysClientBo, pageQuery: PageQuery): TableDataInfo<SysClientVo>?
+    fun queryPageList(bo: SysClientBo, pageQuery: PageQuery): TableDataInfo<SysClientVo>
 
     /**
      * 查询客户端管理列表
      */
-    fun queryList(bo: SysClientBo): MutableList<SysClientVo>?
+    fun queryList(bo: SysClientBo): MutableList<SysClientVo>
 
     /**
      * 新增客户端管理
@@ -43,7 +43,7 @@ interface ISysClientService {
     /**
      * 修改状态
      */
-    fun updateUserStatus(id: Long, status: String): Int
+    fun updateUserStatus(id: Long, status: String): Boolean
 
     /**
      * 校验并批量删除客户端管理信息

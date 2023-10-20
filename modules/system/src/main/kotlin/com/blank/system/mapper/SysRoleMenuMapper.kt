@@ -6,4 +6,4 @@ import com.blank.system.domain.SysRoleMenu
 /**
  * 角色与菜单关联表 数据层
  */
-interface SysRoleMenuMapper : BaseMapperPlus<SysRoleMenu, SysRoleMenu>
+interface SysRoleMenuMapper : BaseMapperPlus<SysRoleMenu>

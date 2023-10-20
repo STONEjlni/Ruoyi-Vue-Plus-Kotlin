@@ -9,7 +9,7 @@ import com.blank.system.domain.vo.SysOperLogVo
  * 操作日志 服务层
  */
 interface ISysOperLogService {
-    fun selectPageOperLogList(operLog: SysOperLogBo, pageQuery: PageQuery): TableDataInfo<SysOperLogVo>?
+    fun selectPageOperLogList(operLog: SysOperLogBo, pageQuery: PageQuery): TableDataInfo<SysOperLogVo>
 
     /**
      * 新增操作日志
@@ -24,7 +24,7 @@ interface ISysOperLogService {
      * @param operLog 操作日志对象
      * @return 操作日志集合
      */
-    fun selectOperLogList(operLog: SysOperLogBo): MutableList<SysOperLogVo>?
+    fun selectOperLogList(operLog: SysOperLogBo): MutableList<SysOperLogVo>
 
     /**
      * 批量删除系统操作日志

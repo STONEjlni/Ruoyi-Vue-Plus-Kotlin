@@ -9,7 +9,7 @@ import com.blank.system.domain.vo.SysNoticeVo
  * 公告 服务层
  */
 interface ISysNoticeService {
-    fun selectPageNoticeList(notice: SysNoticeBo, pageQuery: PageQuery): TableDataInfo<SysNoticeVo>?
+    fun selectPageNoticeList(notice: SysNoticeBo, pageQuery: PageQuery): TableDataInfo<SysNoticeVo>
 
     /**
      * 查询公告信息
@@ -25,7 +25,7 @@ interface ISysNoticeService {
      * @param notice 公告信息
      * @return 公告集合
      */
-    fun selectNoticeList(notice: SysNoticeBo): MutableList<SysNoticeVo>?
+    fun selectNoticeList(notice: SysNoticeBo): MutableList<SysNoticeVo>
 
     /**
      * 新增公告

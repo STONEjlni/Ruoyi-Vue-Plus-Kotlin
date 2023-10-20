@@ -1,6 +1,5 @@
 package com.blank.common.core.utils
 
-import cn.hutool.core.collection.CollUtil
 import cn.hutool.core.lang.tree.Tree
 import cn.hutool.core.lang.tree.TreeNodeConfig
 import cn.hutool.core.lang.tree.TreeUtil
@@ -16,10 +15,10 @@ object TreeBuildUtils {
      */
     private val DEFAULT_CONFIG = TreeNodeConfig.DEFAULT_CONFIG.setNameKey("label")
 
-    fun <T, K> build(list: List<T>, nodeParser: NodeParser<T, K>): List<Tree<K>>? {
-        if (CollUtil.isEmpty(list)) {
+    fun <T, K> build(list: MutableList<T>, nodeParser: NodeParser<T, K>): MutableList<Tree<K>> {
+        /*if (CollUtil.isEmpty(list)) {
             return null
-        }
+        }*/
         val k = ReflectUtils.invokeGetter<K>(list[0] as Any, "parentId")
         return TreeUtil.build(list, k, DEFAULT_CONFIG, nodeParser)
     }

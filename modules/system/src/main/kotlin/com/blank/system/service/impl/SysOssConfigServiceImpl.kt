@@ -1,19 +1,28 @@
 package com.blank.system.service.impl
 
+import cn.hutool.core.collection.CollUtil
+import cn.hutool.core.util.ObjectUtil
 import com.blank.common.core.annotation.Slf4j
 import com.blank.common.core.constant.CacheNames
 import com.blank.common.core.exception.ServiceException
 import com.blank.common.core.utils.MapstructUtils
+import com.blank.common.core.utils.StreamUtils
 import com.blank.common.json.utils.JsonUtils.toJsonString
 import com.blank.common.mybatis.core.page.PageQuery
 import com.blank.common.mybatis.core.page.TableDataInfo
+import com.blank.common.oss.constant.OssConstant
+import com.blank.common.redis.utils.CacheUtils
 import com.blank.common.redis.utils.CacheUtils.put
+import com.blank.common.redis.utils.RedisUtils
 import com.blank.system.domain.SysOssConfig
 import com.blank.system.domain.bo.SysOssConfigBo
+import com.blank.system.domain.table.SysOssConfigDef.SYS_OSS_CONFIG
 import com.blank.system.domain.vo.SysOssConfigVo
 import com.blank.system.mapper.SysOssConfigMapper
 import com.blank.system.service.ISysOssConfigService
 import com.mybatisflex.core.query.QueryWrapper
+import com.mybatisflex.core.update.UpdateChain
+import com.mybatisflex.core.update.UpdateWrapper
 import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,58 +36,52 @@ class SysOssConfigServiceImpl(
     private val baseMapper: SysOssConfigMapper
 ) : ISysOssConfigService {
 
-
     /**
      * 项目启动时，初始化参数到缓存，加载配置类
      */
     override fun init() {
-        /*List<SysOssConfig> list = TenantHelper.ignore(() ->
-            baseMapper.selectList(
-                new LambdaQueryWrapper<SysOssConfig>().orderByAsc(TenantEntity::getTenantId))
-        );
-        Map<String, List<SysOssConfig>> map = StreamUtils.groupByKey(list, SysOssConfig::getTenantId);
-        try {
-            for (String tenantId : map.keySet()) {
-                TenantHelper.setDynamic(tenantId);
-                // 加载OSS初始化配置
-                for (SysOssConfig config : map.get(tenantId)) {
-                    String configKey = config.getConfigKey();
-                    if ("0".equals(config.getStatus())) {
-                        RedisUtils.setCacheObject(OssConstant.DEFAULT_CONFIG_KEY, configKey);
-                    }
-                    CacheUtils.put(CacheNames.SYS_OSS_CONFIG, config.getConfigKey(), JsonUtils.toJsonString(config));
+        val list: List<SysOssConfig> = baseMapper.selectListByQuery(
+            QueryWrapper.create().from(SYS_OSS_CONFIG)
+        )
+        val map: Map<Long?, List<SysOssConfig>> = StreamUtils.groupByKey(list, SysOssConfig::ossConfigId)
+        for (ossConfigId in map.keys) {
+            // 加载OSS初始化配置
+            for (config in map[ossConfigId]!!) {
+                val configKey: String = config.configKey!!
+                if ("0" == config.status) {
+                    RedisUtils.setCacheObject(OssConstant.DEFAULT_CONFIG_KEY, configKey)
                 }
+                put(CacheNames.SYS_OSS_CONFIG, config.configKey, toJsonString(config))
             }
-        } finally {
-            TenantHelper.clearDynamic();
-        }*/
+        }
     }
 
-    override fun queryById(ossConfigId: Long): SysOssConfigVo? {
-        return baseMapper.selectVoById(ossConfigId)
+    override fun queryById(ossConfigId: Long): SysOssConfigVo {
+        return baseMapper.selectOneWithRelationsByIdAs(ossConfigId, SysOssConfigVo::class.java)
     }
 
-    override fun queryPageList(bo: SysOssConfigBo, pageQuery: PageQuery): TableDataInfo<SysOssConfigVo>? {
-        /*LambdaQueryWrapper<SysOssConfig> lqw = buildQueryWrapper(bo);
-        Page<SysOssConfigVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
-        return TableDataInfo.build(result);*/
-        return null
+    override fun queryPageList(bo: SysOssConfigBo, pageQuery: PageQuery): TableDataInfo<SysOssConfigVo> {
+        val lqw = buildQueryWrapper(bo)
+        val result = baseMapper.paginateAs(
+            pageQuery, lqw,
+            SysOssConfigVo::class.java
+        )
+        return TableDataInfo.build(result)
     }
 
-    private fun  /*<SysOssConfig>*/buildQueryWrapper(bo: SysOssConfigBo): QueryWrapper? {
-        /*LambdaQueryWrapper<SysOssConfig> lqw = Wrappers.lambdaQuery();
-        lqw.eq(StrUtil.isNotBlank(bo.getConfigKey()), SysOssConfig::getConfigKey, bo.getConfigKey());
-        lqw.like(StrUtil.isNotBlank(bo.getBucketName()), SysOssConfig::getBucketName, bo.getBucketName());
-        lqw.eq(StrUtil.isNotBlank(bo.getStatus()), SysOssConfig::getStatus, bo.getStatus());
-        lqw.orderByAsc(SysOssConfig::getOssConfigId);
-        return lqw;*/
-        return null
+
+    private fun buildQueryWrapper(bo: SysOssConfigBo): QueryWrapper {
+        return QueryWrapper.create().from(SYS_OSS_CONFIG)
+            .where(SYS_OSS_CONFIG.CONFIG_KEY.eq(bo.configKey))
+            .and(SYS_OSS_CONFIG.BUCKET_NAME.like(bo.bucketName))
+            .and(SYS_OSS_CONFIG.STATUS.eq(bo.status))
+            .orderBy(SYS_OSS_CONFIG.OSS_CONFIG_ID, true)
     }
 
     override fun insertByBo(bo: SysOssConfigBo): Boolean {
         var config = MapstructUtils.convert(bo, SysOssConfig::class.java)!!
         validEntityBeforeSave(config)
-        val flag = baseMapper.insert(config) > 0
+        val flag = baseMapper.insert(config, true) > 0
         if (flag) {
             // 从数据库查询完整的数据做缓存
             config = baseMapper.selectOneById(config.ossConfigId)
@@ -90,20 +93,19 @@ class SysOssConfigServiceImpl(
     override fun updateByBo(bo: SysOssConfigBo): Boolean {
         var config = MapstructUtils.convert(bo, SysOssConfig::class.java)!!
         validEntityBeforeSave(config)
-        /*LambdaUpdateWrapper<SysOssConfig> luw = new LambdaUpdateWrapper<>();
-        luw.set(ObjectUtil.isNull(config.getPrefix()), SysOssConfig::getPrefix, "");
-        luw.set(ObjectUtil.isNull(config.getRegion()), SysOssConfig::getRegion, "");
-        luw.set(ObjectUtil.isNull(config.getExt1()), SysOssConfig::getExt1, "");
-        luw.set(ObjectUtil.isNull(config.getRemark()), SysOssConfig::getRemark, "");
-        luw.eq(SysOssConfig::getOssConfigId, config.getOssConfigId());
-        boolean flag = baseMapper.update(config, luw) > 0;
-        if (flag) {
+        val update: Boolean = UpdateChain.of(SysOssConfig::class.java)
+            .set(SysOssConfig::prefix, "", ObjectUtil.isNull(config.prefix))
+            .set(SysOssConfig::region, "", ObjectUtil.isNull(config.region))
+            .set(SysOssConfig::ext1, "", ObjectUtil.isNull(config.ext1))
+            .set(SysOssConfig::remark, "", ObjectUtil.isNull(config.remark))
+            .where(SysOssConfig::ossConfigId).eq(config.ossConfigId)
+            .update()
+        if (update) {
             // 从数据库查询完整的数据做缓存
             config = baseMapper.selectOneById(config.ossConfigId)
-            CacheUtils.put(CacheNames.SYS_OSS_CONFIG, config.getConfigKey(), JsonUtils.toJsonString(config));
+            put(CacheNames.SYS_OSS_CONFIG, config.configKey, toJsonString(config))
         }
-        return flag*/
-        return false
+        return update
     }
 
     /**
@@ -113,43 +115,44 @@ class SysOssConfigServiceImpl(
         if (StringUtils.isNotEmpty(entity.configKey)
             && !checkConfigKeyUnique(entity)
         ) {
-            throw ServiceException("操作配置'" + entity.configKey + "'失败, 配置key已存在!")
+            throw ServiceException("操作配置'${entity.configKey}'失败, 配置key已存在!")
         }
     }
 
     override fun deleteWithValidByIds(ids: MutableCollection<Long>, isValid: Boolean): Boolean {
-        /*if (isValid) {
+        if (isValid) {
             if (CollUtil.containsAny(ids, OssConstant.SYSTEM_DATA_IDS)) {
-                throw new ServiceException("系统内置, 不可删除!");
+                throw ServiceException("系统内置, 不可删除!")
             }
         }
-        List<SysOssConfig> list = CollUtil.newArrayList();
-        for (Long configId : ids) {
-            SysOssConfig config = baseMapper.selectById(configId);
-            list.add(config);
+        val list: MutableList<SysOssConfig> = CollUtil.newArrayList()
+        for (configId in ids) {
+            val config = baseMapper.selectOneById(configId)
+            list.add(config)
         }
-        boolean flag = baseMapper.deleteBatchIds(ids) > 0;
+        val flag = baseMapper.deleteBatchByIds(ids) > 0
         if (flag) {
-            list.forEach(sysOssConfig ->
-                CacheUtils.evict(CacheNames.SYS_OSS_CONFIG, sysOssConfig.getConfigKey()));
+            list.forEach { sysOssConfig: SysOssConfig ->
+                CacheUtils.evict(
+                    CacheNames.SYS_OSS_CONFIG,
+                    sysOssConfig.configKey
+                )
+            }
         }
-        return flag;*/
-        return false
+        return flag
     }
 
     /**
      * 判断configKey是否唯一
      */
     private fun checkConfigKeyUnique(sysOssConfig: SysOssConfig): Boolean {
-        /*long ossConfigId = ObjectUtil.isNull(sysOssConfig.getOssConfigId()) ? -1L : sysOssConfig.getOssConfigId();
-        SysOssConfig info = baseMapper.selectOne(new LambdaQueryWrapper<SysOssConfig>()
-            .select(SysOssConfig::getOssConfigId, SysOssConfig::getConfigKey)
-            .eq(SysOssConfig::getConfigKey, sysOssConfig.getConfigKey()));
-        if (ObjectUtil.isNotNull(info) && info.getOssConfigId() != ossConfigId) {
-            return false;
-        }
-        return true;*/
-        return false
+        val ossConfigId = if (ObjectUtil.isNull(sysOssConfig.ossConfigId)) -1L else sysOssConfig.ossConfigId
+        val info = baseMapper.selectOneByQuery(
+            QueryWrapper.create().select(SYS_OSS_CONFIG.OSS_CONFIG_ID, SYS_OSS_CONFIG.CONFIG_KEY)
+                .from(SYS_OSS_CONFIG)
+                .where(SYS_OSS_CONFIG.CONFIG_KEY.eq(sysOssConfig.configKey))
+        )
+        return !(ObjectUtil.isNotNull(info) && info.ossConfigId !== ossConfigId)
     }
 
     /**
@@ -157,14 +160,16 @@ class SysOssConfigServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun updateOssConfigStatus(bo: SysOssConfigBo): Int {
-        /*SysOssConfig sysOssConfig = MapstructUtils.convert(bo, SysOssConfig.class);
-        int row = baseMapper.update(null, new LambdaUpdateWrapper<SysOssConfig>()
-            .set(SysOssConfig::getStatus, "1"));
-        row += baseMapper.updateById(sysOssConfig);
+        val sysOssConfig = MapstructUtils.convert(bo, SysOssConfig::class.java)!!
+        //        todo
+        var row = baseMapper.update(
+            UpdateWrapper.of(SysOssConfig::class.java).set(SysOssConfig::status, "1").toEntity()
+        )
+        row += baseMapper.update(sysOssConfig)
         if (row > 0) {
-            RedisUtils.setCacheObject(OssConstant.DEFAULT_CONFIG_KEY, sysOssConfig.getConfigKey());
+            RedisUtils.setCacheObject(OssConstant.DEFAULT_CONFIG_KEY, sysOssConfig.configKey)
         }
-        return row;*/
-        return 0
+        return row
     }
+
 }

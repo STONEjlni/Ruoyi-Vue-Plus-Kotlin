@@ -47,8 +47,8 @@ class GenController(
     @GetMapping(value = ["/{tableId}"])
     fun getInfo(@PathVariable tableId: Long): R<Map<String, Any>> {
         val table = genTableService.selectGenTableById(tableId)!!
-        val tables = genTableService.selectGenTableAll()!!
-        val list = genTableService.selectGenTableColumnListByTableId(tableId)!!
+        val tables = genTableService.selectGenTableAll()
+        val list = genTableService.selectGenTableColumnListByTableId(tableId)
         val map: MutableMap<String, Any> = mutableMapOf()
         map["info"] = table
         map["rows"] = list
@@ -74,7 +74,7 @@ class GenController(
     @GetMapping(value = ["/column/{tableId}"])
     fun columnList(tableId: Long): TableDataInfo<GenTableColumn>? {
         val dataInfo = TableDataInfo<GenTableColumn>()
-        val list = genTableService.selectGenTableColumnListByTableId(tableId)!!
+        val list = genTableService.selectGenTableColumnListByTableId(tableId)
         dataInfo.rows = list
         dataInfo.total = list.size.toLong()
         return dataInfo
@@ -91,7 +91,7 @@ class GenController(
     fun importTableSave(tables: String, dataName: String): R<Void> {
         val tableNames = Convert.toStrArray(tables)
         // 查询表信息
-        val tableList = genTableService.selectDbTableListByNames(tableNames, dataName)!!
+        val tableList = genTableService.selectDbTableListByNames(tableNames, dataName)
         genTableService.importGenTable(tableList, dataName)
         return ok()
     }
@@ -148,8 +148,8 @@ class GenController(
         IOException::class
     )
     fun download(response: HttpServletResponse, @PathVariable("tableId") tableId: Long) {
-        val data = genTableService.downloadCode(tableId)!!
-        genCode(response, data)
+        val `data` = genTableService.downloadCode(tableId)!!
+        genCode(response, `data`)
     }
 
     /**
@@ -191,8 +191,8 @@ class GenController(
     )
     fun batchGenCode(response: HttpServletResponse, tableIdStr: String) {
         val tableIds = Convert.toStrArray(tableIdStr)
-        val data = genTableService.downloadCode(tableIds)!!
-        genCode(response, data)
+        val `data` = genTableService.downloadCode(tableIds)!!
+        genCode(response, `data`)
     }
 
     /**
@@ -204,7 +204,7 @@ class GenController(
         response.addHeader("Access-Control-Allow-Origin", "*")
         response.addHeader("Access-Control-Expose-Headers", "Content-Disposition")
         response.setHeader("Content-Disposition", "attachment; filename=\"blank.zip\"")
-        response.addHeader("Content-Length", "" + data.size)
+        response.addHeader("Content-Length", "${data.size}")
         response.contentType = "application/octet-stream; charset=UTF-8"
         IoUtil.write(response.outputStream, false, data)
     }

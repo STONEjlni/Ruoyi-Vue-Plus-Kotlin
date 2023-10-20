@@ -16,7 +16,7 @@ interface ISysMenuService {
      * @param userId 用户ID
      * @return 菜单列表
      */
-    fun selectMenuList(userId: Long): MutableList<SysMenuVo>?
+    fun selectMenuList(userId: Long): MutableList<SysMenuVo>
 
     /**
      * 根据用户查询系统菜单列表
@@ -25,7 +25,7 @@ interface ISysMenuService {
      * @param userId 用户ID
      * @return 菜单列表
      */
-    fun selectMenuList(menu: SysMenuBo, userId: Long): MutableList<SysMenuVo>?
+    fun selectMenuList(menu: SysMenuBo, userId: Long): MutableList<SysMenuVo>
 
     /**
      * 根据用户ID查询权限
@@ -33,7 +33,7 @@ interface ISysMenuService {
      * @param userId 用户ID
      * @return 权限列表
      */
-    fun selectMenuPermsByUserId(userId: Long): MutableSet<String>?
+    fun selectMenuPermsByUserId(userId: Long): MutableSet<String>
 
     /**
      * 根据角色ID查询权限
@@ -41,7 +41,7 @@ interface ISysMenuService {
      * @param roleId 角色ID
      * @return 权限列表
      */
-    fun selectMenuPermsByRoleId(roleId: Long): MutableSet<String>?
+    fun selectMenuPermsByRoleId(roleId: Long): MutableSet<String>
 
     /**
      * 根据用户ID查询菜单树信息
@@ -49,7 +49,7 @@ interface ISysMenuService {
      * @param userId 用户ID
      * @return 菜单列表
      */
-    fun selectMenuTreeByUserId(userId: Long): MutableList<SysMenu>?
+    fun selectMenuTreeByUserId(userId: Long): MutableList<SysMenu>
 
     /**
      * 根据角色ID查询菜单树信息
@@ -57,15 +57,7 @@ interface ISysMenuService {
      * @param roleId 角色ID
      * @return 选中菜单列表
      */
-    fun selectMenuListByRoleId(roleId: Long): MutableList<Long>?
-
-    /**
-     * 根据租户套餐ID查询菜单树信息
-     *
-     * @param packageId 租户套餐ID
-     * @return 选中菜单列表
-     */
-    fun selectMenuListByPackageId(packageId: Long): MutableList<Long>?
+    fun selectMenuListByRoleId(roleId: Long): MutableList<Long>
 
     /**
      * 构建前端路由所需要的菜单
@@ -73,7 +65,7 @@ interface ISysMenuService {
      * @param menus 菜单列表
      * @return 路由列表
      */
-    fun buildMenus(menus: MutableList<SysMenu>): MutableList<RouterVo>?
+    fun buildMenus(menus: MutableList<SysMenu>): MutableList<RouterVo>
 
     /**
      * 构建前端所需要下拉树结构
@@ -81,7 +73,7 @@ interface ISysMenuService {
      * @param menus 菜单列表
      * @return 下拉树结构列表
      */
-    fun buildMenuTreeSelect(menus: MutableList<SysMenuVo>): MutableList<Tree<Long>>?
+    fun buildMenuTreeSelect(menus: MutableList<SysMenuVo>): MutableList<Tree<Long>>
 
     /**
      * 根据菜单ID查询信息

@@ -22,7 +22,7 @@ interface ISysOssConfigService {
     /**
      * 查询列表
      */
-    fun queryPageList(bo: SysOssConfigBo, pageQuery: PageQuery): TableDataInfo<SysOssConfigVo>?
+    fun queryPageList(bo: SysOssConfigBo, pageQuery: PageQuery): TableDataInfo<SysOssConfigVo>
 
     /**
      * 根据新增业务对象插入对象存储配置

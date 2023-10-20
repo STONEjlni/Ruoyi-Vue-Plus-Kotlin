@@ -12,15 +12,18 @@ import com.blank.common.core.utils.SpringUtilExtend.getAopProxy
 import com.blank.common.core.utils.StreamUtils.toMap
 import com.blank.common.mybatis.core.page.PageQuery
 import com.blank.common.mybatis.core.page.TableDataInfo
-import com.blank.common.redis.utils.CacheUtils.clear
+import com.blank.common.redis.utils.CacheUtils
+import com.blank.system.domain.SysDictData
 import com.blank.system.domain.SysDictType
 import com.blank.system.domain.bo.SysDictTypeBo
+import com.blank.system.domain.table.SysDictTypeDef.SYS_DICT_TYPE
 import com.blank.system.domain.vo.SysDictDataVo
 import com.blank.system.domain.vo.SysDictTypeVo
 import com.blank.system.mapper.SysDictDataMapper
 import com.blank.system.mapper.SysDictTypeMapper
 import com.blank.system.service.ISysDictTypeService
 import com.mybatisflex.core.query.QueryWrapper
+import com.mybatisflex.core.update.UpdateChain
 import org.apache.commons.lang3.StringUtils
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
@@ -38,11 +41,10 @@ class SysDictTypeServiceImpl(
     private val dictDataMapper: SysDictDataMapper
 ) : ISysDictTypeService, DictService {
 
-    override fun selectPageDictTypeList(dictType: SysDictTypeBo, pageQuery: PageQuery): TableDataInfo<SysDictTypeVo>? {
-        /*LambdaQueryWrapper<SysDictType> lqw = buildQueryWrapper(dictType);
-        Page<SysDictTypeVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
-        return TableDataInfo.build(page);*/
-        return null
+    override fun selectPageDictTypeList(dictType: SysDictTypeBo, pageQuery: PageQuery): TableDataInfo<SysDictTypeVo> {
+        val lqw = buildQueryWrapper(dictType)
+        val page = baseMapper.paginateAs(pageQuery, lqw, SysDictTypeVo::class.java)
+        return TableDataInfo.build(page)
     }
 
     /**
@@ -51,22 +53,24 @@ class SysDictTypeServiceImpl(
      * @param dictType 字典类型信息
      * @return 字典类型集合信息
      */
-    override fun selectDictTypeList(dictType: SysDictTypeBo): MutableList<SysDictTypeVo>? {
-        /*LambdaQueryWrapper<SysDictType> lqw = buildQueryWrapper(dictType);
-        return baseMapper.selectVoList(lqw);*/
-        return null
+    override fun selectDictTypeList(dictType: SysDictTypeBo): MutableList<SysDictTypeVo> {
+        val lqw = buildQueryWrapper(dictType)
+        return baseMapper.selectListByQueryAs(lqw, SysDictTypeVo::class.java)
     }
 
-    private fun  /*<SysDictType>*/buildQueryWrapper(bo: SysDictTypeBo): QueryWrapper? {
-        /*Map<String, Object> params = bo.getParams();
-        LambdaQueryWrapper<SysDictType> lqw = Wrappers.lambdaQuery();
-        lqw.like(StrUtil.isNotBlank(bo.getDictName()), SysDictType::getDictName, bo.getDictName());
-        lqw.like(StrUtil.isNotBlank(bo.getDictType()), SysDictType::getDictType, bo.getDictType());
-        lqw.between(params.get("beginTime") != null && params.get("endTime") != null,
-            SysDictType::getCreateTime, params.get("beginTime"), params.get("endTime"));
-        lqw.orderByAsc(SysDictType::getDictId);
-        return lqw;*/
-        return null
+    private fun buildQueryWrapper(bo: SysDictTypeBo): QueryWrapper {
+        val params: Map<String, Any> = bo.params
+        return QueryWrapper.create().from(SYS_DICT_TYPE)
+            .where(SYS_DICT_TYPE.DICT_NAME.like(bo.dictName))
+            .and(SYS_DICT_TYPE.DICT_TYPE.like(bo.dictType))
+            .and(
+                SYS_DICT_TYPE.CREATE_TIME.between(
+                    params["beginTime"],
+                    params["endTime"],
+                    params["beginTime"] != null && params["endTime"] != null
+                )
+            )
+            .orderBy(SYS_DICT_TYPE.DICT_ID, true)
     }
 
     /**
@@ -74,8 +78,8 @@ class SysDictTypeServiceImpl(
      *
      * @return 字典类型集合信息
      */
-    override fun selectDictTypeAll(): MutableList<SysDictTypeVo>? {
-        return baseMapper.selectVoList()
+    override fun selectDictTypeAll(): MutableList<SysDictTypeVo> {
+        return baseMapper.selectListByQueryAs(QueryWrapper(), SysDictTypeVo::class.java)
     }
 
     /**
@@ -86,9 +90,9 @@ class SysDictTypeServiceImpl(
      */
     @Cacheable(cacheNames = [CacheNames.SYS_DICT], key = "#dictType")
     override fun selectDictDataByType(dictType: String): MutableList<SysDictDataVo>? {
-        val dictDatas = dictDataMapper.selectDictDataByType(dictType)
+        val dictDatas: MutableList<SysDictDataVo> = dictDataMapper.selectDictDataByType(dictType)
         return if (CollUtil.isNotEmpty(dictDatas)) {
-            dictDatas?.toMutableList()
+            dictDatas
         } else null
     }
 
@@ -99,7 +103,7 @@ class SysDictTypeServiceImpl(
      * @return 字典类型
      */
     override fun selectDictTypeById(dictId: Long): SysDictTypeVo? {
-        return baseMapper!!.selectVoById(dictId)!!
+        return baseMapper.selectOneWithRelationsByIdAs(dictId, SysDictTypeVo::class.java)
     }
 
     /**
@@ -108,9 +112,11 @@ class SysDictTypeServiceImpl(
      * @param dictType 字典类型
      * @return 字典类型
      */
-    override fun selectDictTypeByType(dictType: String): SysDictTypeVo? {
-        /*return baseMapper.selectVoById(new LambdaQueryWrapper<SysDictType>().eq(SysDictType::getDictType, dictType));*/
-        return null
+    override fun selectDictTypeByType(dictType: String): SysDictTypeVo {
+        return baseMapper.selectOneByQueryAs(
+            QueryWrapper.create().from(SYS_DICT_TYPE).where(SYS_DICT_TYPE.DICT_TYPE.eq(dictType)),
+            SysDictTypeVo::class.java
+        )
     }
 
     /**
@@ -119,22 +125,24 @@ class SysDictTypeServiceImpl(
      * @param dictIds 需要删除的字典ID
      */
     override fun deleteDictTypeByIds(dictIds: Array<Long>) {
-        /*for (Long dictId : dictIds) {
-            SysDictType dictType = baseMapper.selectById(dictId);
-            if (dictDataMapper.exists(new LambdaQueryWrapper<SysDictData>()
-                .eq(SysDictData::getDictType, dictType.getDictType()))) {
-                throw new ServiceException(String.format("%1$s已分配,不能删除", dictType.getDictName()));
+        for (dictId in dictIds) {
+            val dictType = baseMapper.selectOneById(dictId)
+            if (dictDataMapper.selectCountByQuery(
+                    QueryWrapper.create().from(SYS_DICT_TYPE).where(SYS_DICT_TYPE.DICT_TYPE.eq(dictType.dictType))
+                ) > 0
+            ) {
+                throw ServiceException("${dictType.dictName}已分配,不能删除")
             }
-            CacheUtils.evict(CacheNames.SYS_DICT, dictType.getDictType());
+            CacheUtils.evict(CacheNames.SYS_DICT, dictType.dictType)
         }
-        baseMapper.deleteBatchIds(Arrays.asList(dictIds));*/
+        baseMapper.deleteBatchByIds(listOf(*dictIds))
     }
 
     /**
      * 重置字典缓存数据
      */
     override fun resetDictCache() {
-        clear(CacheNames.SYS_DICT)
+        CacheUtils.clear(CacheNames.SYS_DICT)
     }
 
     /**
@@ -144,12 +152,12 @@ class SysDictTypeServiceImpl(
      * @return 结果
      */
     @CachePut(cacheNames = [CacheNames.SYS_DICT], key = "#bo.dictType")
-    override fun insertDictType(bo: SysDictTypeBo): MutableList<SysDictDataVo>? {
-        val dict = convert(bo, SysDictType::class.java)!!
-        val row = baseMapper!!.insert(dict)
+    override fun insertDictType(bo: SysDictTypeBo): MutableList<SysDictDataVo> {
+        val dict: SysDictType? = convert(bo, SysDictType::class.java)
+        val row = baseMapper.insert(dict, true)
         if (row > 0) {
             // 新增 type 下无 data 数据 返回空防止缓存穿透
-            return ArrayList()
+            return mutableListOf()
         }
         throw ServiceException("操作失败")
     }
@@ -162,19 +170,19 @@ class SysDictTypeServiceImpl(
      */
     @CachePut(cacheNames = [CacheNames.SYS_DICT], key = "#bo.dictType")
     @Transactional(rollbackFor = [Exception::class])
-    override fun updateDictType(bo: SysDictTypeBo): MutableList<SysDictDataVo>? {
-        /*SysDictType dict = MapstructUtils.convert(bo, SysDictType.class);
-        SysDictType oldDict = baseMapper.selectById(dict.getDictId());
-        dictDataMapper.update(null, new LambdaUpdateWrapper<SysDictData>()
-            .set(SysDictData::getDictType, dict.getDictType())
-            .eq(SysDictData::getDictType, oldDict.getDictType()));
-        int row = baseMapper.updateById(dict);
+    override fun updateDictType(bo: SysDictTypeBo): MutableList<SysDictDataVo> {
+        val dict: SysDictType = convert(bo, SysDictType::class.java)!!
+        val oldDict = baseMapper.selectOneById(dict.dictId)
+        UpdateChain.of(SysDictData::class.java)
+            .set(SysDictData::dictType, dict.dictType)
+            .where(SysDictData::dictType).eq(oldDict.dictType)
+            .update()
+        val row = baseMapper.update(dict)
         if (row > 0) {
-            CacheUtils.evict(CacheNames.SYS_DICT, oldDict.getDictType());
-            return dictDataMapper.selectDictDataByType(dict.getDictType());
+            CacheUtils.evict(CacheNames.SYS_DICT, oldDict.dictType)
+            return dictDataMapper.selectDictDataByType(dict.dictType!!)
         }
-        throw new ServiceException("操作失败");*/
-        return null
+        throw ServiceException("操作失败")
     }
 
     /**
@@ -184,11 +192,11 @@ class SysDictTypeServiceImpl(
      * @return 结果
      */
     override fun checkDictTypeUnique(dictType: SysDictTypeBo): Boolean {
-        /*boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysDictType>()
-            .eq(SysDictType::getDictType, dictType.getDictType())
-            .ne(ObjectUtil.isNotNull(dictType.getDictId()), SysDictType::getDictId, dictType.getDictId()));
-        return !exist;*/
-        return false
+        val exist = baseMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_DICT_TYPE).where(SYS_DICT_TYPE.DICT_TYPE.eq(dictType.dictType))
+                .and(SYS_DICT_TYPE.DICT_ID.ne(dictType.dictId))
+        ) > 0
+        return !exist
     }
 
     /**
@@ -199,17 +207,21 @@ class SysDictTypeServiceImpl(
      * @param separator 分隔符
      * @return 字典标签
      */
-    override fun getDictLabel(dictType: String, dictValue: String, separator: String): String? {
+    override fun getDictLabel(dictType: String, dictValue: String, separator: String): String {
         // 优先从本地缓存获取
         var datas = SaHolder.getStorage()[CacheConstants.SYS_DICT_KEY + dictType] as MutableList<SysDictDataVo>
         if (ObjectUtil.isNull(datas)) {
             datas = getAopProxy(this).selectDictDataByType(dictType)!!
             SaHolder.getStorage()[CacheConstants.SYS_DICT_KEY + dictType] = datas
         }
-        val map = toMap(datas, { obj: SysDictDataVo -> obj.dictValue }) { obj: SysDictDataVo -> obj.dictLabel }
+        val map: MutableMap<String, String> =
+            toMap(datas, SysDictDataVo::dictValue, SysDictDataVo::dictLabel) as MutableMap<String, String>
         return if (StringUtils.containsAny(dictValue, separator)) {
-            Arrays.stream(dictValue.split(separator).toTypedArray())
-                .map { v: String? -> map[v] ?: StringUtils.EMPTY }
+            Arrays.stream(dictValue.split(separator.toRegex()).dropLastWhile { it.isEmpty() }
+                .toTypedArray())
+                .map { v: String ->
+                    map[v] ?: StringUtils.EMPTY
+                }
                 .collect(Collectors.joining(separator))
         } else {
             map[dictValue] ?: StringUtils.EMPTY
@@ -224,25 +236,29 @@ class SysDictTypeServiceImpl(
      * @param separator 分隔符
      * @return 字典值
      */
-    override fun getDictValue(dictType: String, dictLabel: String, separator: String): String? {
+    override fun getDictValue(dictType: String, dictLabel: String, separator: String): String {
         // 优先从本地缓存获取
         var datas = SaHolder.getStorage()[CacheConstants.SYS_DICT_KEY + dictType] as MutableList<SysDictDataVo>
         if (ObjectUtil.isNull(datas)) {
             datas = getAopProxy(this).selectDictDataByType(dictType)!!
             SaHolder.getStorage()[CacheConstants.SYS_DICT_KEY + dictType] = datas
         }
-        val map = toMap(datas, { obj: SysDictDataVo -> obj.dictLabel }) { obj: SysDictDataVo -> obj.dictValue }
+        val map: MutableMap<String, String> =
+            toMap(datas, SysDictDataVo::dictLabel, SysDictDataVo::dictValue) as MutableMap<String, String>
         return if (StringUtils.containsAny(dictLabel, separator)) {
-            Arrays.stream(dictLabel!!.split(separator).toTypedArray())
-                .map { l: String? -> map[l] ?: StringUtils.EMPTY }
+            Arrays.stream(dictLabel.split(separator.toRegex()).dropLastWhile { it.isEmpty() }
+                .toTypedArray())
+                .map { l: String ->
+                    map[l] ?: StringUtils.EMPTY
+                }
                 .collect(Collectors.joining(separator))
         } else {
             map[dictLabel] ?: StringUtils.EMPTY
         }
     }
 
-    override fun getAllDictByDictType(dictType: String): Map<String, String>? {
+    override fun getAllDictByDictType(dictType: String): MutableMap<String, String>? {
         val list = selectDictDataByType(dictType)!!
-        return toMap(list, { obj: SysDictDataVo -> obj.dictValue!! }) { obj: SysDictDataVo -> obj.dictLabel!! }
+        return toMap(list, SysDictDataVo::dictValue, SysDictDataVo::dictLabel) as MutableMap<String, String>?
     }
 }

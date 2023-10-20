@@ -44,7 +44,6 @@ class SysProfileController(
         val profileVo = ProfileVo()
         profileVo.user = user
         profileVo.roleGroup = userService.selectUserRoleGroup(user.userName!!)
-        profileVo.postGroup = userService.selectUserPostGroup(user.userName!!)
         return ok(data = profileVo)
     }
 
@@ -86,7 +85,7 @@ class SysProfileController(
         if (BCrypt.checkpw(bo.newPassword, password)) {
             return fail(msg = "新密码不能与旧密码相同")
         }
-        return if (userService.resetUserPwd(user.userId!!, BCrypt.hashpw(bo.newPassword)) > 0) {
+        return if (userService.resetUserPwd(user.userId!!, BCrypt.hashpw(bo.newPassword))) {
             ok()
         } else fail(msg = "修改密码异常，请联系管理员")
     }

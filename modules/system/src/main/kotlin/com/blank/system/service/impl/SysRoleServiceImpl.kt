@@ -1,17 +1,28 @@
 package com.blank.system.service.impl
 
+import cn.dev33.satoken.exception.NotLoginException
+import cn.dev33.satoken.stp.StpUtil
+import cn.hutool.core.bean.BeanUtil
 import cn.hutool.core.collection.CollUtil
 import cn.hutool.core.util.ObjectUtil
 import com.blank.common.core.constant.UserConstants
+import com.blank.common.core.domain.model.LoginUser
 import com.blank.common.core.exception.ServiceException
-import com.blank.common.core.utils.MapstructUtils.convert
+import com.blank.common.core.utils.MapstructUtils
+import com.blank.common.core.utils.StreamUtils
 import com.blank.common.core.utils.StringUtilsExtend.splitList
 import com.blank.common.mybatis.core.page.PageQuery
 import com.blank.common.mybatis.core.page.TableDataInfo
-import com.blank.common.satoken.utils.LoginHelper.isSuperAdmin
+import com.blank.common.satoken.utils.LoginHelper
 import com.blank.system.domain.SysRole
+import com.blank.system.domain.SysRoleDept
+import com.blank.system.domain.SysRoleMenu
 import com.blank.system.domain.SysUserRole
 import com.blank.system.domain.bo.SysRoleBo
+import com.blank.system.domain.table.SysRoleDef.SYS_ROLE
+import com.blank.system.domain.table.SysRoleDeptDef.SYS_ROLE_DEPT
+import com.blank.system.domain.table.SysRoleMenuDef.SYS_ROLE_MENU
+import com.blank.system.domain.table.SysUserRoleDef.SYS_USER_ROLE
 import com.blank.system.domain.vo.SysRoleVo
 import com.blank.system.mapper.SysRoleDeptMapper
 import com.blank.system.mapper.SysRoleMapper
@@ -19,6 +30,7 @@ import com.blank.system.mapper.SysRoleMenuMapper
 import com.blank.system.mapper.SysUserRoleMapper
 import com.blank.system.service.ISysRoleService
 import com.mybatisflex.core.query.QueryWrapper
+import com.mybatisflex.core.update.UpdateChain
 import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -34,10 +46,9 @@ class SysRoleServiceImpl(
     private val roleDeptMapper: SysRoleDeptMapper
 ) : ISysRoleService {
 
-    override fun selectPageRoleList(role: SysRoleBo, pageQuery: PageQuery): TableDataInfo<SysRoleVo>? {
-        /*Page<SysRoleVo> page = baseMapper.selectPageRoleList(pageQuery.build(), this.buildQueryWrapper(role));
-        return TableDataInfo.build(page);*/
-        return null
+    override fun selectPageRoleList(role: SysRoleBo, pageQuery: PageQuery): TableDataInfo<SysRoleVo> {
+        val page = baseMapper.selectPageRoleList(pageQuery, buildQueryWrapper(role))
+        return TableDataInfo.build(page)
     }
 
     /**
@@ -46,24 +57,26 @@ class SysRoleServiceImpl(
      * @param role 角色信息
      * @return 角色数据集合信息
      */
-    override fun selectRoleList(role: SysRoleBo): MutableList<SysRoleVo>? {
-        /*return baseMapper.selectRoleList(this.buildQueryWrapper(role));*/
-        return null
+    override fun selectRoleList(role: SysRoleBo): MutableList<SysRoleVo> {
+        return baseMapper.selectRoleList(buildQueryWrapper(role))
     }
 
-    private fun  /*<SysRole>*/buildQueryWrapper(bo: SysRoleBo): QueryWrapper? {
-        /*Map<String, Object> params = bo.getParams();
-        QueryWrapper<SysRole> wrapper = Wrappers.query();
-        wrapper.eq("r.del_flag", UserConstants.ROLE_NORMAL)
-            .eq(ObjectUtil.isNotNull(bo.getRoleId()), "r.role_id", bo.getRoleId())
-            .like(StrUtil.isNotBlank(bo.getRoleName()), "r.role_name", bo.getRoleName())
-            .eq(StrUtil.isNotBlank(bo.getStatus()), "r.status", bo.getStatus())
-            .like(StrUtil.isNotBlank(bo.getRoleKey()), "r.role_key", bo.getRoleKey())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                "r.create_time", params.get("beginTime"), params.get("endTime"))
-            .orderByAsc("r.role_sort").orderByAsc("r.create_time");;
-        return wrapper;*/
-        return null
+    private fun buildQueryWrapper(bo: SysRoleBo): QueryWrapper {
+        val params: Map<String, Any> = bo.params
+        return QueryWrapper.create()
+            .where(SYS_ROLE.ROLE_ID.eq(bo.roleId))
+            .and(SYS_ROLE.ROLE_NAME.like(bo.roleName))
+            .and(SYS_ROLE.STATUS.eq(bo.status))
+            .and(SYS_ROLE.ROLE_KEY.like(bo.roleKey))
+            .and(
+                SYS_ROLE.CREATE_TIME.between(
+                    params["beginTime"],
+                    params["endTime"],
+                    params["beginTime"] != null && params["endTime"] != null
+                )
+            )
+            .orderBy(SYS_ROLE.ROLE_SORT, true)
+            .orderBy(SYS_ROLE.CREATE_TIME, true)
     }
 
     /**
@@ -72,11 +85,11 @@ class SysRoleServiceImpl(
      * @param userId 用户ID
      * @return 角色列表
      */
-    override fun selectRolesByUserId(userId: Long): MutableList<SysRoleVo>? {
+    override fun selectRolesByUserId(userId: Long): MutableList<SysRoleVo> {
         val userRoles = baseMapper.selectRolePermissionByUserId(userId)
         val roles = selectRoleAll()
-        for (role in roles!!) {
-            for (userRole in userRoles!!) {
+        for (role in roles) {
+            for (userRole in userRoles) {
                 if (role.roleId == userRole.roleId) {
                     role.flag = true
                     break
@@ -92,12 +105,12 @@ class SysRoleServiceImpl(
      * @param userId 用户ID
      * @return 权限列表
      */
-    override fun selectRolePermissionByUserId(userId: Long): MutableSet<String>? {
+    override fun selectRolePermissionByUserId(userId: Long): MutableSet<String> {
         val perms = baseMapper.selectRolePermissionByUserId(userId)
         val permsSet: MutableSet<String> = HashSet()
-        for (perm in perms!!) {
+        for (perm in perms) {
             if (ObjectUtil.isNotNull(perm)) {
-                permsSet.addAll(splitList(perm.roleKey!!.trim { it <= ' ' }))
+                permsSet.addAll(splitList(perm.roleKey!!.trim()))
             }
         }
         return permsSet
@@ -108,7 +121,7 @@ class SysRoleServiceImpl(
      *
      * @return 角色列表
      */
-    override fun selectRoleAll(): MutableList<SysRoleVo>? {
+    override fun selectRoleAll(): MutableList<SysRoleVo> {
         return selectRoleList(SysRoleBo())
     }
 
@@ -118,7 +131,7 @@ class SysRoleServiceImpl(
      * @param userId 用户ID
      * @return 选中角色ID列表
      */
-    override fun selectRoleListByUserId(userId: Long): MutableList<Long>? {
+    override fun selectRoleListByUserId(userId: Long): MutableList<Long> {
         return baseMapper.selectRoleListByUserId(userId)
     }
 
@@ -128,7 +141,7 @@ class SysRoleServiceImpl(
      * @param roleId 角色ID
      * @return 角色对象信息
      */
-    override fun selectRoleById(roleId: Long): SysRoleVo? {
+    override fun selectRoleById(roleId: Long): SysRoleVo {
         return baseMapper.selectRoleById(roleId)
     }
 
@@ -139,11 +152,11 @@ class SysRoleServiceImpl(
      * @return 结果
      */
     override fun checkRoleNameUnique(role: SysRoleBo): Boolean {
-        /*boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysRole>()
-            .eq(SysRole::getRoleName, role.getRoleName())
-            .ne(ObjectUtil.isNotNull(role.getRoleId()), SysRole::getRoleId, role.getRoleId()));
-        return !exist;*/
-        return false
+        return baseMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_ROLE)
+                .where(SYS_ROLE.ROLE_NAME.eq(role.roleName))
+                .and(SYS_ROLE.ROLE_ID.ne(role.roleId))
+        ) === 0.toLong()
     }
 
     /**
@@ -153,11 +166,11 @@ class SysRoleServiceImpl(
      * @return 结果
      */
     override fun checkRoleKeyUnique(role: SysRoleBo): Boolean {
-        /*boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysRole>()
-            .eq(SysRole::getRoleKey, role.getRoleKey())
-            .ne(ObjectUtil.isNotNull(role.getRoleId()), SysRole::getRoleId, role.getRoleId()));
-        return !exist;*/
-        return false
+        return baseMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_ROLE)
+                .where(SYS_ROLE.ROLE_KEY.eq(role.roleKey))
+                .and(SYS_ROLE.ROLE_ID.ne(role.roleId))
+        ) === 0.toLong()
     }
 
     /**
@@ -166,12 +179,12 @@ class SysRoleServiceImpl(
      * @param role 角色信息
      */
     override fun checkRoleAllowed(role: SysRoleBo) {
-        if (ObjectUtil.isNotNull(role.roleId) && isSuperAdmin(role.roleId!!)) {
+        if (ObjectUtil.isNotNull(role.roleId) && LoginHelper.isSuperAdmin(role.roleId!!)) {
             throw ServiceException("不允许操作超级管理员角色")
         }
         // 新增不允许使用 管理员标识符
         if (ObjectUtil.isNull(role.roleId)
-            && StringUtils.equalsAny(
+            && StringUtils.equals(
                 role.roleKey,
                 UserConstants.SUPER_ADMIN_ROLE_KEY
             )
@@ -180,10 +193,10 @@ class SysRoleServiceImpl(
         }
         // 修改不允许修改 管理员标识符
         if (ObjectUtil.isNotNull(role.roleId)) {
-            val sysRole = baseMapper!!.selectOneById(role.roleId)
+            val sysRole = baseMapper.selectOneById(role.roleId)
             // 如果标识符不相等 判断为修改了管理员标识符
             if (!StringUtils.equals(sysRole.roleKey, role.roleKey)
-                && StringUtils.equalsAny(
+                && StringUtils.equals(
                     sysRole.roleKey,
                     UserConstants.SUPER_ADMIN_ROLE_KEY
                 )
@@ -202,10 +215,10 @@ class SysRoleServiceImpl(
         if (ObjectUtil.isNull(roleId)) {
             return
         }
-        if (isSuperAdmin()) {
+        if (LoginHelper.isSuperAdmin()) {
             return
         }
-        val roles = selectRoleList(SysRoleBo(roleId))
+        val roles: List<SysRoleVo?> = selectRoleList(SysRoleBo(roleId))
         if (CollUtil.isEmpty(roles)) {
             throw ServiceException("没有权限访问角色数据！")
         }
@@ -218,8 +231,10 @@ class SysRoleServiceImpl(
      * @return 结果
      */
     override fun countUserRoleByRoleId(roleId: Long): Long {
-        /*return userRoleMapper.selectCount(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, roleId));*/
-        return 0
+        return userRoleMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_USER_ROLE)
+                .where(SYS_USER_ROLE.ROLE_ID.eq(roleId))
+        )
     }
 
     /**
@@ -230,9 +245,9 @@ class SysRoleServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun insertRole(bo: SysRoleBo): Int {
-        val role = convert(bo, SysRole::class.java)!!
+        val role: SysRole = MapstructUtils.convert(bo, SysRole::class.java)!!
         // 新增角色信息
-        baseMapper!!.insert(role)
+        baseMapper.insert(role, true)
         bo.roleId = role.roleId
         return insertRoleMenu(bo)
     }
@@ -245,13 +260,15 @@ class SysRoleServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun updateRole(bo: SysRoleBo): Int {
-        /*SysRole role = MapstructUtils.convert(bo, SysRole.class);
+        val role: SysRole = MapstructUtils.convert(bo, SysRole::class.java)!!
         // 修改角色信息
-        baseMapper.updateById(role);
+        baseMapper.update(role)
         // 删除角色与菜单关联
-        roleMenuMapper.delete(new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getRoleId, role.getRoleId()));
-        return insertRoleMenu(bo);*/
-        return 0
+        roleMenuMapper.deleteByQuery(
+            QueryWrapper.create().from(SYS_ROLE_MENU)
+                .where(SYS_ROLE_MENU.ROLE_ID.eq(role.roleId))
+        )
+        return insertRoleMenu(bo)
     }
 
     /**
@@ -261,15 +278,14 @@ class SysRoleServiceImpl(
      * @param status 角色状态
      * @return 结果
      */
-    override fun updateRoleStatus(roleId: Long, status: String): Int {
-        /*if (UserConstants.ROLE_DISABLE.equals(status) && this.countUserRoleByRoleId(roleId) > 0) {
-            throw new ServiceException("角色已分配，不能禁用!");
+    override fun updateRoleStatus(roleId: Long, status: String): Boolean {
+        if (UserConstants.ROLE_DISABLE == status && this.countUserRoleByRoleId(roleId) > 0) {
+            throw ServiceException("角色已分配，不能禁用!")
         }
-        return baseMapper.update(null,
-            new LambdaUpdateWrapper<SysRole>()
-                .set(SysRole::getStatus, status)
-                .eq(SysRole::getRoleId, roleId));*/
-        return 0
+        return UpdateChain.of<Class<SysRole>>(SysRole::class.java)
+            .set(SysRole::status, status)
+            .where(SysRole::roleId).eq(roleId)
+            .update()
     }
 
     /**
@@ -280,14 +296,17 @@ class SysRoleServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun authDataScope(bo: SysRoleBo): Int {
-        /*SysRole role = MapstructUtils.convert(bo, SysRole.class);
+        val role: SysRole = MapstructUtils.convert(bo, SysRole::class.java)!!
         // 修改角色信息
-        baseMapper.updateById(role);
+        baseMapper.update(role)
         // 删除角色与部门关联
-        roleDeptMapper.delete(new LambdaQueryWrapper<SysRoleDept>().eq(SysRoleDept::getRoleId, role.getRoleId()));
+        roleDeptMapper.deleteByQuery(
+            QueryWrapper.create().from(SYS_ROLE_DEPT)
+                .where(SYS_ROLE_DEPT.ROLE_ID.eq(role.roleId))
+        )
+
         // 新增角色和部门信息（数据权限）
-        return insertRoleDept(bo);*/
-        return 0
+        return insertRoleDept(bo)
     }
 
     /**
@@ -296,20 +315,23 @@ class SysRoleServiceImpl(
      * @param role 角色对象
      */
     private fun insertRoleMenu(role: SysRoleBo): Int {
-        /*int rows = 1;
+        var rows = 1
         // 新增用户与角色管理
-        List<SysRoleMenu> list = new ArrayList<SysRoleMenu>();
-        for (Long menuId : role.getMenuIds()) {
-            SysRoleMenu rm = new SysRoleMenu();
-            rm.setRoleId(role.getRoleId());
-            rm.setMenuId(menuId);
-            list.add(rm);
+        val list: MutableList<SysRoleMenu> = mutableListOf()
+        for (menuId in role.menuIds!!) {
+            val rm = SysRoleMenu()
+            rm.roleId = role.roleId
+            rm.menuId = menuId
+            list.add(rm)
         }
-        if (list.size() > 0) {
-            rows = roleMenuMapper.insertBatch(list) ? list.size() : 0;
+        if (list.size > 0) {
+            //rows = roleMenuMapper.executeBatch(list, SysRoleMenuMapper.class, BaseMapper::insertWithPk);
+            // TODO
+            /*rows = Arrays.stream(Db.executeBatch(list, 1000, SysRoleMenuMapper::class.java, BaseMapper::insertWithPk))
+                .filter(
+                    IntPredicate { it: Int -> it != 0 }).count().toInt()*/
         }
-        return rows;*/
-        return 0
+        return rows
     }
 
     /**
@@ -318,20 +340,23 @@ class SysRoleServiceImpl(
      * @param role 角色对象
      */
     private fun insertRoleDept(role: SysRoleBo): Int {
-        /*int rows = 1;
+        var rows = 1
         // 新增角色与部门（数据权限）管理
-        List<SysRoleDept> list = new ArrayList<SysRoleDept>();
-        for (Long deptId : role.getDeptIds()) {
-            SysRoleDept rd = new SysRoleDept();
-            rd.setRoleId(role.getRoleId());
-            rd.setDeptId(deptId);
-            list.add(rd);
+        val list: MutableList<SysRoleDept> = mutableListOf()
+        for (deptId in role.deptIds!!) {
+            val rd = SysRoleDept()
+            rd.roleId = role.roleId
+            rd.deptId = deptId
+            list.add(rd)
         }
-        if (list.size() > 0) {
-            rows = roleDeptMapper.insertBatch(list) ? list.size() : 0;
+        if (list.size > 0) {
+            //rows = roleDeptMapper.insertBatch(list);
+            // TODO
+            /*rows = Arrays.stream(Db.executeBatch(list, 1000, SysRoleDeptMapper::class.java, BaseMapper::insertWithPk))
+                .filter(
+                    IntPredicate { it: Int -> it != 0 }).count().toInt()*/
         }
-        return rows;*/
-        return 0
+        return rows
     }
 
     /**
@@ -342,12 +367,17 @@ class SysRoleServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun deleteRoleById(roleId: Long): Int {
-        /*// 删除角色与菜单关联
-        roleMenuMapper.delete(new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getRoleId, roleId));
+        // 删除角色与菜单关联
+        roleMenuMapper.deleteByQuery(
+            QueryWrapper.create().from(SYS_ROLE_MENU)
+                .where(SYS_ROLE_MENU.ROLE_ID.eq(roleId))
+        )
         // 删除角色与部门关联
-        roleDeptMapper.delete(new LambdaQueryWrapper<SysRoleDept>().eq(SysRoleDept::getRoleId, roleId));
-        return baseMapper.deleteById(roleId);*/
-        return 0
+        roleDeptMapper.deleteByQuery(
+            QueryWrapper.create().from(SYS_ROLE_DEPT)
+                .where(SYS_ROLE_DEPT.ROLE_ID.eq(roleId))
+        )
+        return baseMapper.deleteById(roleId)
     }
 
     /**
@@ -358,21 +388,20 @@ class SysRoleServiceImpl(
      */
     @Transactional(rollbackFor = [Exception::class])
     override fun deleteRoleByIds(roleIds: Array<Long>): Int {
-        /*for (Long roleId : roleIds) {
-            SysRole role = baseMapper.selectById(roleId);
-            checkRoleAllowed(BeanUtil.toBean(role, SysRoleBo.class));
-            checkRoleDataScope(roleId);
+        for (roleId in roleIds) {
+            val role = baseMapper.selectOneById(roleId)
+            checkRoleAllowed(BeanUtil.toBean(role, SysRoleBo::class.java))
+            checkRoleDataScope(roleId)
             if (countUserRoleByRoleId(roleId) > 0) {
-                throw new ServiceException(String.format("%1$s已分配，不能删除!", role.getRoleName()));
+                throw ServiceException("%1${role.roleName}已分配，不能删除!")
             }
         }
-        List<Long> ids = Arrays.asList(roleIds);
+        val ids = listOf(*roleIds)
         // 删除角色与菜单关联
-        roleMenuMapper.delete(new LambdaQueryWrapper<SysRoleMenu>().in(SysRoleMenu::getRoleId, ids));
+        roleMenuMapper.deleteByQuery(QueryWrapper.create().from(SYS_ROLE_MENU).where(SYS_ROLE_MENU.ROLE_ID.`in`(ids)))
         // 删除角色与部门关联
-        roleDeptMapper.delete(new LambdaQueryWrapper<SysRoleDept>().in(SysRoleDept::getRoleId, ids));
-        return baseMapper.deleteBatchIds(ids);*/
-        return 0
+        roleDeptMapper.deleteByQuery(QueryWrapper.create().from(SYS_ROLE_DEPT).where(SYS_ROLE_DEPT.ROLE_ID.`in`(ids)))
+        return baseMapper.deleteBatchByIds(ids)
     }
 
     /**
@@ -382,14 +411,15 @@ class SysRoleServiceImpl(
      * @return 结果
      */
     override fun deleteAuthUser(userRole: SysUserRole): Int {
-        /*int rows = userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>()
-            .eq(SysUserRole::getRoleId, userRole.getRoleId())
-            .eq(SysUserRole::getUserId, userRole.getUserId()));
+        val rows = userRoleMapper.deleteByQuery(
+            QueryWrapper.create().from(SYS_USER_ROLE)
+                .where(SYS_USER_ROLE.ROLE_ID.eq(userRole.roleId))
+                .and(SYS_USER_ROLE.USER_ID.eq(userRole.userId))
+        )
         if (rows > 0) {
-            cleanOnlineUserByRole(userRole.getRoleId());
+            cleanOnlineUserByRole(userRole.roleId!!)
         }
-        return rows;*/
-        return 0
+        return rows
     }
 
     /**
@@ -400,14 +430,15 @@ class SysRoleServiceImpl(
      * @return 结果
      */
     override fun deleteAuthUsers(roleId: Long, userIds: Array<Long>): Int {
-        /*int rows = userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>()
-            .eq(SysUserRole::getRoleId, roleId)
-            .in(SysUserRole::getUserId, Arrays.asList(userIds)));
+        val rows = userRoleMapper.deleteByQuery(
+            QueryWrapper.create().from(SYS_USER_ROLE)
+                .where(SYS_USER_ROLE.ROLE_ID.eq(roleId))
+                .and(SYS_USER_ROLE.USER_ID.`in`(listOf(*userIds)))
+        )
         if (rows > 0) {
-            cleanOnlineUserByRole(roleId);
+            cleanOnlineUserByRole(roleId)
         }
-        return rows;*/
-        return 0
+        return rows
     }
 
     /**
@@ -419,47 +450,50 @@ class SysRoleServiceImpl(
      */
     override fun insertAuthUsers(roleId: Long, userIds: Array<Long>): Int {
         // 新增用户与角色管理
-        /*int rows = 1;
-        List<SysUserRole> list = StreamUtils.toList(List.of(userIds), userId -> {
-            SysUserRole ur = new SysUserRole();
-            ur.setUserId(userId);
-            ur.setRoleId(roleId);
-            return ur;
-        });
-        if (CollUtil.isNotEmpty(list)) {
-            rows = userRoleMapper.insertBatch(list) ? list.size() : 0;
+        var rows = 1
+        val list: MutableList<SysUserRole> = StreamUtils.toList(listOf(*userIds)) { userId ->
+            val ur = SysUserRole()
+            ur.userId = userId
+            ur.roleId = roleId
+            ur
         }
+        /*if (CollUtil.isNotEmpty(list)) {
+            rows = Arrays.stream(Db.executeBatch(list, 1000, SysUserRoleMapper::class.java, BaseMapper<*>::insertWithPk))
+                .filter(IntPredicate { it: Int -> it != 0 }).count().toInt()
+        }*/
         if (rows > 0) {
-            cleanOnlineUserByRole(roleId);
+            cleanOnlineUserByRole(roleId)
         }
-        return rows;*/
-        return 0
+        return rows
     }
 
     override fun cleanOnlineUserByRole(roleId: Long) {
         // 如果角色未绑定用户 直接返回
-        /*Long num = userRoleMapper.selectCount(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, roleId));
-        if (num == 0) {
-            return;
+        val num = userRoleMapper.selectCountByQuery(
+            QueryWrapper.create().from(SYS_USER_ROLE).where(SYS_USER_ROLE.ROLE_ID.eq(roleId))
+        )
+        if (num == 0L) {
+            return
         }
-        List<String> keys = StpUtil.searchTokenValue("", 0, -1, false);
+        val keys = StpUtil.searchTokenValue("", 0, -1, false)
         if (CollUtil.isEmpty(keys)) {
-            return;
+            return
         }
         // 角色关联的在线用户量过大会导致redis阻塞卡顿 谨慎操作
-        keys.parallelStream().forEach(key -> {
-            String token = StringUtils.substringAfterLast(key, ":");
+        keys.parallelStream().forEach { key: String ->
+            val token = StringUtils.substringAfterLast(key, ":")
             // 如果已经过期则跳过
             if (StpUtil.stpLogic.getTokenActiveTimeoutByToken(token) < -1) {
-                return;
+                return@forEach
             }
-            LoginUser loginUser = LoginHelper.getLoginUser(token);
-            if (loginUser.getRoles().stream().anyMatch(r -> r.getRoleId().equals(roleId))) {
+            val loginUser: LoginUser = LoginHelper.getLoginUser(token)!!
+            if (loginUser.roles?.stream()?.anyMatch { r -> r.roleId == roleId } == true) {
                 try {
-                    StpUtil.logoutByTokenValue(token);
-                } catch (NotLoginException ignored) {
+                    StpUtil.logoutByTokenValue(token)
+                } catch (ignored: NotLoginException) {
                 }
             }
-        });*/
+        }
     }
+
 }

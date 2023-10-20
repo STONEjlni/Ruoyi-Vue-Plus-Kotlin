@@ -9,7 +9,7 @@ import com.blank.system.domain.vo.SysLogininforVo
  * 系统访问日志情况信息 服务层
  */
 interface ISysLogininforService {
-    fun selectPageLogininforList(logininfor: SysLogininforBo, pageQuery: PageQuery): TableDataInfo<SysLogininforVo>?
+    fun selectPageLogininforList(logininfor: SysLogininforBo, pageQuery: PageQuery): TableDataInfo<SysLogininforVo>
 
     /**
      * 新增系统登录日志
@@ -24,7 +24,7 @@ interface ISysLogininforService {
      * @param logininfor 访问日志对象
      * @return 登录记录集合
      */
-    fun selectLogininforList(logininfor: SysLogininforBo): MutableList<SysLogininforVo>?
+    fun selectLogininforList(logininfor: SysLogininforBo): MutableList<SysLogininforVo>
 
     /**
      * 批量删除系统登录日志

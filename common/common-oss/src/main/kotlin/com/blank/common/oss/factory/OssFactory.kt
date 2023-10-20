@@ -25,7 +25,7 @@ object OssFactory {
     /**
      * 获取默认实例
      */
-    fun instance(): OssClient? {
+    fun instance(): OssClient {
         // 获取redis 默认类型
         val configKey = RedisUtils.getCacheObject<String>(OssConstant.DEFAULT_CONFIG_KEY)!!
         if (StringUtils.isEmpty(configKey)) {
@@ -37,7 +37,7 @@ object OssFactory {
     /**
      * 根据类型获取实例
      */
-    fun instance(configKey: String): OssClient? {
+    fun instance(configKey: String): OssClient {
         val json = CacheUtils.get<String>(CacheNames.SYS_OSS_CONFIG, configKey)
             ?: throw OssException("系统异常, '$configKey'配置信息不存在!")
         val properties = parseObject(
@@ -50,13 +50,13 @@ object OssFactory {
         if (client == null) {
             CLIENT_CACHE[key] = OssClient(configKey, properties)
             log.info { "创建OSS实例 key => $configKey" }
-            return CLIENT_CACHE[key]
+            return CLIENT_CACHE[key]!!
         }
         // 配置不相同则重新构建
         if (!client.checkPropertiesSame(properties)) {
             CLIENT_CACHE[key] = OssClient(configKey, properties)
             log.info { "重载OSS实例 key => $configKey" }
-            return CLIENT_CACHE[key]
+            return CLIENT_CACHE[key]!!
         }
         return client
     }

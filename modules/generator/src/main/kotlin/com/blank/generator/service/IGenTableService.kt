@@ -15,7 +15,7 @@ interface IGenTableService {
      * @param tableId 业务字段编号
      * @return 业务字段集合
      */
-    fun selectGenTableColumnListByTableId(tableId: Long): MutableList<GenTableColumn>?
+    fun selectGenTableColumnListByTableId(tableId: Long): MutableList<GenTableColumn>
 
     /**
      * 查询业务列表
@@ -23,7 +23,7 @@ interface IGenTableService {
      * @param genTable 业务信息
      * @return 业务集合
      */
-    fun selectPageGenTableList(genTable: GenTable, pageQuery: PageQuery): TableDataInfo<GenTable>?
+    fun selectPageGenTableList(genTable: GenTable, pageQuery: PageQuery): TableDataInfo<GenTable>
 
     /**
      * 查询据库列表
@@ -31,7 +31,7 @@ interface IGenTableService {
      * @param genTable 业务信息
      * @return 数据库表集合
      */
-    fun selectPageDbTableList(genTable: GenTable, pageQuery: PageQuery): TableDataInfo<GenTable>?
+    fun selectPageDbTableList(genTable: GenTable, pageQuery: PageQuery): TableDataInfo<GenTable>
 
     /**
      * 查询据库列表
@@ -40,14 +40,14 @@ interface IGenTableService {
      * @param dataName   数据源名称
      * @return 数据库表集合
      */
-    fun selectDbTableListByNames(tableNames: Array<String>, dataName: String): MutableList<GenTable>?
+    fun selectDbTableListByNames(tableNames: Array<String>, dataName: String): MutableList<GenTable>
 
     /**
      * 查询所有表信息
      *
      * @return 表信息集合
      */
-    fun selectGenTableAll(): MutableList<GenTable>?
+    fun selectGenTableAll(): MutableList<GenTable>
 
     /**
      * 查询业务信息

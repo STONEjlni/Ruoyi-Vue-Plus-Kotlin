@@ -65,5 +65,5 @@ class BaseEntity : Serializable {
      */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Column(ignore = true)
-    var params: Map<String, Any> = HashMap()
+    var params: MutableMap<String, Any> = HashMap()
 }

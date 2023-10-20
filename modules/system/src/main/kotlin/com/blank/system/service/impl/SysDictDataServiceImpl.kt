@@ -5,8 +5,10 @@ import com.blank.common.core.exception.ServiceException
 import com.blank.common.core.utils.MapstructUtils.convert
 import com.blank.common.mybatis.core.page.PageQuery
 import com.blank.common.mybatis.core.page.TableDataInfo
+import com.blank.common.redis.utils.CacheUtils
 import com.blank.system.domain.SysDictData
 import com.blank.system.domain.bo.SysDictDataBo
+import com.blank.system.domain.table.SysDictDataDef.SYS_DICT_DATA
 import com.blank.system.domain.vo.SysDictDataVo
 import com.blank.system.mapper.SysDictDataMapper
 import com.blank.system.service.ISysDictDataService
@@ -22,11 +24,10 @@ class SysDictDataServiceImpl(
     private val baseMapper: SysDictDataMapper
 ) : ISysDictDataService {
 
-    override fun selectPageDictDataList(dictData: SysDictDataBo, pageQuery: PageQuery): TableDataInfo<SysDictDataVo>? {
-        /*LambdaQueryWrapper<SysDictData> lqw = buildQueryWrapper(dictData);
-        Page<SysDictDataVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
-        return TableDataInfo.build(page);*/
-        return null
+    override fun selectPageDictDataList(dictData: SysDictDataBo, pageQuery: PageQuery): TableDataInfo<SysDictDataVo> {
+        val lqw = buildQueryWrapper(dictData)
+        val page = baseMapper.paginateAs(pageQuery, lqw, SysDictDataVo::class.java)
+        return TableDataInfo.build(page)
     }
 
     /**
@@ -35,20 +36,18 @@ class SysDictDataServiceImpl(
      * @param dictData 字典数据信息
      * @return 字典数据集合信息
      */
-    override fun selectDictDataList(dictData: SysDictDataBo): MutableList<SysDictDataVo>? {
-        /*LambdaQueryWrapper<SysDictData> lqw = buildQueryWrapper(dictData);
-        return baseMapper.selectVoList(lqw);*/
-        return null
+    override fun selectDictDataList(dictData: SysDictDataBo): MutableList<SysDictDataVo> {
+        val lqw = buildQueryWrapper(dictData)
+        return baseMapper.selectListByQueryAs(lqw, SysDictDataVo::class.java)
     }
 
-    private fun  /*<SysDictData>*/buildQueryWrapper(bo: SysDictDataBo): QueryWrapper? {
-        /*LambdaQueryWrapper<SysDictData> lqw = Wrappers.lambdaQuery();
-        lqw.eq(bo.getDictSort() != null, SysDictData::getDictSort, bo.getDictSort());
-        lqw.like(StrUtil.isNotBlank(bo.getDictLabel()), SysDictData::getDictLabel, bo.getDictLabel());
-        lqw.eq(StrUtil.isNotBlank(bo.getDictType()), SysDictData::getDictType, bo.getDictType());
-        lqw.orderByAsc(SysDictData::getDictSort);
-        return lqw;*/
-        return null
+    private fun buildQueryWrapper(bo: SysDictDataBo): QueryWrapper {
+        return QueryWrapper.create()
+            .from(SYS_DICT_DATA)
+            .where(SYS_DICT_DATA.DICT_SORT.eq(bo.dictSort))
+            .and(SYS_DICT_DATA.DICT_LABEL.like(bo.dictLabel))
+            .and(SYS_DICT_DATA.DICT_TYPE.eq(bo.dictType))
+            .orderBy(SYS_DICT_DATA.DICT_SORT, true)
     }
 
     /**
@@ -59,12 +58,13 @@ class SysDictDataServiceImpl(
      * @return 字典标签
      */
     override fun selectDictLabel(dictType: String, dictValue: String): String? {
-        /*return baseMapper.selectOne(new LambdaQueryWrapper<SysDictData>()
-                .select(SysDictData::getDictLabel)
-                .eq(SysDictData::getDictType, dictType)
-                .eq(SysDictData::getDictValue, dictValue))
-            .getDictLabel();*/
-        return null
+        return baseMapper.selectOneByQuery(
+            QueryWrapper.create()
+                .select(SYS_DICT_DATA.DICT_LABEL)
+                .from(SYS_DICT_DATA)
+                .where(SYS_DICT_DATA.DICT_TYPE.eq(dictType))
+                .and(SYS_DICT_DATA.DICT_VALUE.eq(dictValue))
+        ).dictLabel
     }
 
     /**
@@ -74,7 +74,7 @@ class SysDictDataServiceImpl(
      * @return 字典数据
      */
     override fun selectDictDataById(dictCode: Long): SysDictDataVo? {
-        return baseMapper!!.selectVoById(dictCode)!!
+        return baseMapper.selectOneWithRelationsByIdAs(dictCode, SysDictDataVo::class.java)
     }
 
     /**
@@ -83,11 +83,11 @@ class SysDictDataServiceImpl(
      * @param dictCodes 需要删除的字典数据ID
      */
     override fun deleteDictDataByIds(dictCodes: Array<Long>) {
-        /*for (Long dictCode : dictCodes) {
-            SysDictData data = baseMapper.selectById(dictCode);
-            baseMapper.deleteById(dictCode);
-            CacheUtils.evict(CacheNames.SYS_DICT, data.getDictType());
-        }*/
+        for (dictCode in dictCodes) {
+            val `data` = baseMapper.selectOneById(dictCode)
+            baseMapper.deleteById(dictCode)
+            CacheUtils.evict(CacheNames.SYS_DICT, `data`.dictType)
+        }
     }
 
     /**
@@ -97,11 +97,11 @@ class SysDictDataServiceImpl(
      * @return 结果
      */
     @CachePut(cacheNames = [CacheNames.SYS_DICT], key = "#bo.dictType")
-    override fun insertDictData(bo: SysDictDataBo): MutableList<SysDictDataVo>? {
-        val data = convert(bo, SysDictData::class.java)!!
-        val row = baseMapper.insert(data)
+    override fun insertDictData(bo: SysDictDataBo): MutableList<SysDictDataVo> {
+        val `data`: SysDictData? = convert(bo, SysDictData::class.java)
+        val row = baseMapper.insert(`data`, true)
         if (row > 0) {
-            return baseMapper.selectDictDataByType(data.dictType!!)
+            return baseMapper.selectDictDataByType(`data`?.dictType!!)
         }
         throw ServiceException("操作失败")
     }
@@ -113,13 +113,12 @@ class SysDictDataServiceImpl(
      * @return 结果
      */
     @CachePut(cacheNames = [CacheNames.SYS_DICT], key = "#bo.dictType")
-    override fun updateDictData(bo: SysDictDataBo): MutableList<SysDictDataVo>? {
-        /*SysDictData data = MapstructUtils.convert(bo, SysDictData.class);
-        int row = baseMapper.updateById(data);
+    override fun updateDictData(bo: SysDictDataBo): MutableList<SysDictDataVo> {
+        val `data`: SysDictData? = convert(bo, SysDictData::class.java)
+        val row = baseMapper.update(`data`)
         if (row > 0) {
-            return baseMapper.selectDictDataByType(data.getDictType());
+            return baseMapper.selectDictDataByType(`data`?.dictType!!)
         }
-        throw new ServiceException("操作失败");*/
-        return null
+        throw ServiceException("操作失败")
     }
 }

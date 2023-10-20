@@ -10,7 +10,7 @@ import com.blank.system.domain.vo.SysRoleVo
  * 角色业务层
  */
 interface ISysRoleService {
-    fun selectPageRoleList(role: SysRoleBo, pageQuery: PageQuery): TableDataInfo<SysRoleVo>?
+    fun selectPageRoleList(role: SysRoleBo, pageQuery: PageQuery): TableDataInfo<SysRoleVo>
 
     /**
      * 根据条件分页查询角色数据
@@ -18,7 +18,7 @@ interface ISysRoleService {
      * @param role 角色信息
      * @return 角色数据集合信息
      */
-    fun selectRoleList(role: SysRoleBo): MutableList<SysRoleVo>?
+    fun selectRoleList(role: SysRoleBo): MutableList<SysRoleVo>
 
     /**
      * 根据用户ID查询角色列表
@@ -26,7 +26,7 @@ interface ISysRoleService {
      * @param userId 用户ID
      * @return 角色列表
      */
-    fun selectRolesByUserId(userId: Long): MutableList<SysRoleVo>?
+    fun selectRolesByUserId(userId: Long): MutableList<SysRoleVo>
 
     /**
      * 根据用户ID查询角色权限
@@ -34,14 +34,14 @@ interface ISysRoleService {
      * @param userId 用户ID
      * @return 权限列表
      */
-    fun selectRolePermissionByUserId(userId: Long): MutableSet<String>?
+    fun selectRolePermissionByUserId(userId: Long): MutableSet<String>
 
     /**
      * 查询所有角色
      *
      * @return 角色列表
      */
-    fun selectRoleAll(): MutableList<SysRoleVo>?
+    fun selectRoleAll(): MutableList<SysRoleVo>
 
     /**
      * 根据用户ID获取角色选择框列表
@@ -49,7 +49,7 @@ interface ISysRoleService {
      * @param userId 用户ID
      * @return 选中角色ID列表
      */
-    fun selectRoleListByUserId(userId: Long): MutableList<Long>?
+    fun selectRoleListByUserId(userId: Long): MutableList<Long>
 
     /**
      * 通过角色ID查询角色
@@ -57,7 +57,7 @@ interface ISysRoleService {
      * @param roleId 角色ID
      * @return 角色对象信息
      */
-    fun selectRoleById(roleId: Long): SysRoleVo?
+    fun selectRoleById(roleId: Long): SysRoleVo
 
     /**
      * 校验角色名称是否唯一
@@ -120,7 +120,7 @@ interface ISysRoleService {
      * @param status 角色状态
      * @return 结果
      */
-    fun updateRoleStatus(roleId: Long, status: String): Int
+    fun updateRoleStatus(roleId: Long, status: String): Boolean
 
     /**
      * 修改数据权限信息

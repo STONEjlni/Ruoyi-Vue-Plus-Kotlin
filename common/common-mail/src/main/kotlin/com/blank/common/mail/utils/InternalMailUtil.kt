@@ -21,7 +21,10 @@ object InternalMailUtil {
      * @return 地址数组
      * @since 4.0.3
      */
-    fun parseAddressFromStrs(addrStrs: Array<String>, charset: Charset = Charset.defaultCharset()): Array<InternetAddress> {
+    fun parseAddressFromStrs(
+        addrStrs: Array<String>,
+        charset: Charset = Charset.defaultCharset()
+    ): Array<InternetAddress> {
         val resultList: List<InternetAddress> = ArrayList(addrStrs.size)
         var addrs: Array<InternetAddress>
         for (addrStr in addrStrs) {

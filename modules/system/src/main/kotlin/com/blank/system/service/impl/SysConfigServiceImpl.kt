@@ -1,18 +1,24 @@
 package com.blank.system.service.impl
 
+import cn.hutool.core.convert.Convert
+import cn.hutool.core.util.ObjectUtil
 import com.blank.common.core.constant.CacheNames
+import com.blank.common.core.constant.UserConstants
 import com.blank.common.core.exception.ServiceException
 import com.blank.common.core.service.ConfigService
 import com.blank.common.core.utils.MapstructUtils.convert
-import com.blank.common.core.utils.SpringUtilExtend.getAopProxy
+import com.blank.common.core.utils.SpringUtilExtend
 import com.blank.common.mybatis.core.page.PageQuery
 import com.blank.common.mybatis.core.page.TableDataInfo
+import com.blank.common.redis.utils.CacheUtils
 import com.blank.common.redis.utils.CacheUtils.clear
 import com.blank.system.domain.SysConfig
 import com.blank.system.domain.bo.SysConfigBo
+import com.blank.system.domain.table.SysConfigDef.SYS_CONFIG
 import com.blank.system.domain.vo.SysConfigVo
 import com.blank.system.mapper.SysConfigMapper
 import com.blank.system.service.ISysConfigService
+import com.mybatisflex.annotation.UseDataSource
 import com.mybatisflex.core.query.QueryWrapper
 import org.apache.commons.lang3.StringUtils
 import org.springframework.cache.annotation.CachePut
@@ -23,13 +29,14 @@ import org.springframework.stereotype.Service
  * 参数配置 服务层实现
  */
 @Service
-class SysConfigServiceImpl : ISysConfigService, ConfigService {
-    private val baseMapper: SysConfigMapper? = null
-    override fun selectPageConfigList(config: SysConfigBo, pageQuery: PageQuery): TableDataInfo<SysConfigVo>? {
-        /*LambdaQueryWrapper<SysConfig> lqw = buildQueryWrapper(config);
-        Page<SysConfigVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
-        return TableDataInfo.build(page);*/
-        return null
+class SysConfigServiceImpl(
+    private val baseMapper: SysConfigMapper
+) : ISysConfigService, ConfigService {
+
+    override fun selectPageConfigList(config: SysConfigBo, pageQuery: PageQuery): TableDataInfo<SysConfigVo> {
+        val lqw = buildQueryWrapper(config)
+        val page = baseMapper.paginateAs(pageQuery, lqw, SysConfigVo::class.java)
+        return TableDataInfo.build(page)
     }
 
     /**
@@ -38,8 +45,9 @@ class SysConfigServiceImpl : ISysConfigService, ConfigService {
      * @param configId 参数配置ID
      * @return 参数配置信息
      */
-    override fun selectConfigById(configId: Long): SysConfigVo {
-        return baseMapper!!.selectVoById(configId)!!
+    @UseDataSource("master")
+    override fun selectConfigById(configId: Long): SysConfigVo? {
+        return baseMapper.selectOneWithRelationsByIdAs(configId, SysConfigVo::class.java)
     }
 
     /**
@@ -49,14 +57,14 @@ class SysConfigServiceImpl : ISysConfigService, ConfigService {
      * @return 参数键值
      */
     @Cacheable(cacheNames = [CacheNames.SYS_CONFIG], key = "#configKey")
-    override fun selectConfigByKey(configKey: String): String {
-        /*SysConfig retConfig = baseMapper.selectOne(new LambdaQueryWrapper<SysConfig>()
-            .eq(SysConfig::getConfigKey, configKey));
-        if (ObjectUtil.isNotNull(retConfig)) {
-            return retConfig.getConfigValue();
-        }
-        return StringUtils.EMPTY;*/
-        return StringUtils.EMPTY
+    override fun selectConfigByKey(configKey: String): String? {
+        val retConfig = baseMapper.selectOneByQuery(
+            QueryWrapper.create().from(SYS_CONFIG)
+                .where(SYS_CONFIG.CONFIG_KEY.eq(configKey))
+        )
+        return if (ObjectUtil.isNotNull(retConfig)) {
+            retConfig.configValue
+        } else StringUtils.EMPTY
     }
 
     /**
@@ -66,14 +74,13 @@ class SysConfigServiceImpl : ISysConfigService, ConfigService {
      * @return true开启，false关闭
      */
     override fun selectRegisterEnabled(tenantId: String): Boolean {
-        /*SysConfig retConfig = baseMapper.selectOne(new LambdaQueryWrapper<SysConfig>()
-            .eq(SysConfig::getConfigKey, "sys.account.registerUser")
-            .eq(TenantHelper.isEnable(),SysConfig::getTenantId, tenantId));
-        if (ObjectUtil.isNull(retConfig)) {
-            return false;
-        }
-        return Convert.toBool(retConfig.getConfigValue());*/
-        return false
+        val retConfig = baseMapper.selectOneByQuery(
+            QueryWrapper.create().from(SYS_CONFIG)
+                .where(SYS_CONFIG.CONFIG_KEY.eq("sys.account.registerUser"))
+        )
+        return if (ObjectUtil.isNull(retConfig)) {
+            false
+        } else Convert.toBool(retConfig.configValue)
     }
 
     /**
@@ -82,23 +89,25 @@ class SysConfigServiceImpl : ISysConfigService, ConfigService {
      * @param config 参数配置信息
      * @return 参数配置集合
      */
-    override fun selectConfigList(config: SysConfigBo): MutableList<SysConfigVo>? {
-        /*LambdaQueryWrapper<SysConfig> lqw = buildQueryWrapper(config);
-        return baseMapper.selectVoList(lqw);*/
-        return null
+    override fun selectConfigList(config: SysConfigBo): MutableList<SysConfigVo> {
+        val lqw = buildQueryWrapper(config)
+        return baseMapper.selectListByQueryAs(lqw, SysConfigVo::class.java)
     }
 
-    private fun  /*<SysConfig>*/buildQueryWrapper(bo: SysConfigBo): QueryWrapper? {
-        /*Map<String, Object> params = bo.getParams();
-        LambdaQueryWrapper<SysConfig> lqw = Wrappers.lambdaQuery();
-        lqw.like(StrUtil.isNotBlank(bo.getConfigName()), SysConfig::getConfigName, bo.getConfigName());
-        lqw.eq(StrUtil.isNotBlank(bo.getConfigType()), SysConfig::getConfigType, bo.getConfigType());
-        lqw.like(StrUtil.isNotBlank(bo.getConfigKey()), SysConfig::getConfigKey, bo.getConfigKey());
-        lqw.between(params.get("beginTime") != null && params.get("endTime") != null,
-            SysConfig::getCreateTime, params.get("beginTime"), params.get("endTime"));
-        lqw.orderByAsc(SysConfig::getConfigId);
-        return lqw;*/
-        return null
+    private fun buildQueryWrapper(bo: SysConfigBo): QueryWrapper {
+        val params: MutableMap<String, Any> = bo.params
+        return QueryWrapper.create().from(SYS_CONFIG)
+            .where(SYS_CONFIG.CONFIG_NAME.like(bo.configName))
+            .and(SYS_CONFIG.CONFIG_TYPE.eq(bo.configType))
+            .where(SYS_CONFIG.CONFIG_KEY.like(bo.configKey))
+            .and(
+                SYS_CONFIG.CREATE_TIME.between(
+                    params["beginTime"],
+                    params["endTime"],
+                    params["beginTime"] != null && params["endTime"] != null
+                )
+            )
+            .orderBy(SYS_CONFIG.CONFIG_ID, true)
     }
 
     /**
@@ -109,10 +118,10 @@ class SysConfigServiceImpl : ISysConfigService, ConfigService {
      */
     @CachePut(cacheNames = [CacheNames.SYS_CONFIG], key = "#bo.configKey")
     override fun insertConfig(bo: SysConfigBo): String? {
-        val config = convert(bo, SysConfig::class.java)!!
-        val row = baseMapper!!.insert(config)
+        val config: SysConfig? = convert(bo, SysConfig::class.java)
+        val row = baseMapper.insert(config, true)
         if (row > 0) {
-            return config.configValue
+            return config?.configValue
         }
         throw ServiceException("操作失败")
     }
@@ -125,23 +134,23 @@ class SysConfigServiceImpl : ISysConfigService, ConfigService {
      */
     @CachePut(cacheNames = [CacheNames.SYS_CONFIG], key = "#bo.configKey")
     override fun updateConfig(bo: SysConfigBo): String? {
-        /*int row = 0;
-        SysConfig config = MapstructUtils.convert(bo, SysConfig.class);
-        if (config.getConfigId() != null) {
-            SysConfig temp = baseMapper.selectById(config.getConfigId());
-            if (!StringUtils.equals(temp.getConfigKey(), config.getConfigKey())) {
-                CacheUtils.evict(CacheNames.SYS_CONFIG, temp.getConfigKey());
+        val config: SysConfig? = convert(bo, SysConfig::class.java)
+        val row = if (config?.configId != null) {
+            val temp = baseMapper.selectOneById(config.configId)
+            if (!StringUtils.equals(temp.configKey, config.configKey)) {
+                CacheUtils.evict(CacheNames.SYS_CONFIG, temp.configKey)
             }
-            row = baseMapper.updateById(config);
+            baseMapper.update(config)
         } else {
-            row = baseMapper.update(config, new LambdaQueryWrapper<SysConfig>()
-                .eq(SysConfig::getConfigKey, config.getConfigKey()));
+            baseMapper.updateByQuery(
+                config,
+                QueryWrapper.create().from(SYS_CONFIG).where(SYS_CONFIG.CONFIG_KEY.eq(config?.configKey))
+            )
         }
         if (row > 0) {
-            return config.getConfigValue();
+            return config?.configValue
         }
-        throw new ServiceException("操作失败");*/
-        return null
+        throw ServiceException("操作失败")
     }
 
     /**
@@ -150,14 +159,14 @@ class SysConfigServiceImpl : ISysConfigService, ConfigService {
      * @param configIds 需要删除的参数ID
      */
     override fun deleteConfigByIds(configIds: Array<Long>) {
-        /*for (Long configId : configIds) {
-            SysConfig config = baseMapper.selectById(configId);
-            if (StringUtils.equals(UserConstants.YES, config.getConfigType())) {
-                throw new ServiceException(String.format("内置参数【%1$s】不能删除 ", config.getConfigKey()));
+        for (configId in configIds) {
+            val config = baseMapper.selectOneById(configId)
+            if (StringUtils.equals(UserConstants.YES, config.configType)) {
+                throw ServiceException(java.lang.String.format("内置参数【%1\$s】不能删除 ", config.configKey))
             }
-            CacheUtils.evict(CacheNames.SYS_CONFIG, config.getConfigKey());
+            CacheUtils.evict(CacheNames.SYS_CONFIG, config.configKey)
         }
-        baseMapper.deleteBatchIds(Arrays.asList(configIds));*/
+        baseMapper.deleteBatchByIds(listOf(*configIds))
     }
 
     /**
@@ -174,13 +183,11 @@ class SysConfigServiceImpl : ISysConfigService, ConfigService {
      * @return 结果
      */
     override fun checkConfigKeyUnique(config: SysConfigBo): Boolean {
-        /*long configId = ObjectUtil.isNull(config.getConfigId()) ? -1L : config.getConfigId();
-        SysConfig info = baseMapper.selectOne(new LambdaQueryWrapper<SysConfig>().eq(SysConfig::getConfigKey, config.getConfigKey()));
-        if (ObjectUtil.isNotNull(info) && info.getConfigId() != configId) {
-            return false;
-        }
-        return true;*/
-        return false
+        val configId = if (ObjectUtil.isNull(config.configId)) -1L else config.configId
+        val info = baseMapper.selectOneByQuery(
+            QueryWrapper.create().from(SYS_CONFIG).where(SYS_CONFIG.CONFIG_KEY.eq(config.configKey))
+        )
+        return !ObjectUtil.isNotNull(info) || info.configId === configId
     }
 
     /**
@@ -190,6 +197,6 @@ class SysConfigServiceImpl : ISysConfigService, ConfigService {
      * @return 参数值
      */
     override fun getConfigValue(configKey: String): String? {
-        return getAopProxy(this).selectConfigByKey(configKey)
+        return SpringUtilExtend.getAopProxy(this).selectConfigByKey(configKey)
     }
 }
