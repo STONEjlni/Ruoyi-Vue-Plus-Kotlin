@@ -93,7 +93,7 @@ class PlusDataPermissionHandler {
             }
             var isSuccess = false
             for (dataColumn in dataColumns) {
-                if (dataColumn.key.size !== dataColumn.value.size) {
+                if (dataColumn.key.size != dataColumn.value.size) {
                     throw ServiceException("角色数据范围异常 => getKey与getValue长度不匹配")
                 }
                 // 不包含 getKey 变量 则不处理

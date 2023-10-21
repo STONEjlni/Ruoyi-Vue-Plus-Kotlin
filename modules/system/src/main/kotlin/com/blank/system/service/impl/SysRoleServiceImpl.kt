@@ -30,10 +30,13 @@ import com.blank.system.mapper.SysRoleMenuMapper
 import com.blank.system.mapper.SysUserRoleMapper
 import com.blank.system.service.ISysRoleService
 import com.mybatisflex.core.query.QueryWrapper
+import com.mybatisflex.core.row.Db
 import com.mybatisflex.core.update.UpdateChain
 import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
+
 
 /**
  * 角色 业务层处理
@@ -156,7 +159,7 @@ class SysRoleServiceImpl(
             QueryWrapper.create().from(SYS_ROLE)
                 .where(SYS_ROLE.ROLE_NAME.eq(role.roleName))
                 .and(SYS_ROLE.ROLE_ID.ne(role.roleId))
-        ) === 0.toLong()
+        ) == 0.toLong()
     }
 
     /**
@@ -170,7 +173,7 @@ class SysRoleServiceImpl(
             QueryWrapper.create().from(SYS_ROLE)
                 .where(SYS_ROLE.ROLE_KEY.eq(role.roleKey))
                 .and(SYS_ROLE.ROLE_ID.ne(role.roleId))
-        ) === 0.toLong()
+        ) == 0.toLong()
     }
 
     /**
@@ -326,10 +329,9 @@ class SysRoleServiceImpl(
         }
         if (list.size > 0) {
             //rows = roleMenuMapper.executeBatch(list, SysRoleMenuMapper.class, BaseMapper::insertWithPk);
-            // TODO
-            /*rows = Arrays.stream(Db.executeBatch(list, 1000, SysRoleMenuMapper::class.java, BaseMapper::insertWithPk))
-                .filter(
-                    IntPredicate { it: Int -> it != 0 }).count().toInt()*/
+            rows = Arrays.stream(Db.executeBatch(list, 1000, SysRoleMenuMapper::class.java) { mapper, index ->
+                mapper.insert(index)
+            }).filter { it: Int -> it != 0 }.count().toInt()
         }
         return rows
     }
@@ -351,10 +353,9 @@ class SysRoleServiceImpl(
         }
         if (list.size > 0) {
             //rows = roleDeptMapper.insertBatch(list);
-            // TODO
-            /*rows = Arrays.stream(Db.executeBatch(list, 1000, SysRoleDeptMapper::class.java, BaseMapper::insertWithPk))
-                .filter(
-                    IntPredicate { it: Int -> it != 0 }).count().toInt()*/
+            rows = Arrays.stream(Db.executeBatch(list, 1000, SysRoleDeptMapper::class.java) { mapper, index ->
+                mapper.insert(index)
+            }).filter { it: Int -> it != 0 }.count().toInt()
         }
         return rows
     }
@@ -457,10 +458,11 @@ class SysRoleServiceImpl(
             ur.roleId = roleId
             ur
         }
-        /*if (CollUtil.isNotEmpty(list)) {
-            rows = Arrays.stream(Db.executeBatch(list, 1000, SysUserRoleMapper::class.java, BaseMapper<*>::insertWithPk))
-                .filter(IntPredicate { it: Int -> it != 0 }).count().toInt()
-        }*/
+        if (CollUtil.isNotEmpty(list)) {
+            rows = Arrays.stream(Db.executeBatch(list, 1000, SysUserRoleMapper::class.java) { mapper, index ->
+                mapper.insert(index)
+            }).filter { it: Int -> it != 0 }.count().toInt()
+        }
         if (rows > 0) {
             cleanOnlineUserByRole(roleId)
         }

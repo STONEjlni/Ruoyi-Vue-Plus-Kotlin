@@ -32,6 +32,7 @@ import com.mybatisflex.core.paginate.Page
 import com.mybatisflex.core.query.If
 import com.mybatisflex.core.query.QueryMethods
 import com.mybatisflex.core.query.QueryWrapper
+import com.mybatisflex.core.row.Db
 import com.mybatisflex.core.util.UpdateEntity
 import org.apache.commons.lang3.StringUtils
 import org.springframework.cache.annotation.Cacheable
@@ -242,7 +243,7 @@ class SysUserServiceImpl(
         return baseMapper.selectCountByQuery(
             QueryWrapper.create().from(SYS_USER)
                 .where(SYS_USER.USER_NAME.eq(user.userName)).and(SYS_USER.USER_ID.ne(user.userId))
-        ) === 0.toLong()
+        ) == 0.toLong()
     }
 
     /**
@@ -254,7 +255,7 @@ class SysUserServiceImpl(
         return baseMapper.selectCountByQuery(
             QueryWrapper.create().from(SYS_USER)
                 .where(SYS_USER.PHONENUMBER.eq(user.phonenumber)).and(SYS_USER.USER_ID.ne(user.userId))
-        ) === 0.toLong()
+        ) == 0.toLong()
     }
 
     /**
@@ -266,7 +267,7 @@ class SysUserServiceImpl(
         return baseMapper.selectCountByQuery(
             QueryWrapper.create().from(SYS_USER)
                 .where(SYS_USER.EMAIL.eq(user.email)).and(SYS_USER.USER_ID.ne(user.userId))
-        ) === 0.toLong()
+        ) == 0.toLong()
     }
 
     /**
@@ -461,7 +462,9 @@ class SysUserServiceImpl(
                 ur.roleId = roleId
                 ur
             }
-            /*Db.executeBatch(list, 1000, SysUserRoleMapper::class.java, BaseMapper::insertWithPk)*/
+            Db.executeBatch(list, 1000, SysUserRoleMapper::class.java) { mapper, index ->
+                mapper.insert(index)
+            }
         }
     }
 
