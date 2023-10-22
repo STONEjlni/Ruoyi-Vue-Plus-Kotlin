@@ -12,6 +12,7 @@ import com.blank.system.domain.SysMenu
 import com.blank.system.domain.SysRole
 import com.blank.system.domain.bo.SysMenuBo
 import com.blank.system.domain.table.SysMenuDef.SYS_MENU
+import com.blank.system.domain.table.SysRoleDef.SYS_ROLE
 import com.blank.system.domain.table.SysRoleMenuDef.SYS_ROLE_MENU
 import com.blank.system.domain.table.SysUserRoleDef.SYS_USER_ROLE
 import com.blank.system.domain.vo.MetaVo
@@ -69,9 +70,9 @@ class SysMenuServiceImpl(
             val queryWrapper: QueryWrapper = QueryWrapper.create()
                 .select(distinct(SYS_MENU.ALL_COLUMNS))
                 .from(SYS_MENU)
-                /*.leftJoin(SYS_ROLE_MENU).on(SYS_MENU.MENU_ID.eq(SYS_ROLE_MENU.MENU_ID))
-                .leftJoin(SYS_USER_ROLE).on(SYS_ROLE_MENU.ROLE_ID.eq(SYS_USER_ROLE.ROLE_ID))
-                .leftJoin(SYS_ROLE).on(SYS_USER_ROLE.ROLE_ID.eq(SYS_ROLE.ROLE_ID))*/
+                .leftJoin<QueryWrapper>(SYS_ROLE_MENU).on(SYS_MENU.MENU_ID.eq(SYS_ROLE_MENU.MENU_ID))
+                .leftJoin<QueryWrapper>(SYS_USER_ROLE).on(SYS_ROLE_MENU.ROLE_ID.eq(SYS_USER_ROLE.ROLE_ID))
+                .leftJoin<QueryWrapper>(SYS_ROLE).on(SYS_USER_ROLE.ROLE_ID.eq(SYS_ROLE.ROLE_ID))
                 .where(SYS_USER_ROLE.USER_ID.eq(userId))
                 .and(SYS_MENU.MENU_NAME.like(menu.menuName))
                 .and(SYS_MENU.VISIBLE.like(menu.visible))

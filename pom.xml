@@ -24,6 +24,7 @@
         <velocity.version>2.3</velocity.version>
         <satoken.version>1.37.0</satoken.version>
         <mybatis-flex.version>1.7.1</mybatis-flex.version>
+        <mybatis-flex-kotlin.version>1.0.2</mybatis-flex-kotlin.version>
         <hutool.version>5.8.22</hutool.version>
         <okhttp.version>4.10.0</okhttp.version>
         <spring-boot-admin.version>3.1.7</spring-boot-admin.version>
@@ -188,6 +189,13 @@
                 <groupId>com.mybatis-flex</groupId>
                 <artifactId>mybatis-flex-spring-boot-starter</artifactId>
                 <version>${mybatis-flex.version}</version>
+            </dependency>
+
+            <!--kotlin扩展库-->
+            <dependency>
+                <groupId>com.mybatis-flex</groupId>
+                <artifactId>mybatis-flex-kotlin</artifactId>
+                <version>${mybatis-flex-kotlin.version}</version>
             </dependency>
 
             <dependency>

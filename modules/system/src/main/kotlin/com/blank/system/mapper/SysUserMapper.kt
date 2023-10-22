@@ -10,6 +10,7 @@ import com.blank.system.domain.dto.SysUserDto
 import com.blank.system.domain.table.SysDeptDef.SYS_DEPT
 import com.blank.system.domain.table.SysRoleDef.SYS_ROLE
 import com.blank.system.domain.table.SysUserDef.SYS_USER
+import com.blank.system.domain.table.SysUserRoleDef.SYS_USER_ROLE
 import com.blank.system.domain.vo.SysUserVo
 import com.mybatisflex.core.paginate.Page
 import com.mybatisflex.core.query.QueryWrapper
@@ -102,9 +103,9 @@ interface SysUserMapper : BaseMapperPlus<SysUser> {
             SYS_ROLE.DATA_SCOPE,
             SYS_ROLE.STATUS
         ).from(SYS_USER).`as`("u")
-            /*.leftJoin(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
-            .leftJoin(SYS_USER_ROLE).`as`("sur").on(SYS_USER.USER_ID.eq(SYS_USER_ROLE.USER_ID))
-            .leftJoin(SYS_ROLE).`as`("r").on(SYS_ROLE.ROLE_ID.eq(SYS_USER_ROLE.ROLE_ID))*/
+            .leftJoin<QueryWrapper>(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
+            .leftJoin<QueryWrapper>(SYS_USER_ROLE).`as`("sur").on(SYS_USER.USER_ID.eq(SYS_USER_ROLE.USER_ID))
+            .leftJoin<QueryWrapper>(SYS_ROLE).`as`("r").on(SYS_ROLE.ROLE_ID.eq(SYS_USER_ROLE.ROLE_ID))
     }
 
 
@@ -154,7 +155,9 @@ interface SysUserMapper : BaseMapperPlus<SysUser> {
      * @return 用户对象信息
      */
     fun selectUserById(userId: Long): SysUserVo {
-        val queryWrapper: QueryWrapper = QueryWrapper.create().where(SysUser::userId).eq(userId)
+        val queryWrapper: QueryWrapper =
+            QueryWrapper.create()
+                .where(SYS_USER.USER_ID.eq(userId))
         selectUserVo(queryWrapper)
         val sysUserDto: SysUserDto = selectOneByQueryAs(
             queryWrapper,

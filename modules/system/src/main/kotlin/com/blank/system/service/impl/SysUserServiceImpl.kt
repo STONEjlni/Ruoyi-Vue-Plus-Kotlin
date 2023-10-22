@@ -21,6 +21,7 @@ import com.blank.system.domain.bo.SysUserBo
 import com.blank.system.domain.table.SysDeptDef.SYS_DEPT
 import com.blank.system.domain.table.SysRoleDef.SYS_ROLE
 import com.blank.system.domain.table.SysUserDef.SYS_USER
+import com.blank.system.domain.table.SysUserRoleDef.SYS_USER_ROLE
 import com.blank.system.domain.vo.SysRoleVo
 import com.blank.system.domain.vo.SysUserVo
 import com.blank.system.mapper.SysDeptMapper
@@ -78,8 +79,8 @@ class SysUserServiceImpl(
                 SYS_DEPT.LEADER,
                 QueryMethods.column("u1.user_name as leaderName")
             )
-            /*.leftJoin(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
-            .leftJoin(SYS_USER).`as`("u1").on(SYS_USER.USER_ID.eq(SYS_DEPT.LEADER))*/
+            .leftJoin<QueryWrapper>(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
+            .leftJoin<QueryWrapper>(SYS_USER).`as`("u1").on(SYS_USER.USER_ID.eq(SYS_DEPT.LEADER))
         return baseMapper.selectPageUserList(pageQuery, queryWrapper)
     }
 
@@ -142,9 +143,9 @@ class SysUserServiceImpl(
                 )
             )
             .from(SYS_USER).`as`("u")
-            /*.leftJoin(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
-            .leftJoin(SYS_USER_ROLE).on(SYS_USER.USER_ID.eq(SYS_USER_ROLE.USER_ID))
-            .leftJoin(SYS_ROLE).on(SYS_ROLE.ROLE_ID.eq(SYS_USER_ROLE.ROLE_ID))*/
+            .leftJoin<QueryWrapper>(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
+            .leftJoin<QueryWrapper>(SYS_USER_ROLE).on(SYS_USER.USER_ID.eq(SYS_USER_ROLE.USER_ID))
+            .leftJoin<QueryWrapper>(SYS_ROLE).on(SYS_ROLE.ROLE_ID.eq(SYS_USER_ROLE.ROLE_ID))
             .where(SYS_USER.DEL_FLAG.eq(UserConstants.USER_NORMAL))
             .and(SYS_ROLE.ROLE_ID.eq(user.roleId))
             .and(SYS_USER.USER_NAME.like(user.userName))
@@ -177,9 +178,9 @@ class SysUserServiceImpl(
                 )
             )
             .from(SYS_USER).`as`("u")
-            /*.leftJoin(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
-            .leftJoin(SYS_USER_ROLE).on(SYS_USER.USER_ID.eq(SYS_USER_ROLE.USER_ID))
-            .leftJoin(SYS_ROLE).on(SYS_ROLE.ROLE_ID.eq(SYS_USER_ROLE.ROLE_ID))*/
+            .leftJoin<QueryWrapper>(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
+            .leftJoin<QueryWrapper>(SYS_USER_ROLE).on(SYS_USER.USER_ID.eq(SYS_USER_ROLE.USER_ID))
+            .leftJoin<QueryWrapper>(SYS_ROLE).on(SYS_ROLE.ROLE_ID.eq(SYS_USER_ROLE.ROLE_ID))
             .where(SYS_USER.DEL_FLAG.eq(UserConstants.USER_NORMAL))
             .and(SYS_ROLE.ROLE_ID.eq(user.roleId).or(SYS_ROLE.ROLE_ID.isNull()))
             .and(SYS_USER.USER_ID.notIn(userIds, If::isNotEmpty))

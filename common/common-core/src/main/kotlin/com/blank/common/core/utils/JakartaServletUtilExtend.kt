@@ -25,42 +25,42 @@ object JakartaServletUtilExtend {
     /**
      * 获取String参数
      */
-    fun getParameter(name: String?): String {
+    fun getParameter(name: String?): String? {
         return getRequest()!!.getParameter(name)
     }
 
     /**
      * 获取String参数
      */
-    fun getParameter(name: String?, defaultValue: String?): String {
+    fun getParameter(name: String, defaultValue: String): String {
         return Convert.toStr(getRequest()!!.getParameter(name), defaultValue)
     }
 
     /**
      * 获取Integer参数
      */
-    fun getParameterToInt(name: String?): Int {
+    fun getParameterToInt(name: String): Int? {
         return Convert.toInt(getRequest()!!.getParameter(name))
     }
 
     /**
      * 获取Integer参数
      */
-    fun getParameterToInt(name: String?, defaultValue: Int?): Int {
+    fun getParameterToInt(name: String, defaultValue: Int): Int {
         return Convert.toInt(getRequest()!!.getParameter(name), defaultValue)
     }
 
     /**
      * 获取Boolean参数
      */
-    fun getParameterToBool(name: String?): Boolean {
+    fun getParameterToBool(name: String): Boolean? {
         return Convert.toBool(getRequest()!!.getParameter(name))
     }
 
     /**
      * 获取Boolean参数
      */
-    fun getParameterToBool(name: String, defaultValue: Boolean?): Boolean {
+    fun getParameterToBool(name: String, defaultValue: Boolean): Boolean {
         return Convert.toBool(getRequest()!!.getParameter(name), defaultValue)
     }
 
