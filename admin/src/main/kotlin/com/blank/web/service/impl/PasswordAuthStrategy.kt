@@ -58,7 +58,7 @@ class PasswordAuthStrategy(
         if (captchaEnabled) {
             validateCaptcha(username, code, uuid)
         }
-        val user = loadUserByUsername(username)!!
+        val user = loadUserByUsername(username)
         loginService.checkLogin(LoginType.PASSWORD, username) { !BCrypt.checkpw(password, user.password) }
         // 此处可根据登录用户的数据不同 自行创建 loginUser
         val loginUser = loginService.buildLoginUser(user)
@@ -101,20 +101,18 @@ class PasswordAuthStrategy(
         }
     }
 
-    private fun loadUserByUsername(username: String): SysUserVo? {
+    private fun loadUserByUsername(username: String): SysUserVo {
         val def = SysUserDef.SYS_USER
         val user = userMapper.selectOneByQuery(
             QueryWrapper()
                 .select(def.USER_NAME, def.STATUS)
-                .where {
-                    def.USER_NAME.eq(username)
-                })
+                .where(def.USER_NAME.eq(username)))
         if (ObjectUtil.isNull(user)) {
             log.info { "登录用户：$username 不存在." }
             throw UserException("user.not.exists", username)
         } else if (UserStatus.DISABLE.code == user.status) {
             log.info { "登录用户：$username 已被停用." }
-            throw UserException("user.blocked", username);
+            throw UserException("user.blocked", username)
         }
         return userMapper.selectUserByUserName(username)
     }

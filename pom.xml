@@ -331,6 +331,11 @@
                         <configuration>
                             <annotationProcessorPaths>
                                 <path>
+                                    <groupId>io.github.linpeilie</groupId>
+                                    <artifactId>mapstruct-plus-processor</artifactId>
+                                    <version>${mapstruct-plus.version}</version>
+                                </path>
+                                <path>
                                     <groupId>com.mybatis-flex</groupId>
                                     <artifactId>mybatis-flex-processor</artifactId>
                                     <version>${mybatis-flex.version}</version>
@@ -402,11 +407,6 @@
                             <groupId>org.springframework.boot</groupId>
                             <artifactId>spring-boot-configuration-processor</artifactId>
                             <version>${spring-boot.version}</version>
-                        </path>
-                        <path>
-                            <groupId>io.github.linpeilie</groupId>
-                            <artifactId>mapstruct-plus-processor</artifactId>
-                            <version>${mapstruct-plus.version}</version>
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>
