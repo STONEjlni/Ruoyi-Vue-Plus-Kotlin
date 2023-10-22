@@ -31,8 +31,6 @@ public class GenTableColumnDef extends TableDef {
      */
     public final QueryColumn IS_LIST = new QueryColumn(this, "is_list");
 
-    public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
-
     /**
      * 是否查询字段（1是）
      */
@@ -42,8 +40,6 @@ public class GenTableColumnDef extends TableDef {
      * 归属表编号
      */
     public final QueryColumn TABLE_ID = new QueryColumn(this, "table_id");
-
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
 
     /**
      * 编号
@@ -94,6 +90,8 @@ public class GenTableColumnDef extends TableDef {
      */
     public final QueryColumn COLUMN_TYPE = new QueryColumn(this, "column_type");
 
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
+
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
     /**
@@ -121,7 +119,7 @@ public class GenTableColumnDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{IS_PK, SORT, IS_EDIT, IS_LIST, IS_QUERY, TABLE_ID, VERSION, COLUMN_ID, CREATE_BY, DICT_TYPE, HTML_TYPE, IS_INSERT, JAVA_TYPE, UPDATE_BY, JAVA_FIELD, QUERY_TYPE, COLUMN_NAME, COLUMN_TYPE, CREATE_TIME, IS_REQUIRED, UPDATE_TIME, IS_INCREMENT, COLUMN_COMMENT};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{IS_PK, SORT, IS_EDIT, IS_LIST, IS_QUERY, TABLE_ID, COLUMN_ID, CREATE_BY, DICT_TYPE, HTML_TYPE, IS_INSERT, JAVA_TYPE, UPDATE_BY, JAVA_FIELD, QUERY_TYPE, COLUMN_NAME, COLUMN_TYPE, CREATE_DEPT, CREATE_TIME, IS_REQUIRED, UPDATE_TIME, IS_INCREMENT, COLUMN_COMMENT};
 
     public GenTableColumnDef() {
         super("", "gen_table_column");

@@ -61,8 +61,6 @@ public class SysSocialDef extends TableDef {
      */
     public final QueryColumn USER_ID = new QueryColumn(this, "user_id");
 
-    public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
-
     /**
      * id token，部分平台可能没有
      */
@@ -72,8 +70,6 @@ public class SysSocialDef extends TableDef {
      * 用户的 unionid
      */
     public final QueryColumn UNION_ID = new QueryColumn(this, "union_id");
-
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
 
     public final QueryColumn CREATE_BY = new QueryColumn(this, "create_by");
 
@@ -103,6 +99,8 @@ public class SysSocialDef extends TableDef {
      * 平台的授权信息，部分平台可能没有
      */
     public final QueryColumn ACCESS_CODE = new QueryColumn(this, "access_code");
+
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
 
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
@@ -141,7 +139,7 @@ public class SysSocialDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{ID, CODE, EMAIL, SCOPE, AUTH_ID, AVATAR, MAC_KEY, OPEN_ID, SOURCE, USER_ID, ID_TOKEN, UNION_ID, VERSION, CREATE_BY, EXPIRE_IN, NICK_NAME, UPDATE_BY, USER_NAME, TOKEN_TYPE, ACCESS_CODE, CREATE_TIME, OAUTH_TOKEN, UPDATE_TIME, ACCESS_TOKEN, MAC_ALGORITHM, REFRESH_TOKEN, OAUTH_TOKEN_SECRET};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{ID, CODE, EMAIL, SCOPE, AUTH_ID, AVATAR, MAC_KEY, OPEN_ID, SOURCE, USER_ID, ID_TOKEN, UNION_ID, CREATE_BY, EXPIRE_IN, NICK_NAME, UPDATE_BY, USER_NAME, TOKEN_TYPE, ACCESS_CODE, CREATE_DEPT, CREATE_TIME, OAUTH_TOKEN, UPDATE_TIME, ACCESS_TOKEN, MAC_ALGORITHM, REFRESH_TOKEN, OAUTH_TOKEN_SECRET};
 
     public SysSocialDef() {
         super("", "sys_social");

@@ -36,9 +36,10 @@ public class SysDeptDef extends TableDef {
      */
     public final QueryColumn STATUS = new QueryColumn(this, "status");
 
+    /**
+     * 删除标志（0代表存在 2代表删除）
+     */
     public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
-
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
 
     public final QueryColumn CREATE_BY = new QueryColumn(this, "create_by");
 
@@ -64,6 +65,8 @@ public class SysDeptDef extends TableDef {
      */
     public final QueryColumn ANCESTORS = new QueryColumn(this, "ancestors");
 
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
+
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
     public final QueryColumn UPDATE_TIME = new QueryColumn(this, "update_time");
@@ -76,7 +79,7 @@ public class SysDeptDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{EMAIL, PHONE, DEPT_ID, LEADER, STATUS, VERSION, CREATE_BY, DEPT_NAME, ORDER_NUM, PARENT_ID, UPDATE_BY, ANCESTORS, CREATE_TIME, UPDATE_TIME};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{EMAIL, PHONE, DEPT_ID, LEADER, STATUS, CREATE_BY, DEPT_NAME, ORDER_NUM, PARENT_ID, UPDATE_BY, ANCESTORS, CREATE_DEPT, CREATE_TIME, UPDATE_TIME};
 
     public SysDeptDef() {
         super("", "sys_dept");

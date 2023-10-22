@@ -82,11 +82,6 @@ class SysMenuVo : Serializable {
     var icon: String? = null
 
     /**
-     * 创建部门
-     */
-    var createDept: Long? = null
-
-    /**
      * 备注
      */
     var remark: String? = null

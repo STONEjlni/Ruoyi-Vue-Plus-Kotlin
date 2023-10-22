@@ -67,11 +67,6 @@ class SysDictDataBo : BaseEntity() {
     var isDefault: String? = null
 
     /**
-     * 创建部门
-     */
-    var createDept: Long? = null
-
-    /**
      * 备注
      */
     var remark: String? = null

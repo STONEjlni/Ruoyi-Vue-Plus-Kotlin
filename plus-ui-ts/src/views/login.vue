@@ -53,10 +53,10 @@
 </template>
 
 <script setup lang="ts">
-import {getCodeImg, getTenantList} from '@/api/login';
+import {getCodeImg} from '@/api/login';
 import {authBinding} from '@/api/system/social/auth';
 import {useUserStore} from '@/store/modules/user';
-import {LoginData, TenantVO} from '@/api/types';
+import {LoginData} from '@/api/types';
 import {to} from 'await-to-js';
 import {HttpStatus} from "@/enums/RespEnum";
 
@@ -91,8 +91,6 @@ const tenantEnabled = ref(true);
 const register = ref(false);
 const redirect = ref(undefined);
 const loginRef = ref<ElFormInstance>();
-// 租户列表
-const tenantList = ref<TenantVO[]>([]);
 
 watch(() => router.currentRoute.value, (newRoute: any) => {
   redirect.value = newRoute.query && newRoute.query.redirect;
@@ -159,21 +157,6 @@ const getLoginData = () => {
   } as LoginData;
 }
 
-
-/**
- * 获取租户列表
- */
-const initTenantList = async () => {
-  const { data } = await getTenantList();
-  tenantEnabled.value = data.tenantEnabled === undefined ? true : data.tenantEnabled;
-  if (tenantEnabled.value) {
-    tenantList.value = data.voList;
-    if (tenantList.value != null && tenantList.value.length !== 0) {
-      loginForm.value.tenantId = tenantList.value[0].tenantId;
-    }
-  }
-}
-
 //检测租户选择框的变化
 watch(() => loginForm.value.tenantId, () => {
   localStorage.setItem("tenantId", String(loginForm.value.tenantId))
@@ -198,7 +181,6 @@ const doSocialLogin = (type: string) => {
 
 onMounted(() => {
   getCode();
-  initTenantList();
   getLoginData();
 });
 </script>

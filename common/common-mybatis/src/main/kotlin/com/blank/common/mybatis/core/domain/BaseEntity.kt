@@ -29,6 +29,11 @@ class BaseEntity : Serializable {
     var searchValue: String? = null
 
     /**
+     * 创建部门
+     */
+    var createDept: Long? = null
+
+    /**
      * 创建者
      */
     var createBy: Long? = null
@@ -47,18 +52,6 @@ class BaseEntity : Serializable {
      * 更新时间
      */
     var updateTime: Date? = null
-
-    /**
-     * 是否删除
-     */
-    @Column(isLogicDelete = true)
-    var delFlag: String? = null
-
-    /**
-     * 版本
-     */
-    @Column(version = true)
-    var version: Long? = null
 
     /**
      * 请求参数

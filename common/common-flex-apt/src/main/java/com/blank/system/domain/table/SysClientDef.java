@@ -21,14 +21,15 @@ public class SysClientDef extends TableDef {
      */
     public final QueryColumn STATUS = new QueryColumn(this, "status");
 
+    /**
+     * 删除标志（0代表存在 2代表删除）
+     */
     public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
 
     /**
      * token固定超时时间
      */
     public final QueryColumn TIMEOUT = new QueryColumn(this, "timeout");
-
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
 
     /**
      * 客户端id
@@ -48,6 +49,8 @@ public class SysClientDef extends TableDef {
      * 授权类型
      */
     public final QueryColumn GRANT_TYPE = new QueryColumn(this, "grant_type");
+
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
 
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
@@ -76,7 +79,7 @@ public class SysClientDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{ID, STATUS, TIMEOUT, VERSION, CLIENT_ID, CREATE_BY, UPDATE_BY, CLIENT_KEY, GRANT_TYPE, CREATE_TIME, DEVICE_TYPE, UPDATE_TIME, CLIENT_SECRET, ACTIVE_TIMEOUT};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{ID, STATUS, TIMEOUT, CLIENT_ID, CREATE_BY, UPDATE_BY, CLIENT_KEY, GRANT_TYPE, CREATE_DEPT, CREATE_TIME, DEVICE_TYPE, UPDATE_TIME, CLIENT_SECRET, ACTIVE_TIMEOUT};
 
     public SysClientDef() {
         super("", "sys_client");

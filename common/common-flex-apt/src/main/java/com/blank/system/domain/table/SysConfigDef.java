@@ -16,10 +16,6 @@ public class SysConfigDef extends TableDef {
      */
     public final QueryColumn REMARK = new QueryColumn(this, "remark");
 
-    public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
-
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
-
     /**
      * 参数主键
      */
@@ -44,6 +40,8 @@ public class SysConfigDef extends TableDef {
      */
     public final QueryColumn CONFIG_TYPE = new QueryColumn(this, "config_type");
 
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
+
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
     public final QueryColumn UPDATE_TIME = new QueryColumn(this, "update_time");
@@ -61,7 +59,7 @@ public class SysConfigDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{REMARK, VERSION, CONFIG_ID, CREATE_BY, UPDATE_BY, CONFIG_KEY, CONFIG_NAME, CONFIG_TYPE, CREATE_TIME, UPDATE_TIME, CONFIG_VALUE};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{REMARK, CONFIG_ID, CREATE_BY, UPDATE_BY, CONFIG_KEY, CONFIG_NAME, CONFIG_TYPE, CREATE_DEPT, CREATE_TIME, UPDATE_TIME, CONFIG_VALUE};
 
     public SysConfigDef() {
         super("", "sys_config");

@@ -41,8 +41,6 @@ public class SysMenuDef extends TableDef {
      */
     public final QueryColumn STATUS = new QueryColumn(this, "status");
 
-    public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
-
     /**
      * 是否缓存（0缓存 1不缓存）
      */
@@ -52,8 +50,6 @@ public class SysMenuDef extends TableDef {
      * 是否为外链（0是 1否）
      */
     public final QueryColumn IS_FRAME = new QueryColumn(this, "is_frame");
-
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
 
     /**
      * 显示状态（0显示 1隐藏）
@@ -89,6 +85,8 @@ public class SysMenuDef extends TableDef {
      */
     public final QueryColumn COMPONENT = new QueryColumn(this, "component");
 
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
+
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
     /**
@@ -106,7 +104,7 @@ public class SysMenuDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{ICON, PATH, PERMS, MENU_ID, REMARK, STATUS, IS_CACHE, IS_FRAME, VERSION, VISIBLE, CREATE_BY, MENU_NAME, MENU_TYPE, ORDER_NUM, PARENT_ID, UPDATE_BY, COMPONENT, CREATE_TIME, QUERY_PARAM, UPDATE_TIME};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{ICON, PATH, PERMS, MENU_ID, REMARK, STATUS, IS_CACHE, IS_FRAME, VISIBLE, CREATE_BY, MENU_NAME, MENU_TYPE, ORDER_NUM, PARENT_ID, UPDATE_BY, COMPONENT, CREATE_DEPT, CREATE_TIME, QUERY_PARAM, UPDATE_TIME};
 
     public SysMenuDef() {
         super("", "sys_menu");

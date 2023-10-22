@@ -43,17 +43,3 @@ export interface VerifyCodeResult {
   uuid?: string;
   img?: string;
 }
-
-/**
- * 租户
- */
-export interface TenantVO {
-  companyName: string;
-  domain: any;
-  tenantId: string;
-}
-
-export interface TenantInfo {
-  tenantEnabled: boolean;
-  voList: TenantVO[];
-}

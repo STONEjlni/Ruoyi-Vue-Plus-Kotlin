@@ -1,6 +1,5 @@
 export interface LoginInfoVO {
   infoId: string | number;
-  tenantId: string | number;
   userName: string;
   status: string;
   ipaddr: string;

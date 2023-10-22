@@ -1,6 +1,7 @@
 package com.blank.system.domain
 
 import com.blank.common.mybatis.core.domain.BaseEntity
+import com.mybatisflex.annotation.Column
 import com.mybatisflex.annotation.Id
 import com.mybatisflex.annotation.Table
 
@@ -53,4 +54,10 @@ class SysRole(
      * 备注
      */
     var remark: String? = null
+
+    /**
+     * 删除标志（0代表存在 2代表删除）
+     */
+    @Column(isLogicDelete = true)
+    var delFlag: String? = null
 }

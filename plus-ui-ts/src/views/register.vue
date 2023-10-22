@@ -56,8 +56,8 @@
 </template>
 
 <script setup lang="ts">
-import {getCodeImg, getTenantList, register} from '@/api/login';
-import {RegisterForm, TenantVO} from '@/api/types';
+import {getCodeImg, register} from '@/api/login';
+import {RegisterForm} from '@/api/types';
 import {to} from 'await-to-js';
 
 const router = useRouter();
@@ -106,8 +106,6 @@ const codeUrl = ref("");
 const loading = ref(false);
 const captchaEnabled = ref(true);
 const registerRef = ref(ElForm);
-// 租户列表
-const tenantList = ref<TenantVO[]>([]);
 
 const handleRegister = () => {
   registerRef.value.validate(async (valid: boolean) => {
@@ -141,20 +139,8 @@ const getCode = async () => {
   }
 };
 
-const initTenantList = async () => {
-  const { data } = await getTenantList();
-  tenantEnabled.value = data.tenantEnabled === undefined ? true : data.tenantEnabled;
-  if (tenantEnabled.value) {
-    tenantList.value = data.voList;
-    if (tenantList.value != null && tenantList.value.length !== 0) {
-      registerForm.value.tenantId = tenantList.value[0].tenantId;
-    }
-  }
-}
-
 onMounted(() => {
   getCode();
-  initTenantList();
 })
 </script>
 

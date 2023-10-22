@@ -41,14 +41,10 @@ public class SysOssConfigDef extends TableDef {
      */
     public final QueryColumn STATUS = new QueryColumn(this, "status");
 
-    public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
-
     /**
      * 是否https（0否 1是）
      */
     public final QueryColumn IS_HTTPS = new QueryColumn(this, "is_https");
-
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
 
     public final QueryColumn CREATE_BY = new QueryColumn(this, "create_by");
 
@@ -79,6 +75,8 @@ public class SysOssConfigDef extends TableDef {
      */
     public final QueryColumn BUCKET_NAME = new QueryColumn(this, "bucket_name");
 
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
+
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
     public final QueryColumn UPDATE_TIME = new QueryColumn(this, "update_time");
@@ -101,7 +99,7 @@ public class SysOssConfigDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{EXT1, DOMAIN, PREFIX, REGION, REMARK, STATUS, IS_HTTPS, VERSION, CREATE_BY, ENDPOINT, UPDATE_BY, ACCESS_KEY, CONFIG_KEY, SECRET_KEY, BUCKET_NAME, CREATE_TIME, UPDATE_TIME, OSS_CONFIG_ID, ACCESS_POLICY};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{EXT1, DOMAIN, PREFIX, REGION, REMARK, STATUS, IS_HTTPS, CREATE_BY, ENDPOINT, UPDATE_BY, ACCESS_KEY, CONFIG_KEY, SECRET_KEY, BUCKET_NAME, CREATE_DEPT, CREATE_TIME, UPDATE_TIME, OSS_CONFIG_ID, ACCESS_POLICY};
 
     public SysOssConfigDef() {
         super("", "sys_oss_config");

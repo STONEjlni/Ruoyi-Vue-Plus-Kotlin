@@ -1,6 +1,7 @@
 package com.blank.system.domain
 
 import com.blank.common.mybatis.core.domain.BaseEntity
+import com.mybatisflex.annotation.Column
 import com.mybatisflex.annotation.Id
 import com.mybatisflex.annotation.Table
 import java.io.Serial
@@ -55,6 +56,12 @@ class SysClient : BaseEntity() {
      * 状态（0正常 1停用）
      */
     var status: String? = null
+
+    /**
+     * 删除标志（0代表存在 2代表删除）
+     */
+    @Column(isLogicDelete = true)
+    var delFlag: String? = null
 
     companion object {
         @Serial

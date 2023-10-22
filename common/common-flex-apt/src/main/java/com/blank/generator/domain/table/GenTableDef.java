@@ -16,8 +16,6 @@ public class GenTableDef extends TableDef {
      */
     public final QueryColumn REMARK = new QueryColumn(this, "remark");
 
-    public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
-
     /**
      * 生成路径（不填默认项目路径）
      */
@@ -38,8 +36,6 @@ public class GenTableDef extends TableDef {
      */
     public final QueryColumn TABLE_ID = new QueryColumn(this, "table_id");
 
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
-
     public final QueryColumn CREATE_BY = new QueryColumn(this, "create_by");
 
     /**
@@ -58,6 +54,8 @@ public class GenTableDef extends TableDef {
      * 表名称
      */
     public final QueryColumn TABLE_NAME = new QueryColumn(this, "table_name");
+
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
 
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
@@ -116,7 +114,7 @@ public class GenTableDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{REMARK, GEN_PATH, GEN_TYPE, OPTIONS, TABLE_ID, VERSION, CREATE_BY, DATA_NAME, UPDATE_BY, CLASS_NAME, TABLE_NAME, CREATE_TIME, MODULE_NAME, UPDATE_TIME, PACKAGE_NAME, TPL_CATEGORY, BUSINESS_NAME, FUNCTION_NAME, SUB_TABLE_NAME, TABLE_COMMENT, FUNCTION_AUTHOR, SUB_TABLE_FK_NAME};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{REMARK, GEN_PATH, GEN_TYPE, OPTIONS, TABLE_ID, CREATE_BY, DATA_NAME, UPDATE_BY, CLASS_NAME, TABLE_NAME, CREATE_DEPT, CREATE_TIME, MODULE_NAME, UPDATE_TIME, PACKAGE_NAME, TPL_CATEGORY, BUSINESS_NAME, FUNCTION_NAME, SUB_TABLE_NAME, TABLE_COMMENT, FUNCTION_AUTHOR, SUB_TABLE_FK_NAME};
 
     public GenTableDef() {
         super("", "gen_table");

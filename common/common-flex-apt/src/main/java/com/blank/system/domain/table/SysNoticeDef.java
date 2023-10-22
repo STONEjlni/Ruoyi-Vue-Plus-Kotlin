@@ -21,10 +21,6 @@ public class SysNoticeDef extends TableDef {
      */
     public final QueryColumn STATUS = new QueryColumn(this, "status");
 
-    public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
-
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
-
     public final QueryColumn CREATE_BY = new QueryColumn(this, "create_by");
 
     /**
@@ -33,6 +29,8 @@ public class SysNoticeDef extends TableDef {
     public final QueryColumn NOTICE_ID = new QueryColumn(this, "notice_id");
 
     public final QueryColumn UPDATE_BY = new QueryColumn(this, "update_by");
+
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
 
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
@@ -61,7 +59,7 @@ public class SysNoticeDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{REMARK, STATUS, VERSION, CREATE_BY, NOTICE_ID, UPDATE_BY, CREATE_TIME, NOTICE_TYPE, UPDATE_TIME, NOTICE_TITLE, NOTICE_CONTENT};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{REMARK, STATUS, CREATE_BY, NOTICE_ID, UPDATE_BY, CREATE_DEPT, CREATE_TIME, NOTICE_TYPE, UPDATE_TIME, NOTICE_TITLE, NOTICE_CONTENT};
 
     public SysNoticeDef() {
         super("", "sys_notice");

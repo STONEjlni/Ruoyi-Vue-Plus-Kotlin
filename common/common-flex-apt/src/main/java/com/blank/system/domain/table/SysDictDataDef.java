@@ -16,10 +16,6 @@ public class SysDictDataDef extends TableDef {
      */
     public final QueryColumn REMARK = new QueryColumn(this, "remark");
 
-    public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
-
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
-
     public final QueryColumn CREATE_BY = new QueryColumn(this, "create_by");
 
     /**
@@ -64,6 +60,8 @@ public class SysDictDataDef extends TableDef {
      */
     public final QueryColumn LIST_CLASS = new QueryColumn(this, "list_class");
 
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
+
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
     public final QueryColumn UPDATE_TIME = new QueryColumn(this, "update_time");
@@ -76,7 +74,7 @@ public class SysDictDataDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{REMARK, VERSION, CREATE_BY, CSS_CLASS, DICT_CODE, DICT_SORT, DICT_TYPE, UPDATE_BY, DICT_LABEL, DICT_VALUE, IS_DEFAULT, LIST_CLASS, CREATE_TIME, UPDATE_TIME};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{REMARK, CREATE_BY, CSS_CLASS, DICT_CODE, DICT_SORT, DICT_TYPE, UPDATE_BY, DICT_LABEL, DICT_VALUE, IS_DEFAULT, LIST_CLASS, CREATE_DEPT, CREATE_TIME, UPDATE_TIME};
 
     public SysDictDataDef() {
         super("", "sys_dict_data");

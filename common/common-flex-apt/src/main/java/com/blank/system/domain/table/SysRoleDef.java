@@ -26,14 +26,15 @@ public class SysRoleDef extends TableDef {
      */
     public final QueryColumn STATUS = new QueryColumn(this, "status");
 
+    /**
+     * 删除标志（0代表存在 2代表删除）
+     */
     public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
 
     /**
      * 角色权限
      */
     public final QueryColumn ROLE_KEY = new QueryColumn(this, "role_key");
-
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
 
     public final QueryColumn CREATE_BY = new QueryColumn(this, "create_by");
 
@@ -53,6 +54,8 @@ public class SysRoleDef extends TableDef {
      * 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限；5：仅本人数据权限）
      */
     public final QueryColumn DATA_SCOPE = new QueryColumn(this, "data_scope");
+
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
 
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
@@ -76,7 +79,7 @@ public class SysRoleDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{REMARK, ROLE_ID, STATUS, ROLE_KEY, VERSION, CREATE_BY, ROLE_NAME, ROLE_SORT, UPDATE_BY, DATA_SCOPE, CREATE_TIME, UPDATE_TIME, DEPT_CHECK_STRICTLY, MENU_CHECK_STRICTLY};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{REMARK, ROLE_ID, STATUS, ROLE_KEY, CREATE_BY, ROLE_NAME, ROLE_SORT, UPDATE_BY, DATA_SCOPE, CREATE_DEPT, CREATE_TIME, UPDATE_TIME, DEPT_CHECK_STRICTLY, MENU_CHECK_STRICTLY};
 
     public SysRoleDef() {
         super("", "sys_role");

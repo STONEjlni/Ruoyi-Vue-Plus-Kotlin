@@ -46,14 +46,15 @@ public class SysUserDef extends TableDef {
      */
     public final QueryColumn USER_ID = new QueryColumn(this, "user_id");
 
+    /**
+     * 删除标志（0代表存在 2代表删除）
+     */
     public final QueryColumn DEL_FLAG = new QueryColumn(this, "del_flag");
 
     /**
      * 最后登录IP
      */
     public final QueryColumn LOGIN_IP = new QueryColumn(this, "login_ip");
-
-    public final QueryColumn VERSION = new QueryColumn(this, "version");
 
     public final QueryColumn CREATE_BY = new QueryColumn(this, "create_by");
 
@@ -84,6 +85,8 @@ public class SysUserDef extends TableDef {
      */
     public final QueryColumn LOGIN_DATE = new QueryColumn(this, "login_date");
 
+    public final QueryColumn CREATE_DEPT = new QueryColumn(this, "create_dept");
+
     public final QueryColumn CREATE_TIME = new QueryColumn(this, "create_time");
 
     public final QueryColumn UPDATE_TIME = new QueryColumn(this, "update_time");
@@ -101,7 +104,7 @@ public class SysUserDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{SEX, EMAIL, AVATAR, DEPT_ID, REMARK, STATUS, USER_ID, LOGIN_IP, VERSION, CREATE_BY, NICK_NAME, PASSWORD, UPDATE_BY, USER_NAME, USER_TYPE, LOGIN_DATE, CREATE_TIME, UPDATE_TIME, PHONENUMBER};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{SEX, EMAIL, AVATAR, DEPT_ID, REMARK, STATUS, USER_ID, LOGIN_IP, CREATE_BY, NICK_NAME, PASSWORD, UPDATE_BY, USER_NAME, USER_TYPE, LOGIN_DATE, CREATE_DEPT, CREATE_TIME, UPDATE_TIME, PHONENUMBER};
 
     public SysUserDef() {
         super("", "sys_user");

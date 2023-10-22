@@ -28,7 +28,7 @@ import java.util.*
 @MapperScan("\${mybatis-flex.mapperPackage}")
 @PropertySource(value = ["classpath:common-mybatis.yml"], factory = YmlPropertySourceFactory::class)
 @Slf4j
-class MyBatisFlexConfiguration : MyBatisFlexCustomizer {
+class MyBatisFlexConfig : MyBatisFlexCustomizer {
 
     companion object {
         init {
@@ -62,6 +62,7 @@ class MyBatisFlexConfiguration : MyBatisFlexCustomizer {
                         it.createBy = userId
                         // 当前已登录 且 更新人为空 则填充
                         it.updateBy = userId
+                        it.createDept = if (ObjectUtil.isNotNull(it.createDept)) it.createDept else loginUser?.deptId
                     }
                 }
             } catch (e: Exception) {
