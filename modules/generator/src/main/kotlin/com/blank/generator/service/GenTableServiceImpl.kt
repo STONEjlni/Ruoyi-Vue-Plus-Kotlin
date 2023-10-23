@@ -65,9 +65,7 @@ class GenTableServiceImpl(
      */
     override fun selectGenTableColumnListByTableId(tableId: Long): MutableList<GenTableColumn> {
         return genTableColumnMapper.selectListByQuery(QueryWrapper.create().select()
-            .where {
-                GEN_TABLE_COLUMN.TABLE_ID.eq(tableId)
-            }
+            .where(GEN_TABLE_COLUMN.TABLE_ID.eq(tableId))
             .orderBy(GEN_TABLE_COLUMN.SORT, true))
     }
 
@@ -93,15 +91,13 @@ class GenTableServiceImpl(
         val params = genTable.params
 
         return QueryWrapper.create().from(GEN_TABLE)
-            .where {
-                GEN_TABLE.DATA_NAME.eq(genTable.dataName, StrUtil.isNotBlank(genTable.dataName))
-                QueryMethods.lower(GEN_TABLE.TABLE_NAME).like(StringUtils.lowerCase(genTable.tableName), StrUtil.isNotBlank(genTable.tableName))
-                QueryMethods.lower(GEN_TABLE.TABLE_COMMENT).like(StringUtils.lowerCase(genTable.tableComment), StrUtil.isNotBlank(genTable.tableComment))
-                /*GEN_TABLE.DATA_NAME.like("lower(${genTable.tableName})", StrUtil.isNotBlank(genTable.tableName))
-                GEN_TABLE.DATA_NAME.like("lower(${genTable.tableComment})", StrUtil.isNotBlank(genTable.tableComment))*/
-                GEN_TABLE.CREATE_TIME.between(params["beginTime"], params["endTime"],
-                    params["beginTime"] != null && params["endTime"] != null)
-            }
+            .where(GEN_TABLE.DATA_NAME.eq(genTable.dataName, StrUtil.isNotBlank(genTable.dataName)))
+            .and(QueryMethods.lower(GEN_TABLE.TABLE_NAME).like(StringUtils.lowerCase(genTable.tableName),
+                StrUtil.isNotBlank(genTable.tableName)))
+            .and(QueryMethods.lower(GEN_TABLE.TABLE_COMMENT).like(StringUtils.lowerCase(genTable.tableComment),
+                StrUtil.isNotBlank(genTable.tableComment)))
+            .and(GEN_TABLE.CREATE_TIME.between(params["beginTime"], params["endTime"],
+                params["beginTime"] != null && params["endTime"] != null))
     }
 
     override fun selectPageDbTableList(genTable: GenTable, pageQuery: PageQuery): TableDataInfo<GenTable> {
@@ -282,9 +278,7 @@ class GenTableServiceImpl(
         baseMapper.deleteBatchByIds(ids)
         genTableColumnMapper.deleteByQuery(
             QueryWrapper.create().from(GEN_TABLE_COLUMN)
-                .where {
-                    GEN_TABLE_COLUMN.TABLE_ID.`in`(ids)
-                }
+                .where(GEN_TABLE_COLUMN.TABLE_ID.`in`(ids))
         )
     }
 

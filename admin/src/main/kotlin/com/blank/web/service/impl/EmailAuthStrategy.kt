@@ -87,9 +87,7 @@ class EmailAuthStrategy(
         var user = userMapper.selectOneByQuery(
             QueryWrapper()
                 .select(def.EMAIL, def.STATUS)
-                .where {
-                    def.EMAIL.eq(email)
-                }
+                .where(def.EMAIL.eq(email))
         )
 
         if (ObjectUtil.isNull(user)) {

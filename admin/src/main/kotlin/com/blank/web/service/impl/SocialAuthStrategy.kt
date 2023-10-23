@@ -92,9 +92,7 @@ class SocialAuthStrategy(
         val def = SysUserDef.SYS_USER
         val user = userMapper.selectOneByQuery(
             QueryWrapper().select(def.USER_NAME, def.STATUS)
-                .where {
-                    def.USER_ID.eq(userId)
-                })
+                .where(def.USER_ID.eq(userId)))
         if (ObjectUtil.isNull(user)) {
             log.info { "登录用户：$userId 不存在." }
             throw UserException("user.not.exists", "");
