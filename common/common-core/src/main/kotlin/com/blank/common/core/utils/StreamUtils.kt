@@ -55,7 +55,6 @@ object StreamUtils {
             .map { function.apply(it) }
             .filter { Objects.nonNull(it) }
             .joinToString { delimiter }
-        /*.collect(Collectors.joining(delimiter))*/
     }
 
     /**
@@ -71,9 +70,6 @@ object StreamUtils {
         } else collection
             .filter { Objects.nonNull(it) }
             .sortedWith(comparing)
-        /*collection.stream().filter { obj: E? -> Objects.nonNull(obj) }.sorted(comparing)
-            .collect(Collectors.toList())*/
-        // 注意此处不要使用 .toList() 新语法 因为返回的是不可变List 会导致序列化问题
     }
 
     /**
@@ -92,12 +88,6 @@ object StreamUtils {
         } else collection
             .filter { Objects.nonNull(it) }
             .associateBy { key.apply(it) }
-
-        /*collection.stream().filter { obj: V? -> Objects.nonNull(obj) }
-            .collect(
-                Collectors.toMap(key, Function.identity(),
-                    BinaryOperator { l: V?, r: V? -> l })
-            )*/
     }
 
     /**
@@ -139,12 +129,6 @@ object StreamUtils {
         } else collection
             .filter { Objects.nonNull(it) }
             .groupBy { key.apply(it) }
-
-        /*return collection
-        .stream().filter(Objects::nonNull)
-        .collect(Collectors.groupingBy(key,
-            LinkedHashMap::new,
-            Collectors.toList()));*/
     }
 
     /**
@@ -172,13 +156,6 @@ object StreamUtils {
             .mapValues {
                 it.value.groupBy { key2.apply(it) }
             }
-
-
-        /*collection
-        .stream().filter(Objects::nonNull)
-        .collect(Collectors.groupingBy(key1, LinkedHashMap::new,
-        Collectors.groupingBy(key2, LinkedHashMap::new, Collectors.toList())));
-        */
     }
 
     /**
@@ -208,13 +185,6 @@ object StreamUtils {
                     key2.apply(it)
                 }
             }
-        /*.collect(
-            Collectors.groupingBy<E?, T, Map<U, E?>, Any, java.util.LinkedHashMap<T, Map<U, E>>>(
-                key1,
-                Supplier { LinkedHashMap() }, Collectors.toMap(key2, Function.identity(),
-                    BinaryOperator { l: E, r: E -> l })
-            )
-        )*/
     }
 
     /**
@@ -234,12 +204,6 @@ object StreamUtils {
             .map { function.apply(it) }
             .filter { Objects.nonNull(it) }
             .toMutableList()
-
-        /*collection
-        .stream()
-        .map(function)
-        .filter { obj: T -> Objects.nonNull(obj) } // 注意此处不要使用 .toList() 新语法 因为返回的是不可变List 会导致序列化问题
-        .collect(Collectors.toList())*/
     }
 
     /**
@@ -259,12 +223,6 @@ object StreamUtils {
             .map { function.apply(it) }
             .filter { Objects.nonNull(it) }
             .toSet()
-
-        /*collection
-        .stream()
-        .map(function)
-        .filter { obj: T -> Objects.nonNull(obj) }
-        .collect(Collectors.toSet())*/
     }
 
 

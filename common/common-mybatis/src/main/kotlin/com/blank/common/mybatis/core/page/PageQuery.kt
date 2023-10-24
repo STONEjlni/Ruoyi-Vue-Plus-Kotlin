@@ -104,19 +104,10 @@ class PageQuery : Serializable {
                 "desc" -> {
                     orderBys[i] = QueryOrderBy(QueryColumn(orderByStr), SqlConsts.DESC)
                 }
-
                 else -> {
                     throw ServiceException("排序参数有误")
                 }
             }
-
-            /*if ("asc" == isAscStr) {
-                orderBys[i] = QueryOrderBy(QueryColumn(orderByStr), SqlConsts.ASC)
-            } else if ("desc" == isAscStr) {
-                orderBys[i] = QueryOrderBy(QueryColumn(orderByStr), SqlConsts.DESC)
-            } else {
-                throw ServiceException("排序参数有误")
-            }*/
         }
         return orderBys
     }

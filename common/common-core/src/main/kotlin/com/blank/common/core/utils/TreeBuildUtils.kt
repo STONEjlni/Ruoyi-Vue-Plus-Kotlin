@@ -16,9 +16,6 @@ object TreeBuildUtils {
     private val DEFAULT_CONFIG = TreeNodeConfig.DEFAULT_CONFIG.setNameKey("label")
 
     fun <T, K> build(list: MutableList<T>, nodeParser: NodeParser<T, K>): MutableList<Tree<K>> {
-        /*if (CollUtil.isEmpty(list)) {
-            return null
-        }*/
         val k = ReflectUtils.invokeGetter<K>(list[0] as Any, "parentId")
         return TreeUtil.build(list, k, DEFAULT_CONFIG, nodeParser)
     }

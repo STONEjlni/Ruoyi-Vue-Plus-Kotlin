@@ -310,10 +310,5 @@ object StringUtilsExtend {
         } else StrUtil.split(str, separator)
             .filter { Objects.nonNull(it) }
             .map { mapper.apply(it) }
-        /*StrUtil.split(str, separator)
-        .stream()
-        .filter { obj: String? -> Objects.nonNull(obj) }
-        .map(mapper)
-        .collect(Collectors.toList())*/
     }
 }

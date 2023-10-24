@@ -67,7 +67,6 @@ object RedisUtils {
         topic.addListener(clazz) { _, msg ->
             consumer.accept(msg)
         }
-        /*topic.addListener(clazz, (channel, msg) -> consumer.accept(msg));*/
     }
 
     /**
@@ -207,9 +206,6 @@ object RedisUtils {
         collection.forEach {
             batch.getBucket<Any>(it.toString()).deleteAsync()
         }
-        /*collection.forEach(t -> {
-            batch.getBucket(t.toString()).deleteAsync();
-        });*/
         batch.execute()
     }
 
