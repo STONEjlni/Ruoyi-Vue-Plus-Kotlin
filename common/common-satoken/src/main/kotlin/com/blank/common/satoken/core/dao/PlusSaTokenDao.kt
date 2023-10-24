@@ -155,7 +155,7 @@ class PlusSaTokenDao : SaTokenDao {
      */
     override fun searchData(prefix: String, keyword: String, start: Int, size: Int, sortType: Boolean): List<String> {
         val keys = keys("$prefix*$keyword*")
-        val list: List<String> = ArrayList(keys)
+        val list: MutableList<String> = keys.toMutableList()
         return SaFoxUtil.searchList(list, start, size, sortType)
     }
 }

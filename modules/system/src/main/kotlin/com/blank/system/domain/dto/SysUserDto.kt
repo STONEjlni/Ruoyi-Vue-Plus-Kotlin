@@ -110,5 +110,5 @@ class SysUserDto : Serializable {
     /**
      * 角色对象
      */
-    var roles: List<SysRoleVo>? = null
+    var roles: MutableList<SysRoleVo>? = null
 }

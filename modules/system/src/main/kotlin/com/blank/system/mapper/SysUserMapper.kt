@@ -41,7 +41,7 @@ interface SysUserMapper : BaseMapperPlus<SysUser> {
      * @return 用户信息集合信息
      */
     fun selectUserList(queryWrapper: QueryWrapper): MutableList<SysUserVo> {
-        val sysUserDtos: List<SysUserDto> = this.selectListByQueryAs(
+        val sysUserDtos: MutableList<SysUserDto> = this.selectListByQueryAs(
             queryWrapper,
             SysUserDto::class.java, DataPermission.of(
                 DataColumn.of("deptName", "d.dept_id"),

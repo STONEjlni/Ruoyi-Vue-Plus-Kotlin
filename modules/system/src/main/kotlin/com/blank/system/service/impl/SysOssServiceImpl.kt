@@ -45,7 +45,7 @@ class SysOssServiceImpl(
     override fun queryPageList(bo: SysOssBo, pageQuery: PageQuery): TableDataInfo<SysOssVo> {
         val lqw = buildQueryWrapper(bo)
         val result = baseMapper.paginateAs(pageQuery, lqw, SysOssVo::class.java)
-        val filterResult: List<SysOssVo> = StreamUtils.toList(result.records) { oss: SysOssVo ->
+        val filterResult: MutableList<SysOssVo> = StreamUtils.toList(result.records) { oss: SysOssVo ->
             matchingUrl(
                 oss
             )

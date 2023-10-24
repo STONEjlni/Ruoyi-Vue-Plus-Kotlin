@@ -221,7 +221,7 @@ class SysRoleServiceImpl(
         if (LoginHelper.isSuperAdmin()) {
             return
         }
-        val roles: List<SysRoleVo?> = selectRoleList(SysRoleBo(roleId))
+        val roles: MutableList<SysRoleVo> = selectRoleList(SysRoleBo(roleId))
         if (CollUtil.isEmpty(roles)) {
             throw ServiceException("没有权限访问角色数据！")
         }

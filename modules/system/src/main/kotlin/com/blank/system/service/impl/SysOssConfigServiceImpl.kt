@@ -40,7 +40,7 @@ class SysOssConfigServiceImpl(
      * 项目启动时，初始化参数到缓存，加载配置类
      */
     override fun init() {
-        val list: List<SysOssConfig> = baseMapper.selectListByQuery(
+        val list: MutableList<SysOssConfig> = baseMapper.selectListByQuery(
             QueryWrapper.create().from(SYS_OSS_CONFIG)
         )
         val map: Map<Long?, List<SysOssConfig>> = StreamUtils.groupByKey(list, SysOssConfig::ossConfigId)

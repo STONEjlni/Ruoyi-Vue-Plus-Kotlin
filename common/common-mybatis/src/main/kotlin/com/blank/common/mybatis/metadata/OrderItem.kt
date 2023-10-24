@@ -28,12 +28,12 @@ class OrderItem @JvmOverloads constructor(
             return build(column, false)
         }
 
-        fun ascs(vararg columns: String): List<OrderItem> {
-            return columns.toList().map { asc(it) }
+        fun ascs(vararg columns: String): MutableList<OrderItem> {
+            return columns.map { asc(it) }.toMutableList()
         }
 
-        fun descs(vararg columns: String): List<OrderItem> {
-            return columns.toList().map { desc(it) }
+        fun descs(vararg columns: String): MutableList<OrderItem> {
+            return columns.map { desc(it) }.toMutableList()
         }
 
         private fun build(column: String, asc: Boolean): OrderItem {

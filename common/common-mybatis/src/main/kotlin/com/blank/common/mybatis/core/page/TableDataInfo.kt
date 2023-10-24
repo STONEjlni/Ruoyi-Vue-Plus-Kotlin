@@ -15,7 +15,7 @@ class TableDataInfo<T> @JvmOverloads constructor(
      * @param list  列表数据
      * @param total 总记录数
      */
-    list: List<T>? = null,
+    list: MutableList<T>? = null,
     /**
      * 总记录数
      */
@@ -34,7 +34,7 @@ class TableDataInfo<T> @JvmOverloads constructor(
             return rspData
         }
 
-        fun <T> build(list: List<T>): TableDataInfo<T> {
+        fun <T> build(list: MutableList<T>): TableDataInfo<T> {
             val rspData = TableDataInfo<T>()
             rspData.code = HttpStatus.HTTP_OK
             rspData.msg = "查询成功"
@@ -54,7 +54,7 @@ class TableDataInfo<T> @JvmOverloads constructor(
     /**
      * 列表数据
      */
-    var rows: List<T>? = list
+    var rows: MutableList<T>? = list
 
     /**
      * 消息状态码

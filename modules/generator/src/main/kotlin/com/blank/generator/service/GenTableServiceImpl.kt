@@ -103,7 +103,7 @@ class GenTableServiceImpl(
     override fun selectPageDbTableList(genTable: GenTable, pageQuery: PageQuery): TableDataInfo<GenTable> {
         return try {
             DataSourceKey.use(genTable.dataName)
-            val value: List<String> = baseMapper.selectTableNameList(genTable.dataName!!)
+            val value: MutableList<String> = baseMapper.selectTableNameList(genTable.dataName!!)
             genTable.params["genTableNames"] = value
             val page = selectPageDbTableList(pageQuery.build(), genTable)
             TableDataInfo.build(page)
@@ -113,7 +113,7 @@ class GenTableServiceImpl(
     }
 
     private fun selectPageDbTableList(page: Page<GenTable>, genTable: GenTable): Page<GenTable> {
-        val genTableNames = genTable.params["genTableNames"] as List<String>
+        val genTableNames = genTable.params["genTableNames"] as MutableList<String>
         val tableName = StringUtils.lowerCase(genTable.tableName)
         val tableComment = StringUtils.lowerCase(genTable.tableComment)
         if (DataBaseHelper.isMySql()) {

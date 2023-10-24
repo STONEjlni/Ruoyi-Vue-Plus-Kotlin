@@ -105,8 +105,8 @@ object VelocityUtils {
      *
      * @return 模板列表
      */
-    fun getTemplateList(tplCategory: String): List<String> {
-        val templates: MutableList<String> = ArrayList()
+    fun getTemplateList(tplCategory: String): MutableList<String> {
+        val templates: MutableList<String> = mutableListOf()
         templates.add("vm/java/domain.java.vm")
         templates.add("vm/java/vo.java.vm")
         templates.add("vm/java/bo.java.vm")
@@ -202,7 +202,7 @@ object VelocityUtils {
      * @return 返回需要导入的包列表
      */
     fun getImportList(genTable: GenTable): HashSet<String> {
-        val columns: List<GenTableColumn>? = genTable.columns
+        val columns: MutableList<GenTableColumn>? = genTable.columns
         val importList = HashSet<String>()
         for (column in columns!!) {
             if (!column.isSuperColumn() && GenConstants.TYPE_DATE == column.javaType) {
@@ -222,7 +222,7 @@ object VelocityUtils {
      * @return 返回字典组
      */
     fun getDicts(genTable: GenTable): String {
-        val columns: List<GenTableColumn>? = genTable.columns
+        val columns: MutableList<GenTableColumn>? = genTable.columns
         val dicts: MutableSet<String> = HashSet()
         addDicts(dicts, columns)
         return StringUtils.join(dicts, ", ")
@@ -234,7 +234,7 @@ object VelocityUtils {
      * @param dicts   字典列表
      * @param columns 列集合
      */
-    fun addDicts(dicts: MutableSet<String>, columns: List<GenTableColumn>?) {
+    fun addDicts(dicts: MutableSet<String>, columns: MutableList<GenTableColumn>?) {
         for (column in columns!!) {
             if (!column.isSuperColumn() && StringUtils.isNotEmpty(column.dictType) && StringUtils.equalsAny(
                     column.htmlType,

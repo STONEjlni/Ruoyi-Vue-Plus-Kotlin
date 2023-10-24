@@ -438,7 +438,7 @@ class SysUserServiceImpl(
     private fun insertUserRole(userId: Long, roleIds: Array<Long>, clear: Boolean) {
         if (ArrayUtil.isNotEmpty(roleIds)) {
             // 判断是否具有此角色的操作权限
-            val roles: List<SysRoleVo> = roleMapper.selectRoleList(QueryWrapper.create())
+            val roles: MutableList<SysRoleVo> = roleMapper.selectRoleList(QueryWrapper.create())
             if (CollUtil.isEmpty(roles)) {
                 throw ServiceException("没有权限访问角色的数据")
             }
@@ -446,7 +446,7 @@ class SysUserServiceImpl(
             if (!isSuperAdmin(userId)) {
                 roleList.remove(UserConstants.SUPER_ADMIN_ID)
             }
-            val canDoRoleList: List<Long?> = StreamUtils.filter(listOf(*roleIds), roleList::contains)
+            val canDoRoleList: MutableList<Long?> = StreamUtils.filter(listOf(*roleIds), roleList::contains)
             if (CollUtil.isEmpty(canDoRoleList)) {
                 throw ServiceException("没有权限访问角色的数据")
             }
@@ -457,7 +457,7 @@ class SysUserServiceImpl(
                 )
             }
             // 新增用户与角色管理
-            val list: List<SysUserRole> = StreamUtils.toList(canDoRoleList) { roleId ->
+            val list: MutableList<SysUserRole> = StreamUtils.toList(canDoRoleList) { roleId ->
                 val ur = SysUserRole()
                 ur.userId = userId
                 ur.roleId = roleId

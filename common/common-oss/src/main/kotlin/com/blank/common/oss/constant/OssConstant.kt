@@ -21,7 +21,7 @@ interface OssConstant {
          * 系统数据ids
          */
         @JvmField
-        val SYSTEM_DATA_IDS: List<Long> = mutableListOf(1L, 2L, 3L, 4L)
+        val SYSTEM_DATA_IDS: MutableList<Long> = mutableListOf(1L, 2L, 3L, 4L)
 
         /**
          * 云服务商
