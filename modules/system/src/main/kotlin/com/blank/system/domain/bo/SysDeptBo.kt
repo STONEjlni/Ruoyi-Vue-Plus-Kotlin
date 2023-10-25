@@ -1,7 +1,5 @@
 package com.blank.system.domain.bo
 
-import com.blank.common.core.validate.AddGroup
-import com.blank.common.core.validate.EditGroup
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.system.domain.SysDept
 import io.github.linpeilie.annotations.AutoMapper
@@ -18,7 +16,7 @@ class SysDeptBo : BaseEntity() {
     /**
      * 部门id
      */
-    var deptId: @NotNull(message = "部门id不能为空", groups = [EditGroup::class]) Long? = null
+    var deptId: @NotNull(message = "部门id不能为空") Long? = null
 
     /**
      * 父部门ID
@@ -28,7 +26,7 @@ class SysDeptBo : BaseEntity() {
     /**
      * 部门名称
      */
-    var deptName: @NotBlank(message = "部门名称不能为空", groups = [AddGroup::class, EditGroup::class]) @Size(
+    var deptName: @NotBlank(message = "部门名称不能为空") @Size(
         min = 0,
         max = 30,
         message = "部门名称长度不能超过{max}个字符"

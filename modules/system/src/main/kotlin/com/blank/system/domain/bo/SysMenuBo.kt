@@ -1,7 +1,5 @@
 package com.blank.system.domain.bo
 
-import com.blank.common.core.validate.AddGroup
-import com.blank.common.core.validate.EditGroup
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.system.domain.SysMenu
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -18,7 +16,7 @@ class SysMenuBo : BaseEntity() {
     /**
      * 菜单ID
      */
-    var menuId: @NotNull(message = "菜单ID不能为空", groups = [EditGroup::class]) Long? = null
+    var menuId: @NotNull(message = "菜单ID不能为空") Long? = null
 
     /**
      * 父菜单ID
@@ -28,7 +26,7 @@ class SysMenuBo : BaseEntity() {
     /**
      * 菜单名称
      */
-    var menuName: @NotBlank(message = "菜单名称不能为空", groups = [AddGroup::class, EditGroup::class]) @Size(
+    var menuName: @NotBlank(message = "菜单名称不能为空") @Size(
         min = 0,
         max = 50,
         message = "菜单名称长度不能超过{max}个字符"
@@ -37,7 +35,7 @@ class SysMenuBo : BaseEntity() {
     /**
      * 显示顺序
      */
-    var orderNum: @NotNull(message = "显示顺序不能为空", groups = [AddGroup::class, EditGroup::class]) Int? =
+    var orderNum: @NotNull(message = "显示顺序不能为空") Int? =
         null
 
     /**
@@ -69,8 +67,7 @@ class SysMenuBo : BaseEntity() {
      * 菜单类型（M目录 C菜单 F按钮）
      */
     var menuType: @NotBlank(
-        message = "菜单类型不能为空",
-        groups = [AddGroup::class, EditGroup::class]
+        message = "菜单类型不能为空"
     ) String? = null
 
     /**

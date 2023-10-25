@@ -20,6 +20,16 @@ class SysUserOnline {
     var userName: String? = null
 
     /**
+     * 客户端
+     */
+    var clientKey: String? = null
+
+    /**
+     * 设备类型
+     */
+    var deviceType: String? = null
+
+    /**
      * 登录IP地址
      */
     var ipaddr: String? = null

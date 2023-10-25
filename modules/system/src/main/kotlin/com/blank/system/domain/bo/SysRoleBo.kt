@@ -1,8 +1,6 @@
 package com.blank.system.domain.bo
 
 import com.blank.common.core.constant.UserConstants
-import com.blank.common.core.validate.AddGroup
-import com.blank.common.core.validate.EditGroup
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.system.domain.SysRole
 import io.github.linpeilie.annotations.AutoMapper
@@ -18,7 +16,7 @@ class SysRoleBo(
     /**
      * 角色ID
      */
-    var roleId: @NotNull(message = "角色ID不能为空", groups = [EditGroup::class]) Long?
+    var roleId: @NotNull(message = "角色ID不能为空") Long?
 ) : BaseEntity() {
 
     constructor() : this(null)
@@ -26,7 +24,7 @@ class SysRoleBo(
     /**
      * 角色名称
      */
-    var roleName: @NotBlank(message = "角色名称不能为空", groups = [AddGroup::class, EditGroup::class]) @Size(
+    var roleName: @NotBlank(message = "角色名称不能为空") @Size(
         min = 0,
         max = 30,
         message = "角色名称长度不能超过{max}个字符"
@@ -36,14 +34,13 @@ class SysRoleBo(
      * 角色权限字符串
      */
     var roleKey: @NotBlank(
-        message = "角色权限字符串不能为空",
-        groups = [AddGroup::class, EditGroup::class]
+        message = "角色权限字符串不能为空"
     ) @Size(min = 0, max = 100, message = "权限字符长度不能超过{max}个字符") String? = null
 
     /**
      * 显示顺序
      */
-    var roleSort: @NotNull(message = "显示顺序不能为空", groups = [AddGroup::class, EditGroup::class]) Int? =
+    var roleSort: @NotNull(message = "显示顺序不能为空") Int? =
         null
 
     /**

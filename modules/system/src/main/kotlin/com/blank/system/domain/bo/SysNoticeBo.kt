@@ -1,7 +1,5 @@
 package com.blank.system.domain.bo
 
-import com.blank.common.core.validate.AddGroup
-import com.blank.common.core.validate.EditGroup
 import com.blank.common.core.xss.Xss
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.system.domain.SysNotice
@@ -18,15 +16,14 @@ class SysNoticeBo : BaseEntity() {
     /**
      * 公告ID
      */
-    var noticeId: @NotNull(message = "公告ID不能为空", groups = [EditGroup::class]) Long? = null
+    var noticeId: @NotNull(message = "公告ID不能为空") Long? = null
 
     /**
      * 公告标题
      */
     @Xss(message = "公告标题不能包含脚本字符")
     var noticeTitle: @NotBlank(
-        message = "公告标题不能为空",
-        groups = [AddGroup::class, EditGroup::class]
+        message = "公告标题不能为空"
     ) @Size(min = 0, max = 50, message = "公告标题不能超过{max}个字符") String? = null
 
     /**

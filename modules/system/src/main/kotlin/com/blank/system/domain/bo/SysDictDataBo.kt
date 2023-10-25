@@ -1,7 +1,5 @@
 package com.blank.system.domain.bo
 
-import com.blank.common.core.validate.AddGroup
-import com.blank.common.core.validate.EditGroup
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.system.domain.SysDictData
 import io.github.linpeilie.annotations.AutoMapper
@@ -17,7 +15,7 @@ class SysDictDataBo : BaseEntity() {
     /**
      * 字典编码
      */
-    var dictCode: @NotNull(message = "字典编码不能为空", groups = [EditGroup::class]) Long? = null
+    var dictCode: @NotNull(message = "字典编码不能为空") Long? = null
 
     /**
      * 字典排序
@@ -27,7 +25,7 @@ class SysDictDataBo : BaseEntity() {
     /**
      * 字典标签
      */
-    var dictLabel: @NotBlank(message = "字典标签不能为空", groups = [AddGroup::class, EditGroup::class]) @Size(
+    var dictLabel: @NotBlank(message = "字典标签不能为空") @Size(
         min = 0,
         max = 100,
         message = "字典标签长度不能超过{max}个字符"
@@ -36,7 +34,7 @@ class SysDictDataBo : BaseEntity() {
     /**
      * 字典键值
      */
-    var dictValue: @NotBlank(message = "字典键值不能为空", groups = [AddGroup::class, EditGroup::class]) @Size(
+    var dictValue: @NotBlank(message = "字典键值不能为空") @Size(
         min = 0,
         max = 100,
         message = "字典键值长度不能超过{max}个字符"
@@ -45,7 +43,7 @@ class SysDictDataBo : BaseEntity() {
     /**
      * 字典类型
      */
-    var dictType: @NotBlank(message = "字典类型不能为空", groups = [AddGroup::class, EditGroup::class]) @Size(
+    var dictType: @NotBlank(message = "字典类型不能为空") @Size(
         min = 0,
         max = 100,
         message = "字典类型长度不能超过{max}个字符"

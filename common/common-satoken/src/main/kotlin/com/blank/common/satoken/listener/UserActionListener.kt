@@ -38,7 +38,7 @@ class UserActionListener(
                 getRequest()!!.getHeader("User-Agent")
             )
             val ip = getClientIP()
-            val user = LoginHelper.getLoginUser()
+            val user = LoginHelper.getLoginUser()!!
             val dto = UserOnlineDTO()
             dto.ipaddr = ip
             dto.loginLocation = getRealAddressByIP(ip)
@@ -46,8 +46,10 @@ class UserActionListener(
             dto.os = userAgent.os.name
             dto.loginTime = System.currentTimeMillis()
             dto.tokenId = tokenValue
-            dto.userName = user?.username
-            dto.deptName = user?.deptName
+            dto.userName = user.username
+            dto.clientKey = user.clientKey
+            dto.deviceType = user.deviceType
+            dto.deptName = user.deptName
             if (tokenConfig.timeout == -1L) {
                 setCacheObject(CacheConstants.ONLINE_TOKEN_KEY + tokenValue, dto)
             } else {

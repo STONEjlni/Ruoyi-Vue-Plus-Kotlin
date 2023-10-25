@@ -10,11 +10,14 @@ import com.blank.common.core.utils.ip.AddressUtils.getRealAddressByIP
 import com.blank.common.log.event.LogininforEvent
 import com.blank.common.mybatis.core.page.PageQuery
 import com.blank.common.mybatis.core.page.TableDataInfo
+import com.blank.common.satoken.utils.LoginHelper
+import com.blank.system.domain.SysClient
 import com.blank.system.domain.SysLogininfor
 import com.blank.system.domain.bo.SysLogininforBo
 import com.blank.system.domain.table.SysLogininforDef.SYS_LOGININFOR
 import com.blank.system.domain.vo.SysLogininforVo
 import com.blank.system.mapper.SysLogininforMapper
+import com.blank.system.service.ISysClientService
 import com.blank.system.service.ISysLogininforService
 import com.mybatisflex.core.query.QueryWrapper
 import jakarta.servlet.http.HttpServletRequest
@@ -24,13 +27,15 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.util.*
 
+
 /**
  * 系统访问日志情况信息 服务层处理
  */
 @Slf4j
 @Service
 class SysLogininforServiceImpl(
-    private val baseMapper: SysLogininforMapper
+    private val baseMapper: SysLogininforMapper,
+    private val clientService: ISysClientService
 ) : ISysLogininforService {
 
     /**
@@ -44,6 +49,14 @@ class SysLogininforServiceImpl(
         val request: HttpServletRequest = logininforEvent.request!!
         val userAgent = UserAgentUtil.parse(request.getHeader("User-Agent"))
         val ip: String = JakartaServletUtil.getClientIP(request)
+        // 客户端信息
+        // 客户端信息
+        val clientid = request.getHeader(LoginHelper.CLIENT_KEY)
+        var client: SysClient? = null
+        if (StringUtils.isNotBlank(clientid)) {
+            client = clientService.queryByClientId(clientid)
+        }
+
         val address: String = getRealAddressByIP(ip)
         val s = StringBuilder()
         s.append(getBlock(ip))
@@ -60,6 +73,8 @@ class SysLogininforServiceImpl(
         // 封装对象
         val logininfor = SysLogininforBo()
         logininfor.userName = logininforEvent.username
+        logininfor.clientKey = client?.clientKey
+        logininfor.deviceType = client?.deviceType
         logininfor.ipaddr = ip
         logininfor.loginLocation = address
         logininfor.browser = browser

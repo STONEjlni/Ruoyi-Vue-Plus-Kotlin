@@ -49,6 +49,8 @@ class XcxAuthStrategy(
         loginUser.username = user.userName
         loginUser.nickname = user.nickName
         loginUser.userType = user.userType
+        loginUser.clientKey = client.clientKey
+        loginUser.deviceType = client.deviceType
         loginUser.openid = openid
         val model = SaLoginModel()
         model.setDevice(client.deviceType)

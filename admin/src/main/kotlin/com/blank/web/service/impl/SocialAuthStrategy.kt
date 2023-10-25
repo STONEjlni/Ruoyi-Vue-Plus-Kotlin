@@ -70,6 +70,8 @@ class SocialAuthStrategy(
 
         // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
         val loginUser = loginService.buildLoginUser(user)
+        loginUser.clientKey = client.clientKey
+        loginUser.deviceType = client.deviceType
         val model = SaLoginModel()
         model.setDevice(client.deviceType)
         // 自定义分配 不同用户体系 不同 token 授权时间 不设置默认走全局 yml 配置

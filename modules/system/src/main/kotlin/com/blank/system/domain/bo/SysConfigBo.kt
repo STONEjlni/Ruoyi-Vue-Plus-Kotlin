@@ -1,7 +1,5 @@
 package com.blank.system.domain.bo
 
-import com.blank.common.core.validate.AddGroup
-import com.blank.common.core.validate.EditGroup
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.system.domain.SysConfig
 import io.github.linpeilie.annotations.AutoMapper
@@ -17,12 +15,12 @@ class SysConfigBo : BaseEntity() {
     /**
      * 参数主键
      */
-    var configId: @NotNull(message = "参数主键不能为空", groups = [EditGroup::class]) Long? = null
+    var configId: @NotNull(message = "参数主键不能为空") Long? = null
 
     /**
      * 参数名称
      */
-    var configName: @NotBlank(message = "参数名称不能为空", groups = [AddGroup::class, EditGroup::class]) @Size(
+    var configName: @NotBlank(message = "参数名称不能为空") @Size(
         min = 0,
         max = 100,
         message = "参数名称不能超过{max}个字符"
@@ -31,7 +29,7 @@ class SysConfigBo : BaseEntity() {
     /**
      * 参数键名
      */
-    var configKey: @NotBlank(message = "参数键名不能为空", groups = [AddGroup::class, EditGroup::class]) @Size(
+    var configKey: @NotBlank(message = "参数键名不能为空") @Size(
         min = 0,
         max = 100,
         message = "参数键名长度不能超过{max}个字符"
@@ -41,8 +39,7 @@ class SysConfigBo : BaseEntity() {
      * 参数键值
      */
     var configValue: @NotBlank(
-        message = "参数键值不能为空",
-        groups = [AddGroup::class, EditGroup::class]
+        message = "参数键值不能为空"
     ) @Size(min = 0, max = 500, message = "参数键值长度不能超过{max}个字符") String? = null
 
     /**

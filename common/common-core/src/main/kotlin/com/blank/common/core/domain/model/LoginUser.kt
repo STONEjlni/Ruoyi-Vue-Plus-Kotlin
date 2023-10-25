@@ -101,6 +101,16 @@ class LoginUser : Serializable {
     var roleId: Long? = null
 
     /**
+     * 客户端
+     */
+    var clientKey: String? = null
+
+    /**
+     * 设备类型
+     */
+    var deviceType: String? = null
+
+    /**
      * 获取登录id
      */
     fun getLoginId(): String {

@@ -51,4 +51,14 @@ class UserOnlineDTO : Serializable {
      * 登录时间
      */
     var loginTime: Long? = null
+
+    /**
+     * 客户端
+     */
+    var clientKey: String? = null
+
+    /**
+     * 设备类型
+     */
+    var deviceType: String? = null
 }

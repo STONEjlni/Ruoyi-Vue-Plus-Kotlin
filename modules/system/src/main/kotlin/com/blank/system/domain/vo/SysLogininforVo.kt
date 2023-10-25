@@ -22,6 +22,16 @@ class SysLogininforVo : Serializable {
     var userName: String? = null
 
     /**
+     * 客户端
+     */
+    var clientKey: String? = null
+
+    /**
+     * 设备类型
+     */
+    var deviceType: String? = null
+
+    /**
      * 登录状态（0成功 1失败）
      */
     var status: String? = null
