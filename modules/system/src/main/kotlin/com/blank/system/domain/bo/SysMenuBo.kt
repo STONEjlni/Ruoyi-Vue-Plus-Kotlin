@@ -16,7 +16,7 @@ class SysMenuBo : BaseEntity() {
     /**
      * 菜单ID
      */
-    var menuId: @NotNull(message = "菜单ID不能为空") Long? = null
+    var menuId: Long? = null
 
     /**
      * 父菜单ID

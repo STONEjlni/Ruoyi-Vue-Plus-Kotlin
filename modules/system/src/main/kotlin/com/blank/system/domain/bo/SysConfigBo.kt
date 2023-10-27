@@ -4,7 +4,6 @@ import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.system.domain.SysConfig
 import io.github.linpeilie.annotations.AutoMapper
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
 /**
@@ -15,7 +14,7 @@ class SysConfigBo : BaseEntity() {
     /**
      * 参数主键
      */
-    var configId: @NotNull(message = "参数主键不能为空") Long? = null
+    var configId: Long? = null
 
     /**
      * 参数名称

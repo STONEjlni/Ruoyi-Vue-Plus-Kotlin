@@ -16,7 +16,7 @@ class SysRoleBo(
     /**
      * 角色ID
      */
-    var roleId: @NotNull(message = "角色ID不能为空") Long?
+    var roleId: Long?
 ) : BaseEntity() {
 
     constructor() : this(null)

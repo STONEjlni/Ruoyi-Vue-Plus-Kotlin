@@ -4,7 +4,6 @@ import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.system.domain.SysDictData
 import io.github.linpeilie.annotations.AutoMapper
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
 /**
@@ -15,7 +14,7 @@ class SysDictDataBo : BaseEntity() {
     /**
      * 字典编码
      */
-    var dictCode: @NotNull(message = "字典编码不能为空") Long? = null
+    var dictCode: Long? = null
 
     /**
      * 字典排序

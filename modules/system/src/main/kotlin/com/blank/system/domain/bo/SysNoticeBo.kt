@@ -5,7 +5,6 @@ import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.system.domain.SysNotice
 import io.github.linpeilie.annotations.AutoMapper
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
 /**
@@ -16,7 +15,7 @@ class SysNoticeBo : BaseEntity() {
     /**
      * 公告ID
      */
-    var noticeId: @NotNull(message = "公告ID不能为空") Long? = null
+    var noticeId: Long? = null
 
     /**
      * 公告标题

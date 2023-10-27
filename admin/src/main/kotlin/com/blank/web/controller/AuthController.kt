@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaIgnore
 import cn.hutool.core.util.ObjectUtil
 import com.blank.common.core.annotation.Slf4j
 import com.blank.common.core.annotation.Slf4j.Companion.log
+import com.blank.common.core.constant.UserConstants
 import com.blank.common.core.domain.R
 import com.blank.common.core.domain.R.Companion.fail
 import com.blank.common.core.domain.R.Companion.ok
@@ -59,6 +60,8 @@ class AuthController(
         if (ObjectUtil.isNull(client) || !StringUtils.contains(client!!.grantType, grantType)) {
             log.info { "客户端id: $clientId 认证类型：$grantType 异常!." }
             return fail(msg = message("auth.grant.type.error"))
+        } else if (UserConstants.NORMAL != client.status) {
+            return fail(msg = message("auth.grant.type.blocked"))
         }
         // 登录
         return ok(data = IAuthStrategy.login(loginBody, client))

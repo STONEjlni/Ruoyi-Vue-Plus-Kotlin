@@ -4,7 +4,6 @@ import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.system.domain.SysDictType
 import io.github.linpeilie.annotations.AutoMapper
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 
@@ -16,7 +15,7 @@ class SysDictTypeBo : BaseEntity() {
     /**
      * 字典主键
      */
-    var dictId: @NotNull(message = "字典主键不能为空") Long? = null
+    var dictId: Long? = null
 
     /**
      * 字典名称

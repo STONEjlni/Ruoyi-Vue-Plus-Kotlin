@@ -16,7 +16,7 @@ class SysDeptBo : BaseEntity() {
     /**
      * 部门id
      */
-    var deptId: @NotNull(message = "部门id不能为空") Long? = null
+    var deptId: Long? = null
 
     /**
      * 父部门ID
