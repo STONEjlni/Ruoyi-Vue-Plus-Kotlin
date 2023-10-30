@@ -1,11 +1,13 @@
 package com.blank.common.core.domain.dto
 
+import com.blank.common.core.annotation.Open
 import java.io.Serial
 import java.io.Serializable
 
 /**
  * 当前在线会话
  */
+@Open
 class UserOnlineDTO : Serializable {
     companion object {
         @Serial

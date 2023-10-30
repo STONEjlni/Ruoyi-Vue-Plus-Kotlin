@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission
 import cn.dev33.satoken.exception.NotLoginException
 import cn.dev33.satoken.stp.StpUtil
 import cn.hutool.core.bean.BeanUtil
+import cn.hutool.core.util.ObjectUtil
 import com.blank.common.core.constant.CacheConstants
 import com.blank.common.core.domain.R
 import com.blank.common.core.domain.R.Companion.ok
@@ -43,7 +44,10 @@ class SysUserOnlineController : BaseController() {
             if (StpUtil.stpLogic.getTokenActiveTimeoutByToken(token) < -1) {
                 continue
             }
-            userOnlineDTOList.add(getCacheObject(CacheConstants.ONLINE_TOKEN_KEY + token)!!)
+            val cacheObject = getCacheObject<UserOnlineDTO>(CacheConstants.ONLINE_TOKEN_KEY + token)
+            if (ObjectUtil.isNotNull(cacheObject)) {
+                userOnlineDTOList.add(cacheObject!!)
+            }
         }
         if (StringUtils.isNotEmpty(ipaddr) && StringUtils.isNotEmpty(userName)) {
             userOnlineDTOList = filter(
