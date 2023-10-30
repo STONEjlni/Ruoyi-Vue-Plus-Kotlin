@@ -96,7 +96,7 @@ class SysMenuServiceImpl(
         val permsSet: MutableSet<String> = mutableSetOf()
         for (perm in perms) {
             if (StringUtils.isNotEmpty(perm)) {
-                permsSet.addAll(splitList(perm.trim { it <= ' ' }))
+                permsSet.addAll(splitList(perm.trim()))
             }
         }
         return permsSet
@@ -113,7 +113,7 @@ class SysMenuServiceImpl(
         val permsSet: MutableSet<String> = mutableSetOf()
         for (perm in perms) {
             if (StringUtils.isNotEmpty(perm)) {
-                permsSet.addAll(splitList(perm.trim { it <= ' ' }))
+                permsSet.addAll(splitList(perm.trim()))
             }
         }
         return permsSet

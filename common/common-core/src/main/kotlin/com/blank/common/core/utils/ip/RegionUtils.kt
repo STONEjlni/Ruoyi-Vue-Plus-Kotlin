@@ -52,7 +52,7 @@ object RegionUtils {
     fun getCityInfo(ip: String): String {
         var ip = ip
         return try {
-            ip = ip.trim { it <= ' ' }
+            ip = ip.trim()
             // 3、执行查询
             val region = SEARCHER.search(ip)
             region.replace("0|", "").replace("|0", "")

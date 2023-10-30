@@ -30,7 +30,7 @@ class JacksonConfig {
             // 全局配置序列化返回 JSON 处理
             val javaTimeModule =
                 JavaTimeModule()
-            javaTimeModule.addSerializer(Long::class.java, BigNumberSerializer.INSTANCE)
+            javaTimeModule.addSerializer(java.lang.Long::class.java, BigNumberSerializer.INSTANCE)
             javaTimeModule.addSerializer(java.lang.Long.TYPE, BigNumberSerializer.INSTANCE)
             javaTimeModule.addSerializer(BigInteger::class.java, BigNumberSerializer.INSTANCE)
             javaTimeModule.addSerializer(

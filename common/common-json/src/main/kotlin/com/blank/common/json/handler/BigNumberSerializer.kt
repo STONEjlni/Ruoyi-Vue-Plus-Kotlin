@@ -23,6 +23,7 @@ class BigNumberSerializer(
         /**
          * 提供实例
          */
+        @JvmField
         val INSTANCE = BigNumberSerializer(Number::class.java)
     }
 

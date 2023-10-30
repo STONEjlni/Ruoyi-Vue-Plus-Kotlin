@@ -24,12 +24,12 @@ class XssHttpServletRequestWrapper(
         val values = super.getParameterValues(name)
         if (values != null) {
             val length = values.size
-            val escapseValues = arrayOf<String>() // arrayOfNulls<String>(length)
+            val escapseValues = mutableListOf<String>() // arrayOfNulls<String>(length)
             for (i in 0 until length) {
                 // 防xss攻击和过滤前后空格
-                escapseValues[i] = HtmlUtil.cleanHtmlTag(values[i]).trim { it <= ' ' }
+                escapseValues.add(i, HtmlUtil.cleanHtmlTag(values[i]).trim())
             }
-            return escapseValues
+            return escapseValues.toTypedArray()
         }
         return super.getParameterValues(name)
     }
@@ -48,7 +48,7 @@ class XssHttpServletRequestWrapper(
         }
 
         // xss过滤
-        json = HtmlUtil.cleanHtmlTag(json).trim { it <= ' ' }
+        json = HtmlUtil.cleanHtmlTag(json).trim()
         val jsonBytes = json.toByteArray(StandardCharsets.UTF_8)
         val bis = IoUtil.toStream(jsonBytes)
         return object : ServletInputStream() {
@@ -77,7 +77,7 @@ class XssHttpServletRequestWrapper(
     /**
      * 是否是Json请求
      */
-    fun isJsonRequest(): Boolean {
+    private fun isJsonRequest(): Boolean {
         val header = super.getHeader(HttpHeaders.CONTENT_TYPE)
         return StringUtils.startsWithIgnoreCase(header, MediaType.APPLICATION_JSON_VALUE)
     }

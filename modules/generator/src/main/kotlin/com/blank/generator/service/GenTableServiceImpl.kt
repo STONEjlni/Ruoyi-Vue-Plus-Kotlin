@@ -561,9 +561,9 @@ class GenTableServiceImpl(
      * @param genTable 设置后的生成对象
      */
     fun setTableFromOptions(genTable: GenTable) {
-        val paramsObj = parseMap(genTable.options)!!
+        val paramsObj = parseMap(genTable.options)
         if (ObjectUtil.isNotNull(paramsObj)) {
-            val treeCode = paramsObj.getStr(GenConstants.TREE_CODE)
+            val treeCode = paramsObj!!.getStr(GenConstants.TREE_CODE)
             val treeParentCode = paramsObj.getStr(GenConstants.TREE_PARENT_CODE)
             val treeName = paramsObj.getStr(GenConstants.TREE_NAME)
             val parentMenuId = paramsObj.getStr(GenConstants.PARENT_MENU_ID)

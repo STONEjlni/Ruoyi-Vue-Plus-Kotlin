@@ -17,6 +17,7 @@ object DataBaseHelper {
     /**
      * 获取当前数据库类型
      */
+    @JvmStatic
     fun getDataBaseType(): DataBaseType? {
         try {
             DATA_SOURCE.connection.use { conn ->
@@ -29,22 +30,27 @@ object DataBaseHelper {
         }
     }
 
+    @JvmStatic
     fun isMySql(): Boolean {
         return DataBaseType.MY_SQL === getDataBaseType()
     }
 
+    @JvmStatic
     fun isOracle(): Boolean {
         return DataBaseType.ORACLE === getDataBaseType()
     }
 
+    @JvmStatic
     fun isPostgerSql(): Boolean {
         return DataBaseType.POSTGRE_SQL === getDataBaseType()
     }
 
+    @JvmStatic
     fun isSqlServer(): Boolean {
         return DataBaseType.SQL_SERVER === getDataBaseType()
     }
 
+    @JvmStatic
     fun findInSet(var1: Any, var2: String): String {
         val dataBasyType = getDataBaseType()
         val `var` = Convert.toStr(var1)
@@ -65,6 +71,7 @@ object DataBaseHelper {
     /**
      * 获取当前加载的数据库名
      */
+    @JvmStatic
     fun getDataSourceNameList(): MutableList<String> {
         return mutableListOf("master")
     }
