@@ -30,7 +30,7 @@ class TableDataInfo<T> @JvmOverloads constructor(
             rspData.code = HttpStatus.HTTP_OK
             rspData.msg = "查询成功"
             rspData.rows = page.records
-            rspData.total = page.totalPage
+            rspData.total = page.totalRow
             return rspData
         }
 
