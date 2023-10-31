@@ -1,5 +1,7 @@
 package com.blank.system.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import com.blank.common.core.constant.Constants
 import com.blank.common.core.constant.UserConstants
 import com.blank.common.core.utils.StringUtilsExtend.ishttp
@@ -13,6 +15,8 @@ import org.apache.commons.lang3.StringUtils
  * 菜单权限表 sys_menu
  */
 @Table("sys_menu")
+@Open
+@NoArg
 class SysMenu : BaseEntity() {
     /**
      * 菜单ID

@@ -1,5 +1,7 @@
 package com.blank.system.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import com.blank.common.core.constant.UserConstants
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.mybatisflex.annotation.Column
@@ -11,6 +13,8 @@ import java.util.*
  * 用户对象 sys_user
  */
 @Table("sys_user")
+@Open
+@NoArg
 class SysUser @JvmOverloads constructor(
     /**
      * 用户ID

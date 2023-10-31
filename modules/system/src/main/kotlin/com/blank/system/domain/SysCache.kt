@@ -1,10 +1,14 @@
 package com.blank.system.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import org.apache.commons.lang3.StringUtils
 
 /**
  * 缓存信息
  */
+@Open
+@NoArg
 class SysCache {
     /**
      * 缓存名称

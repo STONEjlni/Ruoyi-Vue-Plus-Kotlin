@@ -1,5 +1,7 @@
 package com.blank.system.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import com.mybatisflex.annotation.Id
 import com.mybatisflex.annotation.Table
 import java.io.Serial
@@ -10,6 +12,8 @@ import java.util.*
  * 操作日志记录表 oper_log
  */
 @Table("sys_oper_log")
+@Open
+@NoArg
 class SysOperLog : Serializable {
     /**
      * 日志主键

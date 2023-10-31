@@ -1,5 +1,7 @@
 package com.blank.system.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.mybatisflex.annotation.Id
 import com.mybatisflex.annotation.Table
@@ -8,6 +10,8 @@ import com.mybatisflex.annotation.Table
  * 字典类型表 sys_dict_type
  */
 @Table("sys_dict_type")
+@Open
+@NoArg
 class SysDictType : BaseEntity() {
     /**
      * 字典主键

@@ -1,5 +1,7 @@
 package com.blank.system.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.mybatisflex.annotation.Column
 import com.mybatisflex.annotation.Id
@@ -9,6 +11,8 @@ import com.mybatisflex.annotation.Table
  * 角色表 sys_role
  */
 @Table("sys_role")
+@Open
+@NoArg
 class SysRole(
     /**
      * 角色ID

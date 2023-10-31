@@ -1,5 +1,7 @@
 package com.blank.system.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.mybatisflex.annotation.Id
 import com.mybatisflex.annotation.Table
@@ -8,6 +10,8 @@ import com.mybatisflex.annotation.Table
  * 参数配置表 sys_config
  */
 @Table("sys_config")
+@Open
+@NoArg
 class SysConfig : BaseEntity() {
     /**
      * 参数主键

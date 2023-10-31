@@ -1,5 +1,7 @@
 package com.blank.system.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import com.mybatisflex.annotation.Id
 import com.mybatisflex.annotation.Table
 import java.io.Serial
@@ -10,6 +12,8 @@ import java.util.*
  * 系统访问记录表 sys_logininfor
  */
 @Table("sys_logininfor")
+@Open
+@NoArg
 class SysLogininfor : Serializable {
     /**
      * ID

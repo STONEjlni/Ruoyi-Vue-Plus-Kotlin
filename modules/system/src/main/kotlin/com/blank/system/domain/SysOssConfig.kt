@@ -1,5 +1,7 @@
 package com.blank.system.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.mybatisflex.annotation.Id
 import com.mybatisflex.annotation.Table
@@ -9,6 +11,8 @@ import com.mybatisflex.annotation.Table
  *
  */
 @Table("sys_oss_config")
+@Open
+@NoArg
 class SysOssConfig : BaseEntity() {
     /**
      * 主建

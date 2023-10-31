@@ -1,5 +1,7 @@
 package com.blank.generator.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.generator.constant.GenConstants
 import com.mybatisflex.annotation.Column
@@ -13,6 +15,8 @@ import org.apache.commons.lang3.StringUtils
  * 代码生成表 gen_table
  */
 @Table("gen_table")
+@Open
+@NoArg
 class GenTable : BaseEntity() {
 
     /**

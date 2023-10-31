@@ -1,5 +1,7 @@
 package com.blank.system.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.mybatisflex.annotation.Id
 import com.mybatisflex.annotation.Table
@@ -8,6 +10,8 @@ import com.mybatisflex.annotation.Table
  * 通知公告表 sys_notice
  */
 @Table("sys_notice")
+@Open
+@NoArg
 class SysNotice : BaseEntity() {
     /**
      * 公告ID

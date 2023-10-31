@@ -1,5 +1,7 @@
 package com.blank.system.domain
 
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
 import com.blank.common.mybatis.core.domain.BaseEntity
 import com.mybatisflex.annotation.Column
 import com.mybatisflex.annotation.Id
@@ -10,6 +12,8 @@ import java.io.Serial
  * 部门表 sys_dept
  */
 @Table("sys_dept")
+@Open
+@NoArg
 class SysDept : BaseEntity() {
     /**
      * 部门ID
