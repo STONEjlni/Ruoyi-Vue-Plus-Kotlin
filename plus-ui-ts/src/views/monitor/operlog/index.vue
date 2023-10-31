@@ -54,9 +54,6 @@
           <el-col :span="1.5">
             <el-button type="danger" plain icon="WarnTriangleFilled" @click="handleClean" v-hasPermi="['monitor:operlog:remove']">清空</el-button>
           </el-col>
-          <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['monitor:operlog:export']">导出</el-button>
-          </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
       </template>
@@ -288,13 +285,6 @@ const handleClean = async () => {
   await cleanOperlog();
   await getList();
   proxy?.$modal.msgSuccess("清空成功");
-}
-
-/** 导出按钮操作 */
-const handleExport = () => {
-  proxy?.download("monitor/operlog/export", {
-    ...queryParams.value,
-  }, `config_${new Date().getTime()}.xlsx`);
 }
 onMounted(() => {
   getList();

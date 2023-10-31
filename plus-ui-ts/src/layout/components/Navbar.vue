@@ -5,48 +5,6 @@
     <top-nav id="topmenu-container" class="topmenu-container" v-if="settingsStore.topNav" />
 
     <div class="right-menu flex align-center">
-      <template v-if="appStore.device !== 'mobile'">
-        <el-select
-          v-model="companyName"
-          clearable
-          filterable
-          reserve-keyword
-          :placeholder="$t('navbar.selectTenant')"
-          v-if="userId === 1 && tenantEnabled"
-          @change="dynamicTenantEvent"
-          @clear="dynamicClearEvent"
-        >
-          <el-option v-for="item in tenantList" :key="item.tenantId" :label="item.companyName" :value="item.tenantId"> </el-option>
-          <template #prefix><svg-icon icon-class="company" class="el-input__icon input-icon" /></template>
-        </el-select>
-
-        <!-- <header-search id="header-search" class="right-menu-item" /> -->
-        <search-menu ref="searchMenuRef" />
-        <el-tooltip content="搜索" effect="dark" placement="bottom">
-          <div class="right-menu-item hover-effect" @click="openSearchMenu">
-            <svg-icon class-name="search-icon" icon-class="search" />
-          </div>
-        </el-tooltip>
-        <el-tooltip content="Github" effect="dark" placement="bottom">
-          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-        <el-tooltip :content="$t('navbar.document')" effect="dark" placement="bottom">
-          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-        <el-tooltip :content="$t('navbar.full')" effect="dark" placement="bottom">
-          <screenfull id="screenfull" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-        <el-tooltip :content="$t('navbar.language')" effect="dark" placement="bottom">
-          <lang-select id="lang-select" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-        <el-tooltip :content="$t('navbar.layoutSize')" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip>
-      </template>
       <div class="avatar-container">
         <el-dropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="click">
           <div class="avatar-wrapper">
@@ -55,9 +13,6 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <router-link to="/user/profile" v-if="!dynamic">
-                <el-dropdown-item>{{ $t('navbar.personalCenter') }}</el-dropdown-item>
-              </router-link>
               <el-dropdown-item command="setLayout" v-if="settingsStore.showSettings">
                 <span>{{ $t('navbar.layoutSetting') }}</span>
               </el-dropdown-item>
@@ -77,10 +32,7 @@ import SearchMenu from './TopBar/search.vue';
 import useAppStore from '@/store/modules/app';
 import useUserStore from '@/store/modules/user';
 import useSettingsStore from '@/store/modules/settings';
-import { getTenantList } from "@/api/login";
-import { dynamicClear, dynamicTenant } from "@/api/system/tenant";
 import { ComponentInternalInstance } from "vue";
-import { TenantVO } from "@/api/types";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -90,11 +42,6 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const userId = ref(userStore.userId);
 const companyName = ref(undefined);
-const tenantList = ref<TenantVO[]>([]);
-// 是否切换了租户
-const dynamic = ref(false);
-// 租户开关
-const tenantEnabled = ref(true);
 // 搜索菜单
 const searchMenuRef = ref<InstanceType<typeof SearchMenu>>();
 
@@ -102,34 +49,7 @@ const openSearchMenu = () => {
   searchMenuRef.value?.openSearch();
 }
 
-// 动态切换
-const dynamicTenantEvent = async (tenantId: string) => {
-  if (companyName.value != null && companyName.value !== '') {
-    await dynamicTenant(tenantId);
-    dynamic.value = true;
-    proxy?.$tab.closeAllPage();
-    proxy?.$router.push('/');
-  }
-}
-
-const dynamicClearEvent = async () => {
-  await dynamicClear();
-  dynamic.value = false;
-  proxy?.$tab.closeAllPage();
-  proxy?.$router.push('/');
-}
-
-/** 租户列表 */
-const initTenantList = async () => {
-  const { data } = await getTenantList();
-  tenantEnabled.value = data.tenantEnabled === undefined ? true : data.tenantEnabled;
-  if (tenantEnabled.value) {
-    tenantList.value = data.voList;
-  }
-}
-
 defineExpose({
-  initTenantList,
 })
 
 const toggleSideBar = () => {

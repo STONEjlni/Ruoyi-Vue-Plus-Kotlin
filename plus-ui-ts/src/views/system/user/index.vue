@@ -77,21 +77,6 @@
                   删除
                 </el-button>
               </el-col>
-              <el-col :span="1.5">
-                <el-dropdown class="mt-[1px]">
-                  <el-button plain type="info">
-                    更多
-                    <el-icon class="el-icon--right"><arrow-down /></el-icon
-                  ></el-button>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item @click="importTemplate" icon="Download">下载模板</el-dropdown-item>
-                      <el-dropdown-item @click="handleImport" icon="Top"> 导入数据</el-dropdown-item>
-                      <el-dropdown-item @click="handleExport" icon="Download"> 导出数据</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </el-col>
               <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns" :search="true"></right-toolbar>
             </el-row>
           </template>

@@ -15,6 +15,7 @@ import com.blank.system.domain.SysClient
 import com.blank.system.domain.SysLogininfor
 import com.blank.system.domain.bo.SysLogininforBo
 import com.blank.system.domain.table.SysLogininforDef.SYS_LOGININFOR
+import com.blank.system.domain.table.SysOperLogDef
 import com.blank.system.domain.vo.SysLogininforVo
 import com.blank.system.mapper.SysLogininforMapper
 import com.blank.system.service.ISysClientService
@@ -181,7 +182,8 @@ class SysLogininforServiceImpl(
      * 清空系统登录日志
      */
     override fun cleanLogininfor() {
-        baseMapper.deleteByQuery(QueryWrapper())
+        // mybatis不允许不带where执行update delete
+        baseMapper.deleteByQuery(QueryWrapper().where(SYS_LOGININFOR.INFO_ID.ne("-1")))
     }
 
 }

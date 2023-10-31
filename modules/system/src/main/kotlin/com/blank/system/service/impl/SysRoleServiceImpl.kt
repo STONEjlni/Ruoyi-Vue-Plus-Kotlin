@@ -286,8 +286,8 @@ class SysRoleServiceImpl(
             throw ServiceException("角色已分配，不能禁用!")
         }
         return UpdateChain.of<Class<SysRole>>(SysRole::class.java)
-            .set(SysRole::status, status)
-            .where(SysRole::roleId).eq(roleId)
+            .set(SYS_ROLE.STATUS, status)
+            .where(SYS_ROLE.ROLE_ID.eq(roleId))
             .update()
     }
 

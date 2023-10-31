@@ -126,7 +126,8 @@ class SysOperLogServiceImpl(
      * 清空操作日志
      */
     override fun cleanOperLog() {
-        baseMapper.deleteByQuery(QueryWrapper.create().from(SYS_OPER_LOG))
+        // mybatis不允许不带where执行update delete
+        baseMapper.deleteByQuery(QueryWrapper.create().from(SYS_OPER_LOG).where(SYS_OPER_LOG.OPER_ID.ne("-1")))
     }
 
 }

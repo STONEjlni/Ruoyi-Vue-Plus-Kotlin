@@ -21,6 +21,7 @@ import com.blank.system.domain.bo.SysUserBo
 import com.blank.system.domain.table.SysDeptDef.SYS_DEPT
 import com.blank.system.domain.table.SysRoleDef.SYS_ROLE
 import com.blank.system.domain.table.SysUserDef.SYS_USER
+import com.blank.system.domain.table.SysUserRoleDef
 import com.blank.system.domain.table.SysUserRoleDef.SYS_USER_ROLE
 import com.blank.system.domain.vo.SysRoleVo
 import com.blank.system.domain.vo.SysUserVo
@@ -453,7 +454,7 @@ class SysUserServiceImpl(
             if (clear) {
                 // 删除用户与角色关联
                 userRoleMapper.deleteByQuery(
-                    QueryWrapper().from(SysUserRole::class.java).where(SysUserRole::userId).eq(userId)
+                    QueryWrapper().from(SysUserRole::class.java).where(SYS_USER_ROLE.USER_ID.eq(userId))
                 )
             }
             // 新增用户与角色管理
@@ -479,7 +480,7 @@ class SysUserServiceImpl(
     override fun deleteUserById(userId: Long): Int {
         // 删除用户与角色关联
         userRoleMapper.deleteByQuery(
-            QueryWrapper().from(SysUserRole::class.java).where(SysUserRole::userId).eq(userId)
+            QueryWrapper().from(SysUserRole::class.java).where(SYS_USER_ROLE.USER_ID.eq(userId))
         )
 
         // 防止更新失败导致的数据删除
@@ -505,7 +506,7 @@ class SysUserServiceImpl(
         val ids = listOf(*userIds)
         // 删除用户与角色关联
         userRoleMapper.deleteByQuery(
-            QueryWrapper().from(SysUserRole::class.java).where(SysUserRole::userId).`in`(ids)
+            QueryWrapper().from(SysUserRole::class.java).where(SYS_USER_ROLE.USER_ID.`in`(ids))
         )
 
         // 防止更新失败导致的数据删除
@@ -524,16 +525,16 @@ class SysUserServiceImpl(
      */
     override fun selectUserListByDept(deptId: Long): MutableList<SysUserVo> {
         val queryWrapper: QueryWrapper = QueryWrapper.create().from(SysUser::class.java)
-            .where(SysUser::deptId).eq(deptId)
-            .orderBy(SysUser::userId, true)
+            .where(SYS_USER.DEPT_ID.eq(deptId))
+            .orderBy(SYS_USER.USER_ID, true)
         return baseMapper.selectListByQueryAs(queryWrapper, SysUserVo::class.java)
     }
 
     @Cacheable(cacheNames = [CacheNames.SYS_USER_NAME], key = "#userId")
     override fun selectUserNameById(userId: Long): String? {
         val sysUser = baseMapper.selectOneByQuery(
-            QueryWrapper.create().select(SysUser::userName).from(SysUser::class.java)
-                .where(SysUser::userId).eq(userId)
+            QueryWrapper.create().select(SYS_USER.USER_NAME).from(SysUser::class.java)
+                .where(SYS_USER.USER_ID.eq(userId))
         )
         return if (ObjectUtil.isNull(sysUser)) null else sysUser.userName
     }

@@ -48,9 +48,6 @@
           <el-col :span="1.5">
             <el-button type="danger" plain :disabled="ids.length === 0" @click="handleDelete()" v-hasPermi="['system:role:delete']">删除</el-button>
           </el-col>
-          <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:role:export']">导出</el-button>
-          </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
       </template>
@@ -303,13 +300,6 @@ const handleDelete = async (row?: RoleVO) => {
   await delRole(roleids);
   getList();
   proxy?.$modal.msgSuccess('删除成功');
-}
-
-/** 导出按钮操作 */
-const handleExport = () => {
-  proxy?.download("system/role/export", {
-    ...queryParams.value,
-  }, `role_${new Date().getTime()}.xlsx`)
 }
 /** 多选框选中数据 */
 const handleSelectionChange = (selection: RoleVO[]) => {

@@ -106,9 +106,9 @@ class SysClientServiceImpl(
      */
     override fun updateUserStatus(id: Long, status: String): Boolean {
         return UpdateChain.of<Class<SysClient>>(SysClient::class.java)
-            .set(SysClient::status, status)
+            .set(SYS_CLIENT.STATUS, status)
             .from(SysClient::class.java)
-            .where(SysClient::id).eq(id)
+            .where(SYS_CLIENT.ID.eq(id))
             .update()
     }
 

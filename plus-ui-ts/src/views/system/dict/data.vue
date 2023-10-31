@@ -35,9 +35,6 @@
             </el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:dict:export']">导出</el-button>
-          </el-col>
-          <el-col :span="1.5">
             <el-button type="warning" plain icon="Close" @click="handleClose">关闭</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -275,13 +272,6 @@ const handleDelete = async (row?: DictDataVO) => {
   useDictStore().removeDict(queryParams.value.dictType);
 
 }
-/** 导出按钮操作 */
-const handleExport = () => {
-  proxy?.download("system/dict/data/export", {
-    ...queryParams.value
-  }, `dict_data_${new Date().getTime()}.xlsx`);
-}
-
 onMounted(() => {
   getTypes(route.params && route.params.dictId as string);
   getTypeList();

@@ -94,11 +94,11 @@ class SysOssConfigServiceImpl(
         var config = MapstructUtils.convert(bo, SysOssConfig::class.java)!!
         validEntityBeforeSave(config)
         val update: Boolean = UpdateChain.of(SysOssConfig::class.java)
-            .set(SysOssConfig::prefix, "", ObjectUtil.isNull(config.prefix))
-            .set(SysOssConfig::region, "", ObjectUtil.isNull(config.region))
-            .set(SysOssConfig::ext1, "", ObjectUtil.isNull(config.ext1))
-            .set(SysOssConfig::remark, "", ObjectUtil.isNull(config.remark))
-            .where(SysOssConfig::ossConfigId).eq(config.ossConfigId)
+            .set(SYS_OSS_CONFIG.PREFIX, "", ObjectUtil.isNull(config.prefix))
+            .set(SYS_OSS_CONFIG.REGION, "", ObjectUtil.isNull(config.region))
+            .set(SYS_OSS_CONFIG.EXT1, "", ObjectUtil.isNull(config.ext1))
+            .set(SYS_OSS_CONFIG.REMARK, "", ObjectUtil.isNull(config.remark))
+            .where(SYS_OSS_CONFIG.OSS_CONFIG_ID.eq(config.ossConfigId))
             .update()
         if (update) {
             // 从数据库查询完整的数据做缓存

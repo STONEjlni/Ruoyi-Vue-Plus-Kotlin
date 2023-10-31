@@ -38,9 +38,6 @@
               删除
             </el-button>
           </el-col>
-          <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:client:export']">导出</el-button>
-          </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
       </template>
@@ -297,13 +294,6 @@ const handleDelete = async (row?: ClientVO) => {
   await delClient(_ids);
   proxy?.$modal.msgSuccess("删除成功");
   await getList();
-}
-
-/** 导出按钮操作 */
-const handleExport = () => {
-  proxy?.download('system/client/export', {
-    ...queryParams.value
-  }, `client_${new Date().getTime()}.xlsx`)
 }
 
 /** 状态修改  */

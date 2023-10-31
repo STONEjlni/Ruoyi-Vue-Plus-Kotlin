@@ -44,9 +44,6 @@
             </el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:dict:export']">导出</el-button>
-          </el-col>
-          <el-col :span="1.5">
             <el-button type="danger" plain icon="Refresh" @click="handleRefreshCache" v-hasPermi="['system:dict:remove']">刷新缓存</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -223,12 +220,6 @@ const handleDelete = async (row?: DictTypeVO) => {
   await delType(dictIds);
   getList();
   proxy?.$modal.msgSuccess("删除成功");
-}
-/** 导出按钮操作 */
-const handleExport = () => {
-  proxy?.download("system/dict/type/export", {
-    ...queryParams.value
-  }, `dict_${new Date().getTime()}.xlsx`);
 }
 /** 刷新缓存按钮操作 */
 const handleRefreshCache = async () => {

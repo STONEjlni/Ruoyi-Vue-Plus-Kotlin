@@ -51,9 +51,6 @@
               解锁
             </el-button>
           </el-col>
-          <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['monitor:logininfor:export']">导出</el-button>
-          </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
       </template>
@@ -183,12 +180,6 @@ const handleUnlock = async () => {
     await proxy?.$modal.confirm('是否确认解锁用户"' + username + '"数据项?');
     await unlockLoginInfo(username);
     proxy?.$modal.msgSuccess("用户" + username + "解锁成功");
-}
-/** 导出按钮操作 */
-const handleExport = () => {
-    proxy?.download("monitor/logininfor/export", {
-        ...queryParams.value,
-    }, `config_${new Date().getTime()}.xlsx`);
 }
 
 onMounted(() => {

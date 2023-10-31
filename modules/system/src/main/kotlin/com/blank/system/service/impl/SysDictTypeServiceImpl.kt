@@ -16,6 +16,7 @@ import com.blank.common.redis.utils.CacheUtils
 import com.blank.system.domain.SysDictData
 import com.blank.system.domain.SysDictType
 import com.blank.system.domain.bo.SysDictTypeBo
+import com.blank.system.domain.table.SysDictDataDef.SYS_DICT_DATA
 import com.blank.system.domain.table.SysDictTypeDef.SYS_DICT_TYPE
 import com.blank.system.domain.vo.SysDictDataVo
 import com.blank.system.domain.vo.SysDictTypeVo
@@ -174,8 +175,8 @@ class SysDictTypeServiceImpl(
         val dict: SysDictType = convert(bo, SysDictType::class.java)!!
         val oldDict = baseMapper.selectOneById(dict.dictId)
         UpdateChain.of(SysDictData::class.java)
-            .set(SysDictData::dictType, dict.dictType)
-            .where(SysDictData::dictType).eq(oldDict.dictType)
+            .set(SYS_DICT_DATA.DICT_TYPE, dict.dictType)
+            .where(SYS_DICT_DATA.DICT_TYPE.eq(oldDict.dictType))
             .update()
         val row = baseMapper.update(dict)
         if (row > 0) {
