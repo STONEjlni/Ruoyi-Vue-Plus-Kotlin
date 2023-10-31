@@ -1,6 +1,6 @@
 import request from '@/utils/request';
-import {ConfigForm, ConfigQuery, ConfigVO} from './types';
-import {AxiosPromise} from 'axios';
+import { ConfigForm, ConfigQuery, ConfigVO } from './types';
+import { AxiosPromise } from 'axios';
 
 // 查询参数列表
 export function listConfig(query: ConfigQuery): AxiosPromise<ConfigVO[]> {

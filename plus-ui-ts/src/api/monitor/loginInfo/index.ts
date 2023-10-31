@@ -1,6 +1,6 @@
 import request from '@/utils/request';
-import {LoginInfoQuery, LoginInfoVO} from './types';
-import {AxiosPromise} from 'axios';
+import { LoginInfoQuery, LoginInfoVO } from './types';
+import { AxiosPromise } from 'axios';
 
 // 查询登录日志列表
 export function list(query: LoginInfoQuery): AxiosPromise<LoginInfoVO[]> {

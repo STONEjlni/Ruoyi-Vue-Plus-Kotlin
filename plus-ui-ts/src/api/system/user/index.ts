@@ -1,9 +1,9 @@
-import {DeptVO} from './../dept/types';
-import {RoleVO} from '@/api/system/role/types';
+import { DeptVO } from './../dept/types';
+import { RoleVO } from '@/api/system/role/types';
 import request from '@/utils/request';
-import {AxiosPromise} from 'axios';
-import {UserForm, UserInfoVO, UserQuery, UserVO} from './types';
-import {parseStrEmpty} from '@/utils/ruoyi';
+import { AxiosPromise } from 'axios';
+import { UserForm, UserQuery, UserVO, UserInfoVO } from './types';
+import { parseStrEmpty } from '@/utils/ruoyi';
 
 /**
  * 查询用户列表

@@ -1,4 +1,4 @@
-import {TagView} from 'vue-router';
+import { TagView } from 'vue-router';
 
 export const useTagsViewStore = defineStore('tagsView', () => {
   const visitedViews = ref<TagView[]>([]);

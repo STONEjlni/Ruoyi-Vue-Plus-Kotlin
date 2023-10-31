@@ -1,6 +1,7 @@
-import {UserQuery, UserVO} from '@/api/system/user/types';
-import {AxiosPromise} from 'axios';
-import {RoleDeptTree, RoleQuery, RoleVO} from './types';
+import { UserVO } from '@/api/system/user/types';
+import { UserQuery } from '@/api/system/user/types';
+import { AxiosPromise } from 'axios';
+import { RoleQuery, RoleVO, RoleDeptTree } from './types';
 import request from '@/utils/request';
 
 export const listRole = (query: RoleQuery): AxiosPromise<RoleVO[]> => {

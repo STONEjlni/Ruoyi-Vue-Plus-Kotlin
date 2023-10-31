@@ -43,9 +43,9 @@
 </template>
 
 <script setup lang="ts">
-import {delOss, listByIds} from "@/api/system/oss";
-import {propTypes} from '@/utils/propTypes';
-import {globalHeaders} from "@/utils/request";
+import { listByIds, delOss } from "@/api/system/oss";
+import { propTypes } from '@/utils/propTypes';
+import { globalHeaders } from "@/utils/request";
 
 const props = defineProps({
     modelValue: [String, Object, Array],

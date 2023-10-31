@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import {callback, login} from '@/api/login';
-import {getToken, setToken} from '@/utils/auth';
-import {LoginData} from '@/api/types';
+import { login, callback } from '@/api/login';
+import { setToken, getToken } from '@/utils/auth';
+import { LoginData } from '@/api/types';
 
 const route = useRoute();
 const loading = ref(true);

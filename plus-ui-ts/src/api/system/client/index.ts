@@ -1,6 +1,6 @@
 import request from '@/utils/request';
-import {AxiosPromise} from 'axios';
-import {ClientForm, ClientQuery, ClientVO} from '@/api/system/client/types';
+import { AxiosPromise } from 'axios';
+import { ClientVO, ClientForm, ClientQuery } from '@/api/system/client/types';
 
 /**
  * 查询客户端管理列表

@@ -70,8 +70,8 @@ import UserAvatar from "./userAvatar.vue";
 import UserInfo from "./userInfo.vue";
 import ResetPwd from "./resetPwd.vue";
 import ThirdParty from "./thirdParty.vue";
-import {getAuthList} from "@/api/system/social/auth";
-import {getUserProfile} from "@/api/system/user";
+import { getAuthList } from "@/api/system/social/auth";
+import { getUserProfile } from "@/api/system/user";
 
 const activeTab = ref("userinfo");
 const state = ref<Record<string, any>>({

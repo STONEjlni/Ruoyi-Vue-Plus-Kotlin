@@ -27,10 +27,10 @@
 </template>
 
 <script setup lang="ts">
-import {Quill, QuillEditor} from '@vueup/vue-quill';
+import { QuillEditor, Quill } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import {propTypes} from '@/utils/propTypes';
-import {globalHeaders} from "@/utils/request";
+import { propTypes } from '@/utils/propTypes';
+import { globalHeaders } from "@/utils/request";
 
 const props = defineProps({
   /* 编辑器的内容 */

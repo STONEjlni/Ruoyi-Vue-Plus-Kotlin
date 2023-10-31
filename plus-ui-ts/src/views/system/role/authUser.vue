@@ -65,8 +65,9 @@
 </template>
 
 <script setup name="AuthUser" lang="ts">
-import {allocatedUserList, authUserCancel, authUserCancelAll} from "@/api/system/role";
-import {UserQuery, UserVO} from "@/api/system/user/types";
+import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/system/role";
+import { UserQuery } from "@/api/system/user/types";
+import { UserVO } from "@/api/system/user/types";
 import SelectUser from "./selectUser.vue";
 
 

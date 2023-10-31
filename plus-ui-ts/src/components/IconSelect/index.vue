@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import icons from '@/components/IconSelect/requireIcons';
-import {propTypes} from '@/utils/propTypes';
+import { propTypes } from '@/utils/propTypes';
 
 const props = defineProps({
   modelValue: propTypes.string.isRequired,

@@ -50,8 +50,8 @@
 </template>
 
 <script lang="ts" setup>
-import {authBinding, authUnlock} from "@/api/system/social/auth";
-import {PropType} from "vue";
+import { authUnlock, authBinding } from "@/api/system/social/auth";
+import { PropType } from "vue";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 

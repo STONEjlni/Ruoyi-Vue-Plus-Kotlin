@@ -124,7 +124,7 @@
 </template>
 
 <script setup name="Cache" lang="ts">
-import {getCache} from '@/api/monitor/cache';
+import { getCache } from '@/api/monitor/cache';
 import * as echarts from 'echarts';
 
 const cache = ref<any>({});

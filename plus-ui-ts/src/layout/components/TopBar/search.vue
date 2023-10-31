@@ -26,11 +26,10 @@
 </template>
 
 <script setup lang="ts" name="layoutBreadcrumbSearch">
-import {getNormalPath} from '@/utils/ruoyi';
-import {isHttp} from '@/utils/validate';
+import { getNormalPath } from '@/utils/ruoyi';
+import { isHttp } from '@/utils/validate';
 import usePermissionStore from '@/store/modules/permission';
-import {RouteOption} from 'vue-router';
-
+import { RouteOption } from 'vue-router';
 type Router = Array<{
 	path: string;
 	icon: string;

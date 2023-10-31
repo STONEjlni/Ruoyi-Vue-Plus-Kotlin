@@ -133,9 +133,9 @@
 </template>
 
 <script setup name="Oss" lang="ts">
-import {delOss, listOss} from "@/api/system/oss";
+import { listOss, delOss } from "@/api/system/oss";
 import ImagePreview from "@/components/ImagePreview/index.vue";
-import {OssForm, OssQuery, OssVO} from "@/api/system/oss/types";
+import { OssForm, OssQuery, OssVO } from "@/api/system/oss/types";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;

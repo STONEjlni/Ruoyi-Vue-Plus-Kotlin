@@ -13,9 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import {useI18n} from 'vue-i18n';
+import { useI18n } from 'vue-i18n';
 import SvgIcon from '@/components/SvgIcon/index.vue';
-import {useAppStore} from '@/store/modules/app';
+import { useAppStore } from '@/store/modules/app';
 
 const appStore = useAppStore();
 const { locale } = useI18n();

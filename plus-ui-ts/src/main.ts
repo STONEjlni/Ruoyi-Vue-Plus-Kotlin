@@ -1,4 +1,4 @@
-import {createApp} from 'vue';
+import { createApp } from 'vue';
 // global css
 import 'uno.css';
 import '@/assets/styles/index.scss';
@@ -14,7 +14,7 @@ import directive from './directive';
 
 // 注册插件
 import plugins from './plugins/index'; // plugins
-import {download} from '@/utils/request';
+import { download } from '@/utils/request';
 
 // 预设动画
 import animate from './animate';
@@ -26,9 +26,9 @@ import ElementIcons from '@/plugins/svgicon';
 // permission control
 import './permission';
 
-import {useDict} from '@/utils/dict';
-import {getConfigKey, updateConfigByKey} from '@/api/system/config';
-import {addDateRange, handleTree, parseTime, selectDictLabel, selectDictLabels} from '@/utils/ruoyi';
+import { useDict } from '@/utils/dict';
+import { getConfigKey, updateConfigByKey } from '@/api/system/config';
+import { parseTime, addDateRange, handleTree, selectDictLabel, selectDictLabels } from '@/utils/ruoyi';
 
 // 国际化
 import i18n from '@/lang/index';

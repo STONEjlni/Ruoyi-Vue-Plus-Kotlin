@@ -1,6 +1,6 @@
 import request from '@/utils/request';
-import {PostForm, PostQuery, PostVO} from './types';
-import {AxiosPromise} from 'axios';
+import { PostForm, PostQuery, PostVO } from './types';
+import { AxiosPromise } from 'axios';
 
 // 查询岗位列表
 export function listPost(query: PostQuery): AxiosPromise<PostVO[]> {

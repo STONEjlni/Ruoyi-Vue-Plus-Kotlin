@@ -88,14 +88,14 @@
 </template>
 
 <script setup lang="ts">
-import {useDynamicTitle} from '@/utils/dynamicTitle'
+import { useDynamicTitle } from '@/utils/dynamicTitle'
 import useAppStore from '@/store/modules/app'
 import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'
-import {handleThemeStyle} from '@/utils/theme'
-import {ComponentInternalInstance} from "vue";
-import {SettingTypeEnum} from "@/enums/SettingTypeEnum";
-import {SideThemeEnum} from "@/enums/SideThemeEnum";
+import { handleThemeStyle } from '@/utils/theme'
+import { ComponentInternalInstance } from "vue";
+import { SettingTypeEnum } from "@/enums/SettingTypeEnum";
+import { SideThemeEnum } from "@/enums/SideThemeEnum";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const appStore = useAppStore()

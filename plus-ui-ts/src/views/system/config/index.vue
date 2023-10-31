@@ -123,8 +123,8 @@
 </template>
 
 <script setup name="Config" lang="ts">
-import {addConfig, delConfig, getConfig, listConfig, refreshCache, updateConfig} from "@/api/system/config";
-import {ConfigForm, ConfigQuery, ConfigVO} from "@/api/system/config/types";
+import { listConfig, getConfig, delConfig, addConfig, updateConfig, refreshCache } from "@/api/system/config";
+import { ConfigForm, ConfigQuery, ConfigVO } from "@/api/system/config/types";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { sys_yes_no } = toRefs<any>(proxy?.useDict("sys_yes_no"));

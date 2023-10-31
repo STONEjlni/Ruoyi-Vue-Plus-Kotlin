@@ -1,6 +1,6 @@
 import request from '@/utils/request';
-import {OssConfigForm, OssConfigQuery, OssConfigVO} from './types';
-import {AxiosPromise} from 'axios';
+import { OssConfigForm, OssConfigQuery, OssConfigVO } from './types';
+import { AxiosPromise } from 'axios';
 
 // 查询对象存储配置列表
 export function listOssConfig(query: OssConfigQuery): AxiosPromise<OssConfigVO[]> {

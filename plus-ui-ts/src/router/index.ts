@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory, RouteOption} from 'vue-router';
+import { createWebHistory, createRouter, RouteOption } from 'vue-router';
 /* Layout */
 import Layout from '@/layout/index.vue';
 

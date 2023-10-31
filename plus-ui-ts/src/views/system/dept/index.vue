@@ -133,8 +133,8 @@
 </template>
 
 <script setup name="Dept" lang="ts">
-import {addDept, delDept, getDept, listDept, listDeptExcludeChild, updateDept} from "@/api/system/dept"
-import {DeptForm, DeptQuery, DeptVO} from "@/api/system/dept/types";
+import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild } from "@/api/system/dept"
+import { DeptForm, DeptQuery, DeptVO } from "@/api/system/dept/types";
 import {UserVO} from "@/api/system/user/types";
 import {listUserByDeptId} from "@/api/system/user";
 

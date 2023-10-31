@@ -119,10 +119,10 @@
 
 <script setup name="Data" lang="ts">
 import useDictStore from '@/store/modules/dict'
-import {getType, optionselect as getDictOptionselect} from "@/api/system/dict/type";
-import {addData, delData, getData, listData, updateData} from "@/api/system/dict/data";
-import {DictTypeVO} from '@/api/system/dict/type/types';
-import {DictDataForm, DictDataQuery, DictDataVO} from "@/api/system/dict/data/types";
+import { optionselect as getDictOptionselect, getType } from "@/api/system/dict/type";
+import { listData, getData, delData, addData, updateData } from "@/api/system/dict/data";
+import { DictTypeVO } from '@/api/system/dict/type/types';
+import { DictDataForm, DictDataQuery, DictDataVO } from "@/api/system/dict/data/types";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance
 const route = useRoute();

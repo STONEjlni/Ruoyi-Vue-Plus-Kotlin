@@ -1,5 +1,5 @@
 import Components from 'unplugin-vue-components/vite';
-import {ElementPlusResolver} from 'unplugin-vue-components/resolvers';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import IconsResolver from 'unplugin-icons/resolver';
 
 export default (path: any) => {

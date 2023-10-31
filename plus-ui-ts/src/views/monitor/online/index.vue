@@ -55,8 +55,8 @@
 </template>
 
 <script setup name="Online" lang="ts">
-import {forceLogout, list as initData} from "@/api/monitor/online";
-import {OnlineQuery, OnlineVO} from "@/api/monitor/online/types";
+import { forceLogout, list as initData } from "@/api/monitor/online";
+import { OnlineQuery, OnlineVO } from "@/api/monitor/online/types";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 

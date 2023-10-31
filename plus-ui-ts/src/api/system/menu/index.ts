@@ -1,6 +1,6 @@
 import request from '@/utils/request';
-import {AxiosPromise} from 'axios';
-import {MenuForm, MenuQuery, MenuTreeOption, MenuVO, RoleMenuTree} from './types';
+import { AxiosPromise } from 'axios';
+import { MenuQuery, MenuVO, MenuForm, MenuTreeOption, RoleMenuTree } from './types';
 
 // 查询菜单列表
 export const listMenu = (query?: MenuQuery): AxiosPromise<MenuVO[]> => {

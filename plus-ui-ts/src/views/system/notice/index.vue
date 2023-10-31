@@ -120,8 +120,8 @@
 </template>
 
 <script setup name="Notice" lang="ts">
-import {addNotice, delNotice, getNotice, listNotice, updateNotice} from "@/api/system/notice";
-import {NoticeForm, NoticeQuery, NoticeVO} from "@/api/system/notice/types";
+import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/system/notice";
+import { NoticeForm, NoticeQuery, NoticeVO } from "@/api/system/notice/types";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { sys_notice_status, sys_notice_type } = toRefs<any>(proxy?.useDict("sys_notice_status", "sys_notice_type"));

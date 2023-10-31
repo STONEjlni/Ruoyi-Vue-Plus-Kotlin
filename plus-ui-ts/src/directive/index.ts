@@ -1,6 +1,6 @@
 import copyText from './common/copyText';
-import {hasPermi, hasRoles} from './permission';
-import {App} from 'vue';
+import { hasPermi, hasRoles } from './permission';
+import { App } from 'vue';
 
 export default (app: App) => {
   app.directive('copyText', copyText);

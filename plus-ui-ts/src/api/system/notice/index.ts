@@ -1,7 +1,6 @@
 import request from '@/utils/request';
-import {NoticeForm, NoticeQuery, NoticeVO} from './types';
-import {AxiosPromise} from 'axios';
-
+import { NoticeForm, NoticeQuery, NoticeVO } from './types';
+import { AxiosPromise } from 'axios';
 // 查询公告列表
 export function listNotice(query: NoticeQuery): AxiosPromise<NoticeVO[]> {
   return request({

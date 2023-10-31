@@ -1,8 +1,8 @@
-import {defineStore} from 'pinia';
+import { defineStore } from 'pinia';
 import defaultSettings from '@/settings';
-import {SettingTypeEnum} from '@/enums/SettingTypeEnum';
-import {useDynamicTitle} from '@/utils/dynamicTitle';
-import {Ref} from 'vue';
+import { SettingTypeEnum } from '@/enums/SettingTypeEnum';
+import { useDynamicTitle } from '@/utils/dynamicTitle';
+import { Ref } from 'vue';
 
 export const useSettingsStore = defineStore('setting', () => {
   const storageSetting = JSON.parse(localStorage.getItem('layout-setting') || '{}');

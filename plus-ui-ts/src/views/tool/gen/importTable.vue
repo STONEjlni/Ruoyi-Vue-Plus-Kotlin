@@ -38,8 +38,8 @@
 </template>
 
 <script setup lang="ts">
-import {getDataNames, importTable, listDbTable} from '@/api/tool/gen';
-import {DbTableQuery, DbTableVO} from '@/api/tool/gen/types';
+import { listDbTable, importTable, getDataNames } from '@/api/tool/gen';
+import { DbTableQuery, DbTableVO } from '@/api/tool/gen/types';
 
 const total = ref(0);
 const visible = ref(false);

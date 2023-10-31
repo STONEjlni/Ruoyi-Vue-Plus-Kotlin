@@ -133,14 +133,14 @@
 
 <script setup name="OssConfig" lang="ts">
 import {
-  addOssConfig,
-  changeOssConfigStatus,
-  delOssConfig,
-  getOssConfig,
   listOssConfig,
-  updateOssConfig
+  getOssConfig,
+  delOssConfig,
+  addOssConfig,
+  updateOssConfig,
+  changeOssConfigStatus
 } from "@/api/system/ossConfig";
-import {OssConfigForm, OssConfigQuery, OssConfigVO} from "@/api/system/ossConfig/types";
+import { OssConfigForm, OssConfigQuery, OssConfigVO } from "@/api/system/ossConfig/types";
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance

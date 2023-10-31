@@ -4,10 +4,10 @@ import type download from '@/plugins/download';
 import type auth from '@/plugins/auth';
 import type cache from '@/plugins/cache';
 import type animate from '@/animate';
-import type {useDict} from '@/utils/dict';
-import type {addDateRange, handleTree, parseTime, selectDictLabel, selectDictLabels} from '@/utils/ruoyi';
-import type {getConfigKey, updateConfigByKey} from '@/api/system/config';
-import type {download as rd} from '@/utils/request';
+import type { useDict } from '@/utils/dict';
+import type { addDateRange, handleTree, selectDictLabel, selectDictLabels, parseTime } from '@/utils/ruoyi';
+import type { getConfigKey, updateConfigByKey } from '@/api/system/config';
+import type { download as rd } from '@/utils/request';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {

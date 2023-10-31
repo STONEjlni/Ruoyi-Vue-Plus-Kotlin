@@ -1,10 +1,10 @@
-import {to as tos} from 'await-to-js';
+import { to as tos } from 'await-to-js';
 import router from './router';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
-import {getToken} from '@/utils/auth';
-import {isHttp} from '@/utils/validate';
-import {isRelogin} from '@/utils/request';
+import { getToken } from '@/utils/auth';
+import { isHttp } from '@/utils/validate';
+import { isRelogin } from '@/utils/request';
 import useUserStore from '@/store/modules/user';
 import useSettingsStore from '@/store/modules/settings';
 import usePermissionStore from '@/store/modules/permission';

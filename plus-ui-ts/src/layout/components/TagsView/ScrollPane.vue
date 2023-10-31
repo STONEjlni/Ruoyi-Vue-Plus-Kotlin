@@ -6,8 +6,7 @@
 
 <script setup lang="ts">
 import useTagsViewStore from '@/store/modules/tagsView'
-import {TagView} from 'vue-router'
-
+import { TagView } from 'vue-router'
 const tagAndTagSpacing = ref(4);
 
 const scrollContainerRef = ref<ElScrollbarInstance>()

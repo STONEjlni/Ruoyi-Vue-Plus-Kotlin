@@ -1,6 +1,6 @@
 import request from '@/utils/request';
-import {DictTypeForm, DictTypeQuery, DictTypeVO} from './types';
-import {AxiosPromise} from 'axios';
+import { DictTypeForm, DictTypeVO, DictTypeQuery } from './types';
+import { AxiosPromise } from 'axios';
 
 // 查询字典类型列表
 export function listType(query: DictTypeQuery): AxiosPromise<DictTypeVO[]> {

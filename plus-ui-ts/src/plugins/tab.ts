@@ -1,6 +1,6 @@
-import {useTagsViewStore} from '@/store/modules/tagsView';
+import { useTagsViewStore } from '@/store/modules/tagsView';
 import router from '@/router';
-import {RouteLocationRaw, TagView} from 'vue-router';
+import { TagView, RouteLocationRaw } from 'vue-router';
 
 export default {
   /**

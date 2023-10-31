@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import {propTypes} from '@/utils/propTypes';
+import { propTypes } from '@/utils/propTypes';
 
 defineProps({
   isActive: propTypes.bool.def(false)

@@ -30,10 +30,10 @@
 </template>
 
 <script setup lang="ts">
-import {isExternal} from '@/utils/validate'
+import { isExternal } from '@/utils/validate'
 import AppLink from './Link.vue'
-import {getNormalPath} from '@/utils/ruoyi'
-import {RouteOption} from "vue-router";
+import { getNormalPath } from '@/utils/ruoyi'
+import { RouteOption } from "vue-router";
 
 const props = defineProps({
     // route object

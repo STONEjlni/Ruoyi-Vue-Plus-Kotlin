@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import {propTypes} from "@/utils/propTypes";
+import { propTypes } from "@/utils/propTypes";
 
 const prop = defineProps({
   info: propTypes.any.def({})

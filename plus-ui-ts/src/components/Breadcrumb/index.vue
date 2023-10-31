@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import {RouteLocationMatched} from 'vue-router'
+import { RouteLocationMatched } from 'vue-router'
 
 const route = useRoute();
 const router = useRouter();

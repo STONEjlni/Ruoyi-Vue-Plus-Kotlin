@@ -55,9 +55,9 @@
 </template>
 
 <script setup name="AuthRole" lang="ts">
-import {RoleVO} from "@/api/system/role/types";
-import {getAuthRole, updateAuthRole} from "@/api/system/user";
-import {UserForm} from "@/api/system/user/types";
+import { RoleVO } from "@/api/system/role/types";
+import { getAuthRole, updateAuthRole } from "@/api/system/user";
+import { UserForm } from "@/api/system/user/types";
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;

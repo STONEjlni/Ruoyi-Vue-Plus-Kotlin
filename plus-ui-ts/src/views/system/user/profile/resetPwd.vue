@@ -17,8 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import {updateUserPwd} from "@/api/system/user";
-import type {ResetPwdForm} from "@/api/system/user/types";
+import { updateUserPwd } from "@/api/system/user";
+import type { ResetPwdForm } from "@/api/system/user/types";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const pwdRef = ref<ElFormInstance>();

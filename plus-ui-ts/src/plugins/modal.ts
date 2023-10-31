@@ -1,6 +1,5 @@
-import {MessageBoxData} from 'element-plus';
-import {LoadingInstance} from 'element-plus/es/components/loading/src/loading';
-
+import { MessageBoxData } from 'element-plus';
+import { LoadingInstance } from 'element-plus/es/components/loading/src/loading';
 let loadingInstance: LoadingInstance;
 export default {
   // 消息提示

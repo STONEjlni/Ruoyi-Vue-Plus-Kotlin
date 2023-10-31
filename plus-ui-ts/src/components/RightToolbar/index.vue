@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import {propTypes} from '@/utils/propTypes';
+import { propTypes } from '@/utils/propTypes';
 
 const props = defineProps({
     showSearch: propTypes.bool.def(true),

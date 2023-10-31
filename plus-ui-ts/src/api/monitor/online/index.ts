@@ -1,6 +1,6 @@
 import request from '@/utils/request';
-import {OnlineQuery, OnlineVO} from './types';
-import {AxiosPromise} from 'axios';
+import { OnlineQuery, OnlineVO } from './types';
+import { AxiosPromise } from 'axios';
 
 // 查询在线用户列表
 export function list(query: OnlineQuery): AxiosPromise<OnlineVO[]> {

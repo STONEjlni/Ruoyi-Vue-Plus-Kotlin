@@ -1,12 +1,12 @@
-import {defineStore} from 'pinia';
-import router, {constantRoutes, dynamicRoutes} from '@/router';
+import { defineStore } from 'pinia';
+import router, { constantRoutes, dynamicRoutes } from '@/router';
 import store from '@/store';
-import {getRouters} from '@/api/menu';
+import { getRouters } from '@/api/menu';
 import Layout from '@/layout/index.vue';
 import ParentView from '@/components/ParentView/index.vue';
 import InnerLink from '@/layout/components/InnerLink/index.vue';
 import auth from '@/plugins/auth';
-import {RouteOption} from 'vue-router';
+import { RouteOption } from 'vue-router';
 // 匹配views里面所有的.vue文件
 const modules = import.meta.glob('./../../views/**/*.vue');
 

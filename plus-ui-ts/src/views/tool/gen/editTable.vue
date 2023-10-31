@@ -113,10 +113,10 @@
 </template>
 
 <script setup name="GenEdit" lang="ts">
-import {getGenTable, updateGenTable} from '@/api/tool/gen';
-import {DbColumnVO, DbTableVO} from '@/api/tool/gen/types';
-import {optionselect as getDictOptionselect} from '@/api/system/dict/type';
-import {DictTypeVO} from '@/api/system/dict/type/types';
+import { getGenTable, updateGenTable } from '@/api/tool/gen';
+import { DbColumnVO, DbTableVO } from '@/api/tool/gen/types';
+import { optionselect as getDictOptionselect } from '@/api/system/dict/type';
+import { DictTypeVO } from '@/api/system/dict/type/types';
 import BasicInfoForm from './basicInfoForm.vue';
 import GenInfoForm from "./genInfoForm.vue";
 

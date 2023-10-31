@@ -99,8 +99,8 @@
 </template>
 
 <script setup name="Logininfor" lang="ts">
-import {cleanLoginInfo, delLoginInfo, list, unlockLoginInfo} from "@/api/monitor/loginInfo";
-import {LoginInfoQuery, LoginInfoVO} from "@/api/monitor/loginInfo/types";
+import { list, delLoginInfo, cleanLoginInfo, unlockLoginInfo } from "@/api/monitor/loginInfo";
+import { LoginInfoQuery, LoginInfoVO } from "@/api/monitor/loginInfo/types";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { sys_common_status } = toRefs<any>(proxy?.useDict("sys_common_status"));

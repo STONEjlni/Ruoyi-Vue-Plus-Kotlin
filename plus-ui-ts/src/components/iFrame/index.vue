@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import {propTypes} from '@/utils/propTypes';
+import { propTypes } from '@/utils/propTypes';
 
 const props = defineProps({
   src: propTypes.string.isRequired

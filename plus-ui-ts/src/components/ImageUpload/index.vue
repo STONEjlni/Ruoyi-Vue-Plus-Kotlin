@@ -40,10 +40,10 @@
 </template>
 
 <script setup lang="ts">
-import {delOss, listByIds} from "@/api/system/oss";
-import {ComponentInternalInstance} from "vue";
-import {OssVO} from "@/api/system/oss/types";
-import {propTypes} from '@/utils/propTypes';
+import { listByIds, delOss } from "@/api/system/oss";
+import { ComponentInternalInstance } from "vue";
+import { OssVO } from "@/api/system/oss/types";
+import { propTypes } from '@/utils/propTypes';
 import {globalHeaders} from "@/utils/request";
 
 const props = defineProps({

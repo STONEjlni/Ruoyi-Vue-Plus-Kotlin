@@ -1,5 +1,4 @@
 import type * as ep from 'element-plus';
-
 declare global {
   declare type ElTagType = '' | 'success' | 'warning' | 'info' | 'danger' | 'default' | 'primary';
   declare type ElFormInstance = InstanceType<typeof ep.ElForm>;

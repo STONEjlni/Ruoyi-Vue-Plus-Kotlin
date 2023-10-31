@@ -1,6 +1,6 @@
 import request from '@/utils/request';
-import {DbTableForm, DbTableQuery, DbTableVO, GenTableVO, TableQuery, TableVO} from './types';
-import {AxiosPromise} from 'axios';
+import { DbTableQuery, DbTableVO, TableQuery, TableVO, GenTableVO, DbTableForm } from './types';
+import { AxiosPromise } from 'axios';
 
 // 查询生成表数据
 export const listTable = (query: TableQuery): AxiosPromise<TableVO[]> => {

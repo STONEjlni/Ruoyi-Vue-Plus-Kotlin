@@ -1,4 +1,4 @@
-import type {ComponentInternalInstance as ComponentInstance, PropType as VuePropType} from 'vue';
+import type { ComponentInternalInstance as ComponentInstance, PropType as VuePropType } from 'vue';
 
 declare global {
   /** vue Instance */

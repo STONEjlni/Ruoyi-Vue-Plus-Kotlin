@@ -1,5 +1,5 @@
 // 自定义国际化配置
-import {createI18n} from 'vue-i18n';
+import { createI18n } from 'vue-i18n';
 
 // 本地语言包
 import enUSLocale from './en_US';
