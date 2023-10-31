@@ -43,8 +43,8 @@ class UnsignedMathGenerator : CodeGenerator {
         val limit = getLimit()
         val a = RandomUtil.randomInt(limit)
         val b = RandomUtil.randomInt(limit)
-        var max = max(a.toDouble(), b.toDouble()).toString()
-        var min = min(a.toDouble(), b.toDouble()).toString()
+        var max = max(a, b).toString()
+        var min = min(a, b).toString()
         max = StringUtils.rightPad(max, numberLength, CharUtil.SPACE)
         min = StringUtils.rightPad(min, numberLength, CharUtil.SPACE)
         return max + RandomUtil.randomChar(OPERATORS) + min + '='
