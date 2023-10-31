@@ -3,6 +3,7 @@ package com.blank.generator.util
 import cn.hutool.core.collection.CollUtil
 import cn.hutool.core.convert.Convert
 import cn.hutool.core.lang.Dict
+import cn.hutool.core.util.ObjectUtil
 import com.blank.common.core.utils.DateUtils.getDate
 import com.blank.common.core.utils.StringUtilsExtend.format
 import com.blank.common.core.utils.StringUtilsExtend.toCamelCase
@@ -107,13 +108,13 @@ object VelocityUtils {
      */
     fun getTemplateList(tplCategory: String): MutableList<String> {
         val templates: MutableList<String> = mutableListOf()
-        templates.add("vm/java/domain.java.vm")
-        templates.add("vm/java/vo.java.vm")
-        templates.add("vm/java/bo.java.vm")
-        templates.add("vm/java/mapper.java.vm")
-        templates.add("vm/java/service.java.vm")
-        templates.add("vm/java/serviceImpl.java.vm")
-        templates.add("vm/java/controller.java.vm")
+        templates.add("vm/kotlin/domain.kt.vm")
+        templates.add("vm/kotlin/vo.kt.vm")
+        templates.add("vm/kotlin/bo.kt.vm")
+        templates.add("vm/kotlin/mapper.kt.vm")
+        templates.add("vm/kotlin/service.kt.vm")
+        templates.add("vm/kotlin/serviceImpl.kt.vm")
+        templates.add("vm/kotlin/controller.kt.vm")
         templates.add("vm/xml/mapper.xml.vm")
         if (isOracle()) {
             templates.add("vm/sql/oracle/sql.vm")
@@ -151,22 +152,22 @@ object VelocityUtils {
         val javaPath = PROJECT_PATH + "/" + StringUtils.replace(packageName, ".", "/")
         val mybatisPath = "$MYBATIS_PATH/$moduleName"
         val vuePath = "vue"
-        if (template.contains("domain.java.vm")) {
+        if (template.contains("domain.kt.vm")) {
             fileName = format("{}/domain/{}.java", javaPath, className!!)
         }
-        if (template.contains("vo.java.vm")) {
+        if (template.contains("vo.kt.vm")) {
             fileName = format("{}/domain/vo/{}Vo.java", javaPath, className!!)
         }
-        if (template.contains("bo.java.vm")) {
+        if (template.contains("bo.kt.vm")) {
             fileName = format("{}/domain/bo/{}Bo.java", javaPath, className!!)
         }
-        if (template.contains("mapper.java.vm")) {
+        if (template.contains("mapper.kt.vm")) {
             fileName = format("{}/mapper/{}Mapper.java", javaPath, className!!)
-        } else if (template.contains("service.java.vm")) {
+        } else if (template.contains("service.kt.vm")) {
             fileName = format("{}/service/I{}Service.java", javaPath, className!!)
-        } else if (template.contains("serviceImpl.java.vm")) {
+        } else if (template.contains("serviceImpl.kt.vm")) {
             fileName = format("{}/service/impl/{}ServiceImpl.java", javaPath, className!!)
-        } else if (template.contains("controller.java.vm")) {
+        } else if (template.contains("controller.kt.vm")) {
             fileName = format("{}/controller/{}Controller.java", javaPath, className!!)
         } else if (template.contains("mapper.xml.vm")) {
             fileName = format("{}/{}Mapper.xml", mybatisPath, className!!)
@@ -204,12 +205,14 @@ object VelocityUtils {
     fun getImportList(genTable: GenTable): HashSet<String> {
         val columns: MutableList<GenTableColumn>? = genTable.columns
         val importList = HashSet<String>()
-        for (column in columns!!) {
-            if (!column.isSuperColumn() && GenConstants.TYPE_DATE == column.javaType) {
-                importList.add("java.util.Date")
-                importList.add("com.fasterxml.jackson.annotation.JsonFormat")
-            } else if (!column.isSuperColumn() && GenConstants.TYPE_BIGDECIMAL == column.javaType) {
-                importList.add("java.math.BigDecimal")
+        if (CollUtil.isNotEmpty(columns)) {
+            for (column in columns!!) {
+                if (!column.isSuperColumn() && GenConstants.TYPE_DATE == column.javaType) {
+                    importList.add("java.util.Date")
+                    importList.add("com.fasterxml.jackson.annotation.JsonFormat")
+                } else if (!column.isSuperColumn() && GenConstants.TYPE_BIGDECIMAL == column.javaType) {
+                    importList.add("java.math.BigDecimal")
+                }
             }
         }
         return importList
@@ -235,13 +238,15 @@ object VelocityUtils {
      * @param columns 列集合
      */
     fun addDicts(dicts: MutableSet<String>, columns: MutableList<GenTableColumn>?) {
-        for (column in columns!!) {
-            if (!column.isSuperColumn() && StringUtils.isNotEmpty(column.dictType) && StringUtils.equalsAny(
-                    column.htmlType,
-                    *arrayOf(GenConstants.HTML_SELECT, GenConstants.HTML_RADIO, GenConstants.HTML_CHECKBOX)
-                )
-            ) {
-                dicts.add("'" + column.dictType + "'")
+        if (CollUtil.isNotEmpty(columns)) {
+            for (column in columns!!) {
+                if (!column.isSuperColumn() && StringUtils.isNotEmpty(column.dictType) && StringUtils.equalsAny(
+                        column.htmlType,
+                        *arrayOf(GenConstants.HTML_SELECT, GenConstants.HTML_RADIO, GenConstants.HTML_CHECKBOX)
+                    )
+                ) {
+                    dicts.add("'" + column.dictType + "'")
+                }
             }
         }
     }

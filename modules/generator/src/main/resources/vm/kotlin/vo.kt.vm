@@ -1,0 +1,45 @@
+package ${packageName}.domain.vo
+
+    #foreach ($import in $importList)
+    import ${import}
+    #end
+import ${packageName}.domain.${ClassName}
+import com.blank.common.excel.annotation.ExcelDictFormat
+import com.blank.common.excel.convert.ExcelDictConvert
+import io.github.linpeilie.annotations.AutoMapper
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Date;
+
+
+/**
+ * ${functionName}视图对象 ${tableName}
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@AutoMapper(target = ${ClassName}::class)
+class ${ClassName}Vo : Serializable {
+
+    companion object {
+        @Serial
+        private const val serialVersionUID = 1L
+    }
+
+    #foreach ($column in $columns)
+        #if($column.list)
+    /**
+     * $column.columnComment
+     */
+            #set($parentheseIndex=$column.columnComment.indexOf("（"))
+            #if($parentheseIndex != -1)
+                #set($comment=$column.columnComment.substring(0, $parentheseIndex))
+            #else
+                #set($comment=$column.columnComment)
+            #end
+    var $column.javaField: $column.javaType? = null
+        #end
+    #end
+
+}

@@ -6,6 +6,7 @@ import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.generator.constant.GenConstants
 import com.mybatisflex.annotation.Column
 import com.mybatisflex.annotation.Id
+import com.mybatisflex.annotation.RelationOneToMany
 import com.mybatisflex.annotation.Table
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
@@ -104,8 +105,10 @@ class GenTable : BaseEntity() {
     /**
      * 表列信息
      */
+    @Valid
     @Column(ignore = true)
-    var columns: @Valid MutableList<GenTableColumn>? = null
+    @RelationOneToMany(selfField = "tableId", targetField = "tableId", orderBy = "sort")
+    var columns: MutableList<GenTableColumn>? = null
 
     /**
      * 其它生成选项

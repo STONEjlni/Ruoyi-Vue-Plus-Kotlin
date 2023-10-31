@@ -111,38 +111,59 @@ class GenTableColumn : BaseEntity() {
         return StringUtils.capitalize(javaField)
     }
 
-    @JvmOverloads
-    fun isPk(isPk: String? = this.isPk): Boolean {
+    fun isPk(): Boolean {
+        return isPk(this.isPk)
+    }
+
+    fun isPk(isPk: String?): Boolean {
         return isPk != null && StringUtils.equals("1", isPk)
     }
 
-    @JvmOverloads
-    fun isIncrement(isIncrement: String? = this.isIncrement): Boolean {
+    fun isIncrement(): Boolean {
+        return isIncrement(this.isIncrement)
+    }
+
+    fun isIncrement(isIncrement: String?): Boolean {
         return isIncrement != null && StringUtils.equals("1", isIncrement)
     }
 
-    @JvmOverloads
-    fun isRequired(isRequired: String? = this.isRequired): Boolean {
+    fun isRequired(): Boolean {
+        return isRequired(this.isRequired)
+    }
+
+    fun isRequired(isRequired: String?): Boolean {
         return isRequired != null && StringUtils.equals("1", isRequired)
     }
 
-    @JvmOverloads
-    fun isInsert(isInsert: String? = this.isInsert): Boolean {
+    fun isInsert(): Boolean {
+        return isInsert(this.isInsert)
+    }
+
+    fun isInsert(isInsert: String?): Boolean {
         return isInsert != null && StringUtils.equals("1", isInsert)
     }
 
-    @JvmOverloads
-    fun isEdit(isEdit: String? = this.isEdit): Boolean {
+    fun isEdit(): Boolean {
+        return isEdit(this.isEdit)
+    }
+
+    fun isEdit(isEdit: String?): Boolean {
         return isEdit != null && StringUtils.equals("1", isEdit)
     }
 
-    @JvmOverloads
-    fun isList(isList: String? = this.isList): Boolean {
-        return isList != null && StringUtils.equals("1", isList)
+    fun isList(): Boolean {
+        return isList(this.isList)
     }
 
-    @JvmOverloads
-    fun isQuery(isQuery: String? = this.isQuery): Boolean {
+    fun isList(isList: String?): Boolean {
+        return StringUtils.equals("1", isList)
+    }
+
+    fun isQuery(): Boolean {
+        return isQuery(this.isQuery)
+    }
+
+    fun isQuery(isQuery: String?): Boolean {
         return isQuery != null && StringUtils.equals("1", isQuery)
     }
 
@@ -153,7 +174,6 @@ class GenTableColumn : BaseEntity() {
     fun isUsableColumn(): Boolean {
         return isUsableColumn(this.javaField)
     }
-
 
     fun readConverterExp(): String? {
         var remarks = StringUtils.substringBetween(columnComment, "（", "）")

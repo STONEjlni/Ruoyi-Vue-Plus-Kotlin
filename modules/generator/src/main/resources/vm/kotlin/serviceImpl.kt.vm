@@ -1,0 +1,102 @@
+package ${packageName}.service.impl
+
+import com.blank.common.core.annotation.Slf4j
+import com.blank.common.core.annotation.Slf4j.Companion.log
+import com.blank.common.core.utils.MapstructUtils
+    #if($table.crud || $table.sub)
+    import com.blank.common.mybatis.core.page.TableDataInfo
+    import com.blank.common.mybatis.core.page.PageQuery
+    import com.baomidou.mybatisplus.extension.plugins.pagination.Page
+    #end
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper
+import com.baomidou.mybatisplus.core.toolkit.Wrappers
+import org.springframework.stereotype.Service
+import ${packageName}.domain.bo.${ClassName}Bo
+import ${packageName}.domain.vo.${ClassName}Vo
+import ${packageName}.domain.${ClassName}
+import ${packageName}.mapper.${ClassName}Mapper
+import ${packageName}.service.I${ClassName}Service
+
+/**
+ * ${functionName}Service业务层处理
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Slf4j
+@Service
+class ${ClassName}ServiceImpl(
+    private val baseMapper: ${ClassName}Mapper,
+) : I${ClassName}Service {
+
+    /**
+     * 查询${functionName}
+     */
+    override fun queryById(${pkColumn.javaField}: ${pkColumn.javaType}): ${ClassName}Vo? {
+        return baseMapper.selectOneById(${pkColumn.javaField});
+    }
+
+    #if($table.crud || $table.sub)
+    /**
+     * 查询${functionName}列表
+     */
+    override fun queryPageList(bo: ${ClassName}Bo, pageQuery: PageQuery): TableDataInfo<${ClassName}Vo> {
+        val lqw = buildQueryWrapper(bo)
+        val result = baseMapper.paginateAs(pageQuery, lqw, ${ClassName}Vo::class.java)
+        return TableDataInfo.build(result)
+    }
+    #end
+
+    /**
+     * 查询${functionName}列表
+     */
+    override fun queryList(bo: ${ClassName}Bo): MutableList<${ClassName}Vo> {
+        val lqw = buildQueryWrapper(bo)
+        return baseMapper.selectListByQueryAs(lqw, ${ClassName}Vo::class.java)
+    }
+
+    private fun buildQueryWrapper(bo: ${ClassName}Bo): QueryWrapper {
+        val params: Map<String, Any?> = bo.params
+        return QueryWrapper.create()
+    }
+
+    /**
+     * 新增${functionName}
+     */
+    override fun insertByBo(bo: ${ClassName}Bo): Boolean {
+        val add: ${ClassName} = MapstructUtils.convert(bo, ${ClassName}::class)!!
+        validEntityBeforeSave(add)
+        val flag: Boolean = baseMapper.insert(add) > 0
+        #set($pk=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+        if (flag) {
+            bo.$pk = add.$pk;
+        }
+        return flag;
+    }
+
+    /**
+     * 修改${functionName}
+     */
+    override fun updateByBo(${ClassName}Bo bo): Boolean {
+        val update: ${ClassName} = MapstructUtils.convert(bo, ${ClassName}::class)!!
+        validEntityBeforeSave(update)
+        return baseMapper.updateById(update) > 0;
+    }
+
+    /**
+     * 保存前的数据校验
+     */
+    fun validEntityBeforeSave(entity: ${ClassName}) {
+        //TODO 做一些数据校验,如唯一约束
+    }
+
+    /**
+     * 批量删除${functionName}
+     */
+    override fun deleteWithValidByIds(ids: MutableCollection<${pkColumn.javaType}>, isValid: Boolean): Boolean {
+        if (isValid) {
+            //TODO 做一些业务上的校验,判断是否需要校验
+        }
+        return baseMapper.deleteBatchIds(ids) > 0;
+    }
+}

@@ -1,0 +1,99 @@
+package ${packageName}.controller
+
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.constraints.*
+import cn.dev33.satoken.annotation.SaCheckPermission
+import org.springframework.web.bind.annotation.*
+import org.springframework.validation.annotation.Validated
+import com.blank.common.idempotent.annotation.RepeatSubmit
+import com.blank.common.log.annotation.Log
+import com.blank.common.web.core.BaseController
+import com.blank.common.mybatis.core.page.PageQuery
+import com.blank.common.core.domain.R
+import com.blank.common.core.validate.AddGroup
+import com.blank.common.core.validate.EditGroup
+import com.blank.common.log.enums.BusinessType
+import com.blank.common.excel.utils.ExcelUtil
+import ${packageName}.domain.vo.${ClassName}Vo
+import ${packageName}.domain.bo.${ClassName}Bo
+import ${packageName}.service.I${ClassName}Service
+#if($table.crud || $table.sub)
+import com.blank.common.mybatis.core.page.TableDataInfo
+#elseif($table.tree)
+#end
+
+/**
+ * ${functionName}
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Validated
+@RestController
+@RequestMapping("/${moduleName}/${businessName}")
+public class ${ClassName}Controller(
+    private val ${className}Service: I${ClassName}Service
+) : BaseController() {
+
+    /**
+     * 查询${functionName}列表
+     */
+    @SaCheckPermission("${permissionPrefix}:list")
+    @GetMapping("/list")
+    #if($table.crud || $table.sub)
+    fun list(bo: ${ClassName}Bo, pageQuery: PageQuery): TableDataInfo<${ClassName}Vo> {
+        return ${className}Service.queryPageList(bo, pageQuery);
+    }
+    #elseif($table.tree)
+        fun list(bo: ${ClassName}Bo): R<MutableList<${ClassName}Vo>> {
+            MutableList<${ClassName}Vo> list = ${className}Service.queryList(bo);
+            return R.ok(data = list);
+        }
+    #end
+
+    /**
+     * 获取${functionName}详细信息
+     *
+     * @param ${pkColumn.javaField} 主键
+     */
+    @SaCheckPermission("${permissionPrefix}:query")
+    @GetMapping("/{${pkColumn.javaField}}")
+    fun getInfo(@NotNull(message = "主键不能为空") @PathVariable ${pkColumn.javaField}: ${pkColumn.javaType} ): R<${ClassName}Vo> {
+        return R.ok(data = ${className}Service.queryById(${pkColumn.javaField}));
+    }
+
+    /**
+     * 新增${functionName}
+     */
+    @SaCheckPermission("${permissionPrefix}:add")
+    @Log(title = "${functionName}", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
+    @PostMapping()
+    fun add(@Validated(AddGroup::class) @RequestBody bo: ${ClassName}Bo): R<Unit> {
+        return toAjax(${className}Service.insertByBo(bo));
+    }
+
+    /**
+     * 修改${functionName}
+     */
+    @SaCheckPermission("${permissionPrefix}:edit")
+    @Log(title = "${functionName}", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping()
+    fun edit(@Validated(EditGroup::class) @RequestBody ${ClassName}Bo bo): R<Unit> {
+        return toAjax(${className}Service.updateByBo(bo));
+    }
+
+    /**
+     * 删除${functionName}
+     *
+     * @param ${pkColumn.javaField}s 主键串
+     */
+    @SaCheckPermission("${permissionPrefix}:remove")
+    @Log(title = "${functionName}", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{${pkColumn.javaField}s}")
+    fun remove(@NotEmpty(message = "主键不能为空")
+               @PathVariable ${pkColumn.javaField}s: Array<${pkColumn.javaType}>): R<Unit> {
+        return toAjax(${className}Service.deleteWithValidByIds(List.of(${pkColumn.javaField}s), true));
+    }
+}

@@ -544,14 +544,17 @@ class GenTableServiceImpl(
      * @param table 业务表信息
      */
     fun setPkColumn(table: GenTable) {
-        for (column in table.columns!!) {
-            if (column.isPk()) {
-                table.pkColumn = column
-                break
+        if (ObjectUtil.isNotNull(table.columns)) {
+            for (column in table.columns!!) {
+                if (column.isPk()) {
+                    table.pkColumn = column
+                    break
+                }
             }
-        }
-        if (ObjectUtil.isNull(table.pkColumn)) {
-            table.pkColumn = table.columns!![0]
+
+            if (ObjectUtil.isNull(table.pkColumn)) {
+                table.pkColumn = table.columns!![0]
+            }
         }
     }
 

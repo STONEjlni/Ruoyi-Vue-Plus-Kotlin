@@ -1,0 +1,52 @@
+package ${packageName}.domain
+
+    #foreach ($column in $columns)
+        #if($column.javaField=='tenantId')
+            #set($IsTenant=1)
+        #end
+    #end
+import com.baomidou.mybatisplus.annotation.*
+    #foreach ($import in $importList)
+    import ${import}
+    #end
+
+import com.blank.common.core.annotation.NoArg
+import com.blank.common.core.annotation.Open
+import java.io.Serial
+
+/**
+ * ${functionName}对象 ${tableName}
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@TableName("${tableName}")
+@Open
+@NoArg
+class ${ClassName} : BaseEntity() {
+
+    companion object {
+        @Serial
+        private const val serialVersionUID = 1L
+    }
+
+#foreach ($column in $columns)
+    #if(!$table.isSuperColumn($column.javaField))
+    /**
+     * $column.columnComment
+     */
+        #if($column.javaField=='delFlag')
+    @Column(isLogicDelete = true)
+        #end
+        #if($column.javaField=='version')
+    @Column(version = true)
+        #end
+        #if($column.isPk==1)
+    @Id
+        #end
+    var $column.javaField: $column.javaType? = null
+
+    #end
+#end
+
+}

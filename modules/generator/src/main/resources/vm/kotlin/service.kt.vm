@@ -1,0 +1,50 @@
+package ${packageName}.service
+
+import ${packageName}.domain.${ClassName}
+import ${packageName}.domain.vo.${ClassName}Vo
+import ${packageName}.domain.bo.${ClassName}Bo
+    #if($table.crud || $table.sub)
+    import com.blank.common.mybatis.core.page.TableDataInfo
+    import com.blank.common.mybatis.core.page.PageQuery
+    #end
+
+/**
+ * ${functionName}Service接口
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+interface I${ClassName}Service {
+
+    /**
+     * 查询${functionName}
+     */
+     fun queryById(${pkColumn.javaField}: ${pkColumn.javaType}): ${ClassName}Vo?
+
+    #if($table.crud || $table.sub)
+    /**
+     * 查询${functionName}列表
+     */
+    fun queryPageList(bo: ${ClassName}Bo, pageQuery: PageQuery): TableDataInfo<${ClassName}Vo>
+    #end
+
+    /**
+     * 查询${functionName}列表
+     */
+    fun queryList(bo: ${ClassName}Bo): MutableList<${ClassName}Vo>
+
+    /**
+     * 新增${functionName}
+     */
+    fun insertByBo(bo: ${ClassName}Bo): Boolean
+
+    /**
+     * 修改${functionName}
+     */
+    fun updateByBo(bo: ${ClassName}Bo): Boolean
+
+    /**
+     * 校验并批量删除${functionName}信息
+     */
+    fun deleteWithValidByIds(ids: MutableCollection<${pkColumn.javaType}>, isValid: Boolean): Boolean
+}
