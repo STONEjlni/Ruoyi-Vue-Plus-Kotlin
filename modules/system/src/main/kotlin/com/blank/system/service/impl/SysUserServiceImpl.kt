@@ -21,7 +21,6 @@ import com.blank.system.domain.bo.SysUserBo
 import com.blank.system.domain.table.SysDeptDef.SYS_DEPT
 import com.blank.system.domain.table.SysRoleDef.SYS_ROLE
 import com.blank.system.domain.table.SysUserDef.SYS_USER
-import com.blank.system.domain.table.SysUserRoleDef
 import com.blank.system.domain.table.SysUserRoleDef.SYS_USER_ROLE
 import com.blank.system.domain.vo.SysRoleVo
 import com.blank.system.domain.vo.SysUserVo
@@ -30,7 +29,6 @@ import com.blank.system.mapper.SysRoleMapper
 import com.blank.system.mapper.SysUserMapper
 import com.blank.system.mapper.SysUserRoleMapper
 import com.blank.system.service.ISysUserService
-import com.mybatisflex.core.paginate.Page
 import com.mybatisflex.core.query.If
 import com.mybatisflex.core.query.QueryMethods
 import com.mybatisflex.core.query.QueryWrapper
@@ -40,6 +38,7 @@ import org.apache.commons.lang3.StringUtils
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
 
 /**
  * 用户 业务层处理
@@ -54,35 +53,8 @@ class SysUserServiceImpl(
 ) : ISysUserService, UserService {
 
     override fun selectPageUserList(user: SysUserBo, pageQuery: PageQuery): TableDataInfo<SysUserVo> {
-        val page = selectPageUserList(pageQuery, buildQueryWrapper(user))
+        val page = baseMapper.selectPageUserList(pageQuery, buildQueryWrapper(user))
         return TableDataInfo.build(page)
-    }
-
-    private fun selectPageUserList(pageQuery: PageQuery, queryWrapper: QueryWrapper): Page<SysUserVo> {
-        queryWrapper
-            .select(
-                SYS_USER.USER_ID,
-                SYS_USER.DEPT_ID,
-                SYS_USER.USER_NAME,
-                SYS_USER.NICK_NAME,
-                SYS_USER.EMAIL,
-                SYS_USER.AVATAR,
-                SYS_USER.PHONENUMBER,
-                SYS_USER.SEX,
-                SYS_USER.STATUS,
-                SYS_USER.DEL_FLAG,
-                SYS_USER.LOGIN_IP,
-                SYS_USER.LOGIN_DATE,
-                SYS_USER.CREATE_BY,
-                SYS_USER.CREATE_TIME,
-                SYS_USER.REMARK,
-                SYS_DEPT.DEPT_NAME,
-                SYS_DEPT.LEADER,
-                QueryMethods.column("u1.user_name as leaderName")
-            )
-            .leftJoin<QueryWrapper>(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
-            .leftJoin<QueryWrapper>(SYS_USER).`as`("u1").on(SYS_USER.USER_ID.eq(SYS_DEPT.LEADER))
-        return baseMapper.selectPageUserList(pageQuery, queryWrapper)
     }
 
     /**

@@ -22,10 +22,10 @@ import com.blank.system.mapper.SysOssConfigMapper
 import com.blank.system.service.ISysOssConfigService
 import com.mybatisflex.core.query.QueryWrapper
 import com.mybatisflex.core.update.UpdateChain
-import com.mybatisflex.core.update.UpdateWrapper
 import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
 
 /**
  * 对象存储配置Service业务层处理
@@ -93,13 +93,7 @@ class SysOssConfigServiceImpl(
     override fun updateByBo(bo: SysOssConfigBo): Boolean {
         var config = MapstructUtils.convert(bo, SysOssConfig::class.java)!!
         validEntityBeforeSave(config)
-        val update: Boolean = UpdateChain.of(SysOssConfig::class.java)
-            .set(SYS_OSS_CONFIG.PREFIX, "", ObjectUtil.isNull(config.prefix))
-            .set(SYS_OSS_CONFIG.REGION, "", ObjectUtil.isNull(config.region))
-            .set(SYS_OSS_CONFIG.EXT1, "", ObjectUtil.isNull(config.ext1))
-            .set(SYS_OSS_CONFIG.REMARK, "", ObjectUtil.isNull(config.remark))
-            .where(SYS_OSS_CONFIG.OSS_CONFIG_ID.eq(config.ossConfigId))
-            .update()
+        val update = baseMapper.update(config, false) != 0
         if (update) {
             // 从数据库查询完整的数据做缓存
             config = baseMapper.selectOneById(config.ossConfigId)
@@ -161,12 +155,11 @@ class SysOssConfigServiceImpl(
     @Transactional(rollbackFor = [Exception::class])
     override fun updateOssConfigStatus(bo: SysOssConfigBo): Int {
         val sysOssConfig = MapstructUtils.convert(bo, SysOssConfig::class.java)!!
-        //        todo
-        var row = baseMapper.update(
-            UpdateWrapper.of(SysOssConfig::class.java).set(SysOssConfig::status, "1").toEntity()
-        )
-        row += baseMapper.update(sysOssConfig)
-        if (row > 0) {
+        val updateOldStatus = UpdateChain.of(SysOssConfig::class.java).set(SysOssConfig::status, "1")
+            .where(SysOssConfig::status).eq("0")
+            .update()
+        val row = baseMapper.update(sysOssConfig)
+        if (updateOldStatus || row > 0) {
             RedisUtils.setCacheObject(OssConstant.DEFAULT_CONFIG_KEY, sysOssConfig.configKey)
         }
         return row

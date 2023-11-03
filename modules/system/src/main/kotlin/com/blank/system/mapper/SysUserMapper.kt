@@ -16,11 +16,13 @@ import com.mybatisflex.core.paginate.Page
 import com.mybatisflex.core.query.QueryWrapper
 import com.mybatisflex.core.update.UpdateChain
 
+
 /**
  * 用户表 数据层
  */
 interface SysUserMapper : BaseMapperPlus<SysUser> {
     fun selectPageUserList(pageQuery: PageQuery, queryWrapper: QueryWrapper): Page<SysUserVo> {
+        selectListVo(queryWrapper)
         val sysUserDtoPage: Page<SysUserDto> = this.paginateAs(
             pageQuery, queryWrapper,
             SysUserDto::class.java, DataPermission.of(
@@ -34,6 +36,31 @@ interface SysUserMapper : BaseMapperPlus<SysUser> {
         return p
     }
 
+    fun selectListVo(queryWrapper: QueryWrapper) {
+        queryWrapper.select(
+            SYS_USER.USER_ID,
+            SYS_USER.DEPT_ID,
+            SYS_USER.NICK_NAME,
+            SYS_USER.USER_NAME,
+            SYS_USER.EMAIL,
+            SYS_USER.AVATAR,
+            SYS_USER.PHONENUMBER,
+            SYS_USER.SEX,
+            SYS_USER.STATUS,
+            SYS_USER.DEL_FLAG,
+            SYS_USER.LOGIN_IP,
+            SYS_USER.LOGIN_DATE,
+            SYS_USER.CREATE_BY,
+            SYS_USER.CREATE_TIME,
+            SYS_USER.REMARK,
+            SYS_DEPT.DEPT_NAME,
+            SYS_DEPT.LEADER,
+            SYS_USER.USER_NAME.`as`("leaderName")
+        )
+            .leftJoin<QueryWrapper>(SYS_DEPT).`as`("d").on(SYS_USER.DEPT_ID.eq(SYS_DEPT.DEPT_ID))
+            .leftJoin<QueryWrapper>(SYS_USER).`as`("u1").on(SYS_USER.USER_ID.eq(SYS_DEPT.LEADER))
+    }
+
     /**
      * 根据条件分页查询用户列表
      *
@@ -41,6 +68,7 @@ interface SysUserMapper : BaseMapperPlus<SysUser> {
      * @return 用户信息集合信息
      */
     fun selectUserList(queryWrapper: QueryWrapper): MutableList<SysUserVo> {
+        selectListVo(queryWrapper)
         val sysUserDtos: MutableList<SysUserDto> = this.selectListByQueryAs(
             queryWrapper,
             SysUserDto::class.java, DataPermission.of(
