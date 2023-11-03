@@ -3,7 +3,6 @@ package com.blank.generator.service
 import cn.hutool.core.collection.CollUtil
 import cn.hutool.core.io.FileUtil
 import cn.hutool.core.io.IoUtil
-import cn.hutool.core.lang.Snowflake
 import cn.hutool.core.util.ObjectUtil
 import cn.hutool.core.util.StrUtil
 import com.blank.common.core.annotation.Slf4j
@@ -28,7 +27,7 @@ import com.blank.generator.util.GenUtils
 import com.blank.generator.util.VelocityInitializer
 import com.blank.generator.util.VelocityUtils
 import com.mybatisflex.core.datasource.DataSourceKey
-import com.mybatisflex.core.keygen.impl.SnowFlakeIDKeyGenerator
+import com.mybatisflex.core.keygen.impl.FlexIDKeyGenerator
 import com.mybatisflex.core.paginate.Page
 import com.mybatisflex.core.query.*
 import com.mybatisflex.core.row.Db
@@ -57,7 +56,7 @@ class GenTableServiceImpl(
 ) : IGenTableService {
 
 
-    private val snowflake = Snowflake()
+    private val snowflake = FlexIDKeyGenerator()
 
     /**
      * 查询业务字段列表
@@ -335,7 +334,7 @@ class GenTableServiceImpl(
         val table = baseMapper.selectOneWithRelationsById(tableId)
         val menuIds: MutableList<Long> = ArrayList()
         for (i in 0..5) {
-            menuIds.add(SnowFlakeIDKeyGenerator().nextId())
+            menuIds.add(snowflake.generate(null, null).toString().toLong())
         }
         table.menuIds = menuIds
         // 设置主键列信息
@@ -496,7 +495,7 @@ class GenTableServiceImpl(
         val table = baseMapper.selectOneWithRelationsById(tableId)
         val menuIds: MutableList<Long> = ArrayList()
         for (i in 0..5) {
-            menuIds.add(snowflake.nextId())
+            menuIds.add(snowflake.generate(null, null).toString().toLong())
         }
         table.menuIds = menuIds
         // 设置主键列信息
