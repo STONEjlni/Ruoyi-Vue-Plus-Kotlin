@@ -23,7 +23,7 @@
         <therapi-javadoc.version>0.15.0</therapi-javadoc.version>
         <velocity.version>2.3</velocity.version>
         <satoken.version>1.37.0</satoken.version>
-        <mybatis-flex.version>1.7.1</mybatis-flex.version>
+        <mybatis-flex.version>1.7.3</mybatis-flex.version>
         <mybatis-flex-kotlin.version>1.0.2</mybatis-flex-kotlin.version>
         <hutool.version>5.8.22</hutool.version>
         <okhttp.version>4.10.0</okhttp.version>

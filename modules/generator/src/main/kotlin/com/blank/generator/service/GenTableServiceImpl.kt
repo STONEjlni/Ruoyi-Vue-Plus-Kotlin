@@ -31,6 +31,7 @@ import com.mybatisflex.core.datasource.DataSourceKey
 import com.mybatisflex.core.keygen.impl.SnowFlakeIDKeyGenerator
 import com.mybatisflex.core.paginate.Page
 import com.mybatisflex.core.query.*
+import com.mybatisflex.core.row.Db
 import org.apache.commons.lang3.StringUtils
 import org.apache.velocity.app.Velocity
 import org.springframework.stereotype.Service
@@ -43,6 +44,7 @@ import java.nio.charset.StandardCharsets
 import java.util.function.Consumer
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+
 
 /**
  * 代码生成 服务层实现
@@ -452,7 +454,10 @@ class GenTableServiceImpl(
             saveColumns.add(column)
         })
         if (CollUtil.isNotEmpty(saveColumns)) {
-            genTableColumnMapper.insertBatch(saveColumns)
+            // genTableColumnMapper.insertBatch(saveColumns)
+            Db.executeBatch(saveColumns, 1000, GenTableColumnMapper::class.java) { mapper, index ->
+                mapper.insertOrUpdate(index)
+            }
         }
         val delColumns: MutableList<GenTableColumn> = StreamUtils.filter(tableColumns) { column ->
             !dbTableColumnNames.contains(

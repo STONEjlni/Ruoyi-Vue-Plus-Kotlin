@@ -3,7 +3,6 @@ package com.blank.common.mybatis.config
 import cn.hutool.core.util.ObjectUtil
 import cn.hutool.http.HttpStatus
 import com.blank.common.core.annotation.Slf4j
-import com.blank.common.core.annotation.Slf4j.Companion.log
 import com.blank.common.core.domain.model.LoginUser
 import com.blank.common.core.exception.ServiceException
 import com.blank.common.core.factory.YmlPropertySourceFactory
@@ -11,14 +10,16 @@ import com.blank.common.mybatis.core.domain.BaseEntity
 import com.blank.common.satoken.utils.LoginHelper.getLoginUser
 import com.mybatisflex.core.FlexGlobalConfig
 import com.mybatisflex.core.audit.AuditManager
-import com.mybatisflex.core.audit.AuditMessage
+import com.mybatisflex.core.audit.ConsoleMessageCollector
 import com.mybatisflex.core.query.QueryColumnBehavior
 import com.mybatisflex.spring.boot.MyBatisFlexCustomizer
 import org.mybatis.spring.annotation.MapperScan
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.context.annotation.PropertySource
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import java.util.*
+
 
 /**
  * mybatis-flex配置类
@@ -30,6 +31,12 @@ import java.util.*
 @Slf4j
 class MyBatisFlexConfig : MyBatisFlexCustomizer {
 
+    @Value("\${mybatis-flex.configuration.audit_enable}")
+    private var enableAudit = false
+
+    @Value("\${mybatis-flex.configuration.sql_print}")
+    private var sqlPrint = false
+
     companion object {
         init {
             QueryColumnBehavior.setIgnoreFunction(QueryColumnBehavior.IGNORE_BLANK)
@@ -39,13 +46,20 @@ class MyBatisFlexConfig : MyBatisFlexCustomizer {
 
     override fun customize(globalConfig: FlexGlobalConfig) {
         //我们可以在这里进行一些列的初始化配置
-        AuditManager.setAuditEnable(true)
-        //设置 SQL 审计收集器
-        AuditManager.setMessageCollector { auditMessage: AuditMessage ->
-            log.info {
-                "${auditMessage.fullSql},${auditMessage.elapsedTime}ms"
-            }
+        AuditManager.setAuditEnable(enableAudit)
+        if (sqlPrint) {
+            // 开启sql打印默认会开启sql审计
+            AuditManager.setAuditEnable(true)
+
+            //设置 SQL 审计收集器
+            AuditManager.setMessageCollector(ConsoleMessageCollector())
+            /*AuditManager.setMessageCollector { auditMessage: AuditMessage ->
+                log.info {
+                    "${auditMessage.fullSql},${auditMessage.elapsedTime}ms"
+                }
+            }*/
         }
+
 
         // 添加监听器
         globalConfig.registerInsertListener({
