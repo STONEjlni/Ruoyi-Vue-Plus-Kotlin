@@ -29,7 +29,7 @@ class SensitiveHandler : JsonSerializer<String>(), ContextualSerializer {
         try {
             val sensitiveService = SpringUtil.getBean(SensitiveService::class.java)
             if (ObjectUtil.isNotNull(sensitiveService) && sensitiveService.isSensitive()) {
-                gen.writeString(strategy!!.desensitizer?.apply(value))
+                gen.writeString(strategy!!.desensitizer.apply(value))
             } else {
                 gen.writeString(value)
             }

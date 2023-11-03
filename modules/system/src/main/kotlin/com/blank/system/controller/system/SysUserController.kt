@@ -88,7 +88,7 @@ class SysUserController(
         val roleBo = SysRoleBo()
         roleBo.status = UserConstants.ROLE_NORMAL
         val roles = roleService.selectRoleList(roleBo)
-        userInfoVo.roles = if (isSuperAdmin(userId)) roles else filter(roles!!) { r: SysRoleVo? -> !r!!.isSuperAdmin }
+        userInfoVo.roles = if (isSuperAdmin(userId)) roles else filter(roles) { r: SysRoleVo? -> !r!!.isSuperAdmin }
         if (ObjectUtil.isNotNull(userId)) {
             val sysUser = userService.selectUserById(userId)!!
             userInfoVo.user = sysUser
@@ -187,7 +187,7 @@ class SysUserController(
         val roles = roleService.selectRolesByUserId(userId)
         val userInfoVo = SysUserInfoVo()
         userInfoVo.user = user
-        userInfoVo.roles = if (isSuperAdmin(userId)) roles else filter(roles!!) { r: SysRoleVo? -> !r!!.isSuperAdmin }
+        userInfoVo.roles = if (isSuperAdmin(userId)) roles else filter(roles) { r: SysRoleVo? -> !r!!.isSuperAdmin }
         return ok(data = userInfoVo)
     }
 

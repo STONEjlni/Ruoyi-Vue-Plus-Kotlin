@@ -121,8 +121,8 @@ class SysLoginService(
         loginUser.username = user.userName
         loginUser.nickname = user.nickName
         loginUser.userType = user.userType
-        loginUser.menuPermission = permissionService.getMenuPermission(user.userId!!)!!
-        loginUser.rolePermission = permissionService.getRolePermission(user.userId!!)!!
+        loginUser.menuPermission = permissionService.getMenuPermission(user.userId!!)
+        loginUser.rolePermission = permissionService.getRolePermission(user.userId!!)
         loginUser.deptName = if (ObjectUtil.isNull(user.dept)) "" else user.dept!!.deptName
         val roles = BeanUtil.copyToList(user.roles, RoleDTO::class.java)
         loginUser.roles = roles

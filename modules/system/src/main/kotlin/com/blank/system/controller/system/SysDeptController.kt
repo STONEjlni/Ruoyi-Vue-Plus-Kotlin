@@ -47,7 +47,7 @@ class SysDeptController(
     @GetMapping("/list/exclude/{deptId}")
     fun excludeChild(@PathVariable(value = "deptId", required = false) deptId: Long): R<MutableList<SysDeptVo>> {
         val depts = deptService.selectDeptList(SysDeptBo())
-        depts!!.removeIf { d: SysDeptVo? ->
+        depts.removeIf { d: SysDeptVo? ->
             d!!.deptId == deptId || splitList(d.ancestors!!).contains(
                 Convert.toStr(
                     deptId
