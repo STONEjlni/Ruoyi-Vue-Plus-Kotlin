@@ -178,4 +178,16 @@ class SysMenu : BaseEntity() {
             )
         }
     }
+
+    fun setIsFrame(isFrame: String?) {
+        this.isFrame = isFrame
+    }
+
+    fun setIsCache(isCache: String?) {
+        this.isCache = isCache
+    }
+
+    fun getIsFrame() = this.isFrame
+
+    fun getIsCache() = this.isCache
 }

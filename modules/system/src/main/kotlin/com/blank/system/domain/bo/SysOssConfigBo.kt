@@ -106,4 +106,10 @@ class SysOssConfigBo : BaseEntity() {
         message = "桶权限类型不能为空",
         groups = [AddGroup::class, EditGroup::class]
     ) String? = null
+
+    fun setIsHttps(isHttps: String?) {
+        this.isHttps = isHttps
+    }
+
+    fun getIsHttps() = this.isHttps
 }

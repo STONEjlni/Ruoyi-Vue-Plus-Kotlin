@@ -50,5 +50,5 @@ class RouterVo {
     /**
      * 子路由
      */
-    var children: MutableList<RouterVo>? = null
+    var children: MutableList<RouterVo>? = mutableListOf()
 }

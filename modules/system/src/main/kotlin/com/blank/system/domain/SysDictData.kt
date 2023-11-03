@@ -60,6 +60,10 @@ class SysDictData : BaseEntity() {
      */
     var remark: String? = null
 
+    fun setIsDefault(isDefault: String?) {
+        this.isDefault = isDefault
+    }
+
     fun getDefault(): Boolean {
         return UserConstants.YES == this.isDefault
     }

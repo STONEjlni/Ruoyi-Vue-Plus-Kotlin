@@ -61,6 +61,12 @@ class SysDictDataVo : Serializable {
      */
     var createTime: Date? = null
 
+    fun setIsDefault(isDefault: String?) {
+        this.isDefault = isDefault
+    }
+
+    fun getIsDefault() = this.isDefault
+
     companion object {
         @Serial
         private const val serialVersionUID = 1L

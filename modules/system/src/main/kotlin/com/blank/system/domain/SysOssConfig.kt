@@ -84,4 +84,10 @@ class SysOssConfig : BaseEntity() {
      * 桶权限类型(0private 1public 2custom)
      */
     var accessPolicy: String? = null
+
+    fun setIsHttps(isHttps: String?) {
+        this.isHttps = isHttps
+    }
+
+    fun getIsHttps() = this.isHttps
 }

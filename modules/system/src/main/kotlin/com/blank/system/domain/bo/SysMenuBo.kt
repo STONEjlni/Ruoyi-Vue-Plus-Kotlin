@@ -95,4 +95,16 @@ class SysMenuBo : BaseEntity() {
      * 备注
      */
     var remark: String? = null
+
+    fun setIsFrame(isFrame: String?) {
+        this.isFrame = isFrame
+    }
+
+    fun setIsCache(isCache: String?) {
+        this.isCache = isCache
+    }
+
+    fun getIsFrame() = this.isFrame
+
+    fun getIsCache() = this.isCache
 }

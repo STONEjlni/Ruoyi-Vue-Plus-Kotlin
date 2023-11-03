@@ -94,7 +94,19 @@ class SysMenuVo : Serializable {
     /**
      * 子菜单
      */
-    var children: MutableList<SysMenuVo> = ArrayList()
+    var children: MutableList<SysMenuVo> = mutableListOf()
+
+    fun setIsFrame(isFrame: String?) {
+        this.isFrame = isFrame
+    }
+
+    fun setIsCache(isCache: String?) {
+        this.isCache = isCache
+    }
+
+    fun getIsFrame() = this.isFrame
+
+    fun getIsCache() = this.isCache
 
     companion object {
         @Serial

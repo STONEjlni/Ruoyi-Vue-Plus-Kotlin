@@ -80,6 +80,12 @@ class SysOssConfigVo : Serializable {
      */
     var accessPolicy: String? = null
 
+    fun setIsHttps(isHttps: String?) {
+        this.isHttps = isHttps
+    }
+
+    fun getIsHttps() = this.isHttps
+
     companion object {
         @Serial
         private const val serialVersionUID = 1L

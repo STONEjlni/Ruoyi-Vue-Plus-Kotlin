@@ -67,4 +67,10 @@ class SysDictDataBo : BaseEntity() {
      * 备注
      */
     var remark: String? = null
+
+    fun setIsDefault(isDefault: String?) {
+        this.isDefault = isDefault
+    }
+
+    fun getIsDefault() = this.isDefault
 }
