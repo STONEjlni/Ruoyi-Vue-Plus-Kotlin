@@ -4,8 +4,6 @@ package ${packageName}.domain.vo
     import ${import}
     #end
 import ${packageName}.domain.${ClassName}
-import com.blank.common.excel.annotation.ExcelDictFormat
-import com.blank.common.excel.convert.ExcelDictConvert
 import io.github.linpeilie.annotations.AutoMapper
 
 import java.io.Serial;

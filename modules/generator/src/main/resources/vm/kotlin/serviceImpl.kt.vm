@@ -3,13 +3,11 @@ package ${packageName}.service.impl
 import com.blank.common.core.annotation.Slf4j
 import com.blank.common.core.annotation.Slf4j.Companion.log
 import com.blank.common.core.utils.MapstructUtils
-    #if($table.crud || $table.sub)
-    import com.blank.common.mybatis.core.page.TableDataInfo
-    import com.blank.common.mybatis.core.page.PageQuery
-    import com.baomidou.mybatisplus.extension.plugins.pagination.Page
-    #end
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper
-import com.baomidou.mybatisplus.core.toolkit.Wrappers
+#if($table.crud || $table.sub)
+import com.blank.common.mybatis.core.page.TableDataInfo
+import com.blank.common.mybatis.core.page.PageQuery
+import com.mybatisflex.core.paginate.Page
+#end
 import org.springframework.stereotype.Service
 import ${packageName}.domain.bo.${ClassName}Bo
 import ${packageName}.domain.vo.${ClassName}Vo
@@ -17,7 +15,8 @@ import ${packageName}.domain.${ClassName}
 import ${packageName}.mapper.${ClassName}Mapper
 import ${packageName}.service.I${ClassName}Service
     #set($TABLE_NAME = ${tableName.toUpperCase()})
-import ${packageName}.domain.table.${ClassName}TableDef.$TABLE_NAME
+import ${packageName}.domain.table.${ClassName}TableDef.$className.toUpperCase()
+import com.mybatisflex.core.query.QueryWrapper
 
 /**
  * ${functionName}Service业务层处理
@@ -35,7 +34,7 @@ class ${ClassName}ServiceImpl(
      * 查询${functionName}
      */
     override fun queryById(${pkColumn.javaField}: ${pkColumn.javaType}): ${ClassName}Vo? {
-        return baseMapper.selectOneById(${pkColumn.javaField});
+        return baseMapper.selectOneWithRelationsByIdAs(${pkColumn.javaField}, ${ClassName}Vo::class.java)
     }
 
     #if($table.crud || $table.sub)
@@ -59,7 +58,7 @@ class ${ClassName}ServiceImpl(
 
     private fun buildQueryWrapper(bo: ${ClassName}Bo): QueryWrapper {
         val params: Map<String, Any?> = bo.params
-        return QueryWrapper.create().from($TABLE_NAME)
+        return QueryWrapper.create().from($className.toUpperCase())
         #set($count = 1)
         #set($endCount = 0)
         #foreach($column in $columns)
@@ -80,16 +79,11 @@ class ${ClassName}ServiceImpl(
                 #else
                     #set($mfQuery='and')
                 #end
-                #if($count == $endCount)
-                    #set($end=';')
-                #else
-                    #set($end='')
-                #end
                 #set($mfMethod=$column.queryType.toLowerCase())
                 #if($queryType != 'BETWEEN')
-                    .$mfQuery($TABLE_NAME.$columnName.$mfMethod(bo.$AttrName)$end
+                    .$mfQuery($className.toUpperCase().$columnName.$mfMethod(bo.$AttrName)$end)
                 #else
-                    .$mfQuery($TABLE_NAME.${columnName}.between(params["begin$AttrName2"], params["end$AttrName2"], params["begin$AttrName2"] != null && params.get("end$AttrName2") != null))$end
+                    .$mfQuery($className.toUpperCase().${columnName}.between(params["begin$AttrName2"], params["end$AttrName2"], params["begin$AttrName2"] != null && params.get("end$AttrName2") != null))$end
                 #end
                 #set($count = $count + 1)
             #end
@@ -100,23 +94,23 @@ class ${ClassName}ServiceImpl(
      * 新增${functionName}
      */
     override fun insertByBo(bo: ${ClassName}Bo): Boolean {
-        val add: ${ClassName} = MapstructUtils.convert(bo, ${ClassName}::class)!!
+        val add: ${ClassName} = MapstructUtils.convert(bo, ${ClassName}::class.java)!!
         validEntityBeforeSave(add)
         val flag: Boolean = baseMapper.insert(add) > 0
-        #set($pk=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+        #set($pk=$pkColumn.javaField)
         if (flag) {
-            bo.$pk = add.$pk;
+            bo.$pk = add.$pk
         }
-        return flag;
+        return flag
     }
 
     /**
      * 修改${functionName}
      */
-    override fun updateByBo(${ClassName}Bo bo): Boolean {
-        val update: ${ClassName} = MapstructUtils.convert(bo, ${ClassName}::class)!!
+    override fun updateByBo(bo: ${ClassName}Bo): Boolean {
+        val update: ${ClassName} = MapstructUtils.convert(bo, ${ClassName}::class.java)!!
         validEntityBeforeSave(update)
-        return baseMapper.updateById(update) > 0;
+        return baseMapper.update(update) > 0
     }
 
     /**
@@ -133,6 +127,6 @@ class ${ClassName}ServiceImpl(
         if (isValid) {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
-        return baseMapper.deleteBatchIds(ids) > 0;
+        return baseMapper.deleteBatchByIds(ids) > 0
     }
 }

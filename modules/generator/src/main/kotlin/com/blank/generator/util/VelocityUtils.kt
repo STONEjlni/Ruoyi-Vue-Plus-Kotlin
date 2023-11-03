@@ -3,7 +3,6 @@ package com.blank.generator.util
 import cn.hutool.core.collection.CollUtil
 import cn.hutool.core.convert.Convert
 import cn.hutool.core.lang.Dict
-import cn.hutool.core.util.ObjectUtil
 import com.blank.common.core.utils.DateUtils.getDate
 import com.blank.common.core.utils.StringUtilsExtend.format
 import com.blank.common.core.utils.StringUtilsExtend.toCamelCase
@@ -24,7 +23,7 @@ object VelocityUtils {
     /**
      * 项目空间路径
      */
-    private const val PROJECT_PATH = "main/java"
+    private const val PROJECT_PATH = "main/kotlin"
 
     /**
      * mybatis空间路径
@@ -153,22 +152,22 @@ object VelocityUtils {
         val mybatisPath = "$MYBATIS_PATH/$moduleName"
         val vuePath = "vue"
         if (template.contains("domain.kt.vm")) {
-            fileName = format("{}/domain/{}.java", javaPath, className!!)
+            fileName = format("{}/domain/{}.kt", javaPath, className!!)
         }
         if (template.contains("vo.kt.vm")) {
-            fileName = format("{}/domain/vo/{}Vo.java", javaPath, className!!)
+            fileName = format("{}/domain/vo/{}Vo.kt", javaPath, className!!)
         }
         if (template.contains("bo.kt.vm")) {
-            fileName = format("{}/domain/bo/{}Bo.java", javaPath, className!!)
+            fileName = format("{}/domain/bo/{}Bo.kt", javaPath, className!!)
         }
         if (template.contains("mapper.kt.vm")) {
-            fileName = format("{}/mapper/{}Mapper.java", javaPath, className!!)
+            fileName = format("{}/mapper/{}Mapper.kt", javaPath, className!!)
         } else if (template.contains("service.kt.vm")) {
-            fileName = format("{}/service/I{}Service.java", javaPath, className!!)
+            fileName = format("{}/service/I{}Service.kt", javaPath, className!!)
         } else if (template.contains("serviceImpl.kt.vm")) {
-            fileName = format("{}/service/impl/{}ServiceImpl.java", javaPath, className!!)
+            fileName = format("{}/service/impl/{}ServiceImpl.kt", javaPath, className!!)
         } else if (template.contains("controller.kt.vm")) {
-            fileName = format("{}/controller/{}Controller.java", javaPath, className!!)
+            fileName = format("{}/controller/{}Controller.kt", javaPath, className!!)
         } else if (template.contains("mapper.xml.vm")) {
             fileName = format("{}/{}Mapper.xml", mybatisPath, className!!)
         } else if (template.contains("sql.vm")) {

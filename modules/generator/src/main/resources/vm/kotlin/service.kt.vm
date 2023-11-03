@@ -1,12 +1,11 @@
 package ${packageName}.service
 
-import ${packageName}.domain.${ClassName}
 import ${packageName}.domain.vo.${ClassName}Vo
 import ${packageName}.domain.bo.${ClassName}Bo
-    #if($table.crud || $table.sub)
-    import com.blank.common.mybatis.core.page.TableDataInfo
-    import com.blank.common.mybatis.core.page.PageQuery
-    #end
+#if($table.crud || $table.sub)
+import com.blank.common.mybatis.core.page.TableDataInfo
+import com.blank.common.mybatis.core.page.PageQuery
+#end
 
 /**
  * ${functionName}Service接口

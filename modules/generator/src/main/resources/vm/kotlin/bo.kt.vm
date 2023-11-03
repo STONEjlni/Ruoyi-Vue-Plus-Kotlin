@@ -4,6 +4,8 @@ import ${packageName}.domain.${ClassName}
 import com.blank.common.mybatis.core.domain.BaseEntity
 import io.github.linpeilie.annotations.AutoMapper
 import jakarta.validation.constraints.*
+import com.blank.common.core.validate.EditGroup
+import com.blank.common.core.validate.AddGroup
 #foreach ($import in $importList)
 import ${import}
 #end
@@ -23,11 +25,11 @@ class ${ClassName}Bo : BaseEntity() {
      * $column.columnComment
      */
         #if($column.insert && $column.edit)
-                #set($Group="AddGroup.class, EditGroup.class")
+            #set($Group="AddGroup::class, EditGroup::class")
             #elseif($column.insert)
-                #set($Group="AddGroup.class")
+                #set($Group="AddGroup::class")
             #elseif($column.edit)
-                #set($Group="EditGroup.class")
+                #set($Group="EditGroup::class")
             #end
                 #if($column.required)
                     #if($column.javaType == 'String')

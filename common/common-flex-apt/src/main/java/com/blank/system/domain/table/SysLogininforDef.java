@@ -47,9 +47,19 @@ public class SysLogininforDef extends TableDef {
     public final QueryColumn USER_NAME = new QueryColumn(this, "user_name");
 
     /**
+     * 客户端
+     */
+    public final QueryColumn CLIENT_KEY = new QueryColumn(this, "client_key");
+
+    /**
      * 访问时间
      */
     public final QueryColumn LOGIN_TIME = new QueryColumn(this, "login_time");
+
+    /**
+     * 设备类型
+     */
+    public final QueryColumn DEVICE_TYPE = new QueryColumn(this, "device_type");
 
     /**
      * 登录地点
@@ -64,7 +74,7 @@ public class SysLogininforDef extends TableDef {
     /**
      * 默认字段，不包含逻辑删除或者 large 等字段。
      */
-    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{OS, MSG, INFO_ID, IPADDR, STATUS, BROWSER, USER_NAME, LOGIN_TIME, LOGIN_LOCATION};
+    public final QueryColumn[] DEFAULT_COLUMNS = new QueryColumn[]{OS, MSG, INFO_ID, IPADDR, STATUS, BROWSER, USER_NAME, CLIENT_KEY, LOGIN_TIME, DEVICE_TYPE, LOGIN_LOCATION};
 
     public SysLogininforDef() {
         super("", "sys_logininfor");

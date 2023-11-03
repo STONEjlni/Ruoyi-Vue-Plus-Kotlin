@@ -5,13 +5,15 @@ package ${packageName}.domain
             #set($IsTenant=1)
         #end
     #end
-import com.baomidou.mybatisplus.annotation.*
     #foreach ($import in $importList)
     import ${import}
     #end
 
 import com.blank.common.core.annotation.NoArg
 import com.blank.common.core.annotation.Open
+import com.blank.common.mybatis.core.domain.BaseEntity
+import com.mybatisflex.annotation.Table
+import com.mybatisflex.annotation.Column
 import java.io.Serial
 
 /**
@@ -20,7 +22,7 @@ import java.io.Serial
  * @author ${author}
  * @date ${datetime}
  */
-@TableName("${tableName}")
+@Table("${tableName}")
 @Open
 @NoArg
 class ${ClassName} : BaseEntity() {
