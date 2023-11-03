@@ -16,6 +16,8 @@ import ${packageName}.domain.vo.${ClassName}Vo
 import ${packageName}.domain.${ClassName}
 import ${packageName}.mapper.${ClassName}Mapper
 import ${packageName}.service.I${ClassName}Service
+    #set($TABLE_NAME = ${tableName.toUpperCase()})
+import ${packageName}.domain.table.${ClassName}TableDef.$TABLE_NAME
 
 /**
  * ${functionName}Service业务层处理
@@ -57,7 +59,41 @@ class ${ClassName}ServiceImpl(
 
     private fun buildQueryWrapper(bo: ${ClassName}Bo): QueryWrapper {
         val params: Map<String, Any?> = bo.params
-        return QueryWrapper.create()
+        return QueryWrapper.create().from($TABLE_NAME)
+        #set($count = 1)
+        #set($endCount = 0)
+        #foreach($column in $columns)
+            #if($column.query)
+                #set($endCount = $endCount + 1)
+            #end
+        #end
+        #foreach($column in $columns)
+            #if($column.query)
+                #set($queryType=$column.queryType)
+                #set($javaField=$column.javaField)
+                #set($javaType=$column.javaType)
+                #set($columnName=${column.columnName.toUpperCase()})
+                #set($AttrName=$column.javaField)
+                #set($AttrName2=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+                #if($count == 1)
+                    #set($mfQuery='where')
+                #else
+                    #set($mfQuery='and')
+                #end
+                #if($count == $endCount)
+                    #set($end=';')
+                #else
+                    #set($end='')
+                #end
+                #set($mfMethod=$column.queryType.toLowerCase())
+                #if($queryType != 'BETWEEN')
+                    .$mfQuery($TABLE_NAME.$columnName.$mfMethod(bo.$AttrName)$end
+                #else
+                    .$mfQuery($TABLE_NAME.${columnName}.between(params["begin$AttrName2"], params["end$AttrName2"], params["begin$AttrName2"] != null && params.get("end$AttrName2") != null))$end
+                #end
+                #set($count = $count + 1)
+            #end
+        #end
     }
 
     /**
