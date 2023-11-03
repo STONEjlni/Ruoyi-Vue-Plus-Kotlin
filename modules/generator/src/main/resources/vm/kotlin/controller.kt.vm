@@ -40,12 +40,12 @@ class ${ClassName}Controller(
     @GetMapping("/list")
     #if($table.crud || $table.sub)
     fun list(bo: ${ClassName}Bo, pageQuery: PageQuery): TableDataInfo<${ClassName}Vo> {
-        return ${className}Service.queryPageList(bo, pageQuery);
+        return ${className}Service.queryPageList(bo, pageQuery)
     }
     #elseif($table.tree)
         fun list(bo: ${ClassName}Bo): R<MutableList<${ClassName}Vo>> {
-            MutableList<${ClassName}Vo> list = ${className}Service.queryList(bo);
-            return R.ok(data = list);
+            MutableList<${ClassName}Vo> list = ${className}Service.queryList(bo)
+            return R.ok(data = list)
         }
     #end
 
@@ -57,7 +57,7 @@ class ${ClassName}Controller(
     @SaCheckPermission("${permissionPrefix}:query")
     @GetMapping("/{${pkColumn.javaField}}")
     fun getInfo(@NotNull(message = "主键不能为空") @PathVariable ${pkColumn.javaField}: ${pkColumn.javaType} ): R<${ClassName}Vo> {
-        return R.ok(data = ${className}Service.queryById(${pkColumn.javaField}));
+        return R.ok(data = ${className}Service.queryById(${pkColumn.javaField}))
     }
 
     /**
@@ -68,7 +68,7 @@ class ${ClassName}Controller(
     @RepeatSubmit()
     @PostMapping()
     fun add(@Validated(AddGroup::class) @RequestBody bo: ${ClassName}Bo): R<Unit> {
-        return toAjax(${className}Service.insertByBo(bo));
+        return toAjax(${className}Service.insertByBo(bo))
     }
 
     /**
@@ -79,7 +79,7 @@ class ${ClassName}Controller(
     @RepeatSubmit()
     @PutMapping()
     fun edit(@Validated(EditGroup::class) @RequestBody bo: ${ClassName}Bo): R<Unit> {
-        return toAjax(${className}Service.updateByBo(bo));
+        return toAjax(${className}Service.updateByBo(bo))
     }
 
     /**
@@ -92,6 +92,6 @@ class ${ClassName}Controller(
     @DeleteMapping("/{${pkColumn.javaField}s}")
     fun remove(@NotEmpty(message = "主键不能为空")
                @PathVariable ${pkColumn.javaField}s: Array<${pkColumn.javaType}>): R<Unit> {
-        return toAjax(${className}Service.deleteWithValidByIds(${pkColumn.javaField}s.toMutableList(), true));
+        return toAjax(${className}Service.deleteWithValidByIds(${pkColumn.javaField}s.toMutableList(), true))
     }
 }

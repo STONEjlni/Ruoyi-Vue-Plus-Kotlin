@@ -6,9 +6,9 @@ package ${packageName}.domain.vo
 import ${packageName}.domain.${ClassName}
 import io.github.linpeilie.annotations.AutoMapper
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Date;
+import java.io.Serial
+import java.io.Serializable
+import java.util.Date
 
 
 /**
