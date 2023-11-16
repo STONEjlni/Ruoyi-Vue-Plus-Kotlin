@@ -14,7 +14,7 @@ import com.blank.common.json.utils.JsonUtils.toJsonString
 import com.blank.common.log.annotation.Log
 import com.blank.common.log.enums.BusinessStatus
 import com.blank.common.log.event.OperLogEvent
-import com.blank.common.satoken.utils.LoginHelper
+import com.blank.common.satoken.utils.LoginHelper.getLoginUser
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.commons.lang3.StringUtils
@@ -29,6 +29,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.validation.BindingResult
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
+
 
 /**
  * 操作日志记录处理
@@ -92,7 +93,9 @@ class LogAspect {
             operLog.operIp = ip
             operLog.operUrl =
                 StringUtils.substring(getRequest()!!.requestURI, 0, 255)
-            operLog.operName = LoginHelper.getUsername()
+            val loginUser = getLoginUser()
+            operLog.operName = loginUser?.username
+            operLog.deptName = loginUser?.deptName
             if (e != null) {
                 operLog.status = BusinessStatus.FAIL.ordinal
                 operLog.errorMsg = StringUtils.substring(e.message, 0, 2000)

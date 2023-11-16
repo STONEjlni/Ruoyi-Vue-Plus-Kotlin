@@ -19,7 +19,7 @@ object AddressUtils {
             return UNKNOWN
         }
         // 内网不查询
-        ip = if ("0:0:0:0:0:0:0:1" == ip) "127.0.0.1" else HtmlUtil.cleanHtmlTag(ip)
+        ip = if (StrUtil.contains(ip, "0:0:0:0:0:0:0:1")) "127.0.0.1" else HtmlUtil.cleanHtmlTag(ip)
         return if (NetUtil.isInnerIP(ip)) {
             "内网IP"
         } else RegionUtils.getCityInfo(ip)
