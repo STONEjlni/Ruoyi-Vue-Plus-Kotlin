@@ -5,6 +5,7 @@ import cn.dev33.satoken.stp.StpUtil
 import cn.hutool.core.bean.BeanUtil
 import cn.hutool.core.collection.CollUtil
 import cn.hutool.core.util.ObjectUtil
+import cn.hutool.core.util.StrUtil
 import com.blank.common.core.constant.UserConstants
 import com.blank.common.core.domain.model.LoginUser
 import com.blank.common.core.exception.ServiceException
@@ -185,26 +186,22 @@ class SysRoleServiceImpl(
         if (ObjectUtil.isNotNull(role.roleId) && LoginHelper.isSuperAdmin(role.roleId!!)) {
             throw ServiceException("不允许操作超级管理员角色")
         }
+        val keys = arrayOf(UserConstants.SUPER_ADMIN_ROLE_KEY)
         // 新增不允许使用 管理员标识符
         if (ObjectUtil.isNull(role.roleId)
-            && StringUtils.equals(
-                role.roleKey,
-                UserConstants.SUPER_ADMIN_ROLE_KEY
-            )
-        ) {
+            && StrUtil.equalsAny(role.roleKey, *keys)) {
             throw ServiceException("不允许使用系统内置管理员角色标识符!")
         }
         // 修改不允许修改 管理员标识符
         if (ObjectUtil.isNotNull(role.roleId)) {
             val sysRole = baseMapper.selectOneById(role.roleId)
             // 如果标识符不相等 判断为修改了管理员标识符
-            if (!StringUtils.equals(sysRole.roleKey, role.roleKey)
-                && StringUtils.equals(
-                    sysRole.roleKey,
-                    UserConstants.SUPER_ADMIN_ROLE_KEY
-                )
-            ) {
-                throw ServiceException("不允许修改系统内置管理员角色标识符!")
+            if (!StrUtil.equals(sysRole.roleKey, role.roleKey)) {
+                if (StrUtil.equalsAny(sysRole.roleKey, *keys)) {
+                    throw ServiceException("不允许修改系统内置管理员角色标识符!")
+                } else if (StrUtil.equalsAny(role.roleKey, *keys)) {
+                    throw ServiceException("不允许使用系统内置管理员角色标识符!")
+                }
             }
         }
     }
