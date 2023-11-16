@@ -96,7 +96,7 @@ class ${ClassName}ServiceImpl(
     override fun insertByBo(bo: ${ClassName}Bo): Boolean {
         val add: ${ClassName} = MapstructUtils.convert(bo, ${ClassName}::class.java)!!
         validEntityBeforeSave(add)
-        val flag: Boolean = baseMapper.insert(add) > 0
+        val flag: Boolean = baseMapper.insert(add, true) > 0
         #set($pk=$pkColumn.javaField)
         if (flag) {
             bo.$pk = add.$pk
