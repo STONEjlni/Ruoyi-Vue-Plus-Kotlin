@@ -8,10 +8,10 @@ import jakarta.validation.constraints.NotBlank
 import org.hibernate.validator.constraints.Length
 
 /**
- * 用户注册对象
+ * 密码登录对象
+ *
  */
-class RegisterBody : LoginBody() {
-
+class PasswordLoginBody : LoginBody() {
     /**
      * 用户名
      */
@@ -25,6 +25,4 @@ class RegisterBody : LoginBody() {
     @NotBlank(message = "{user.password.not.blank}")
     @Length(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH, message = "{user.password.length.valid}")
     var password: String? = null
-
-    var userType: String? = null
 }

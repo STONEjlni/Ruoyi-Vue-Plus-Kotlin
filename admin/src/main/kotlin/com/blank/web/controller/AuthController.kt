@@ -10,7 +10,10 @@ import com.blank.common.core.domain.R.Companion.fail
 import com.blank.common.core.domain.R.Companion.ok
 import com.blank.common.core.domain.model.LoginBody
 import com.blank.common.core.domain.model.RegisterBody
+import com.blank.common.core.domain.model.SocialLoginBody
 import com.blank.common.core.utils.MessageUtils.message
+import com.blank.common.core.utils.ValidatorUtils.validate
+import com.blank.common.json.utils.JsonUtils
 import com.blank.common.social.config.properties.SocialProperties
 import com.blank.common.social.utils.SocialUtils.getAuthRequest
 import com.blank.common.social.utils.SocialUtils.loginAuth
@@ -25,6 +28,7 @@ import me.zhyd.oauth.utils.AuthStateUtils
 import org.apache.commons.lang3.StringUtils
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+
 
 /**
  * 认证
@@ -47,13 +51,15 @@ class AuthController(
     /**
      * 登录方法
      *
-     * @param loginBody 登录信息
+     * @param body 登录信息
      * @return 结果
      */
     @PostMapping("/login")
-    fun login(@Validated @RequestBody loginBody: LoginBody): R<LoginVo> {
+    fun login(@Validated @RequestBody body: String): R<LoginVo> {
+        val loginBody: LoginBody? = JsonUtils.parseObject(body, LoginBody::class.java)
+        validate(loginBody)
         // 授权类型和客户端id
-        val clientId = loginBody.clientId
+        val clientId = loginBody!!.clientId
         val grantType = loginBody.grantType
         val client = clientService.queryByClientId(clientId!!)
         // 查询不到 client 或 client 内不包含 grantType
@@ -64,7 +70,7 @@ class AuthController(
             return fail(msg = message("auth.grant.type.blocked"))
         }
         // 登录
-        return ok(data = IAuthStrategy.login(loginBody, client))
+        return ok(data = IAuthStrategy.login(body, client, grantType))
     }
 
     /**
@@ -91,9 +97,12 @@ class AuthController(
      * @return 结果
      */
     @PostMapping("/social/callback")
-    fun socialCallback(@RequestBody loginBody: LoginBody): R<Void> {
+    fun socialCallback(@RequestBody loginBody: SocialLoginBody): R<Void> {
         // 获取第三方登录信息
-        val response = loginAuth(loginBody, socialProperties)
+        val response = loginAuth(
+            loginBody.source!!, loginBody.socialCode!!,
+            loginBody.socialState!!, socialProperties
+        )
         val authUserData = response.data
         // 判断授权响应是否成功
         if (!response.ok()) {

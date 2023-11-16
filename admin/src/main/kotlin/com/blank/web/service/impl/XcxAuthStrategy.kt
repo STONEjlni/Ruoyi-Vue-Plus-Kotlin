@@ -7,11 +7,11 @@ import com.blank.common.core.annotation.Slf4j
 import com.blank.common.core.annotation.Slf4j.Companion.log
 import com.blank.common.core.annotation.UserStatus
 import com.blank.common.core.constant.Constants
-import com.blank.common.core.domain.model.LoginBody
+import com.blank.common.core.domain.model.XcxLoginBody
 import com.blank.common.core.domain.model.XcxLoginUser
 import com.blank.common.core.utils.MessageUtils.message
 import com.blank.common.core.utils.ValidatorUtils.validate
-import com.blank.common.core.validate.auth.WechatGroup
+import com.blank.common.json.utils.JsonUtils
 import com.blank.common.satoken.utils.LoginHelper
 import com.blank.common.satoken.utils.LoginHelper.login
 import com.blank.system.domain.SysClient
@@ -20,6 +20,7 @@ import com.blank.web.domain.vo.LoginVo
 import com.blank.web.service.IAuthStrategy
 import com.blank.web.service.SysLoginService
 import org.springframework.stereotype.Service
+
 
 /**
  * 小程序认证策略
@@ -30,13 +31,15 @@ class XcxAuthStrategy(
     private val loginService: SysLoginService
 ) : IAuthStrategy {
 
-    override fun validate(loginBody: LoginBody) {
-        validate(loginBody, WechatGroup::class.java)
-    }
-
-    override fun login(clientId: String, loginBody: LoginBody, client: SysClient): LoginVo {
+    override fun login(clientId: String?, body: String?, client: SysClient?): LoginVo {
+        val loginBody: XcxLoginBody? = JsonUtils.parseObject(body, XcxLoginBody::class.java)
+        validate(loginBody)
         // xcxCode 为 小程序调用 wx.login 授权后获取
-        val xcxCode = loginBody.xcxCode
+        val xcxCode = loginBody!!.xcxCode
+        // 多个小程序识别使用
+        // 多个小程序识别使用
+        val appid = loginBody.appid
+
         // todo 以下自行实现
         // 校验 appid + appsrcret + xcxCode 调用登录凭证校验接口 获取 session_key 与 openid
         val openid = ""
@@ -49,14 +52,14 @@ class XcxAuthStrategy(
         loginUser.username = user.userName
         loginUser.nickname = user.nickName
         loginUser.userType = user.userType
-        loginUser.clientKey = client.clientKey
-        loginUser.deviceType = client.deviceType
+        loginUser.clientKey = client?.clientKey
+        loginUser.deviceType = client?.deviceType
         loginUser.openid = openid
         val model = SaLoginModel()
-        model.setDevice(client.deviceType)
+        model.setDevice(client?.deviceType)
         // 自定义分配 不同用户体系 不同 token 授权时间 不设置默认走全局 yml 配置
         // 例如: 后台用户30分钟过期 app用户1天过期
-        model.setTimeout(client.timeout!!)
+        model.setTimeout(client?.timeout!!)
         model.setActiveTimeout(client.activeTimeout!!)
         model.setExtra(LoginHelper.CLIENT_KEY, clientId)
         // 生成token

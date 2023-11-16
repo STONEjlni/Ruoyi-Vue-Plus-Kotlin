@@ -10,13 +10,13 @@ import com.blank.common.core.annotation.Slf4j.Companion.log
 import com.blank.common.core.annotation.UserStatus
 import com.blank.common.core.constant.Constants
 import com.blank.common.core.constant.GlobalConstants
-import com.blank.common.core.domain.model.LoginBody
+import com.blank.common.core.domain.model.PasswordLoginBody
 import com.blank.common.core.exception.user.CaptchaException
 import com.blank.common.core.exception.user.CaptchaExpireException
 import com.blank.common.core.exception.user.UserException
 import com.blank.common.core.utils.MessageUtils.message
 import com.blank.common.core.utils.ValidatorUtils.validate
-import com.blank.common.core.validate.auth.PasswordGroup
+import com.blank.common.json.utils.JsonUtils
 import com.blank.common.redis.utils.RedisUtils.deleteObject
 import com.blank.common.redis.utils.RedisUtils.getCacheObject
 import com.blank.common.satoken.utils.LoginHelper
@@ -33,6 +33,7 @@ import com.mybatisflex.core.query.QueryWrapper
 import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
 
+
 /**
  * 密码认证策略
  */
@@ -44,12 +45,10 @@ class PasswordAuthStrategy(
     private val userMapper: SysUserMapper
 ) : IAuthStrategy {
 
-    override fun validate(loginBody: LoginBody) {
-        validate(loginBody, PasswordGroup::class.java)
-    }
-
-    override fun login(clientId: String, loginBody: LoginBody, client: SysClient): LoginVo {
-        val username = loginBody.username!!
+    override fun login(clientId: String?, body: String?, client: SysClient?): LoginVo {
+        val loginBody: PasswordLoginBody? = JsonUtils.parseObject(body, PasswordLoginBody::class.java)
+        validate(loginBody)
+        val username = loginBody!!.username!!
         val password = loginBody.password!!
         val code = loginBody.code!!
         val uuid = loginBody.uuid!!
@@ -62,13 +61,13 @@ class PasswordAuthStrategy(
         loginService.checkLogin(LoginType.PASSWORD, username) { !BCrypt.checkpw(password, user.password) }
         // 此处可根据登录用户的数据不同 自行创建 loginUser
         val loginUser = loginService.buildLoginUser(user)
-        loginUser.clientKey = client.clientKey
-        loginUser.deviceType = client.deviceType
+        loginUser.clientKey = client?.clientKey
+        loginUser.deviceType = client?.deviceType
         val model = SaLoginModel()
-        model.setDevice(client.deviceType)
+        model.setDevice(client?.deviceType)
         // 自定义分配 不同用户体系 不同 token 授权时间 不设置默认走全局 yml 配置
         // 例如: 后台用户30分钟过期 app用户1天过期
-        model.setTimeout(client.timeout!!)
+        model.setTimeout(client?.timeout!!)
         model.setActiveTimeout(client.activeTimeout!!)
         model.setExtra(LoginHelper.CLIENT_KEY, clientId)
         // 生成token

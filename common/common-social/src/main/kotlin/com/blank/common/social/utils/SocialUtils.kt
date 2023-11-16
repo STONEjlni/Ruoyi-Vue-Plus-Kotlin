@@ -2,7 +2,6 @@ package com.blank.common.social.utils
 
 import cn.hutool.core.util.ObjectUtil
 import cn.hutool.extra.spring.SpringUtil
-import com.blank.common.core.domain.model.LoginBody
 import com.blank.common.social.config.properties.SocialProperties
 import com.blank.common.social.maxkey.AuthMaxKeyRequest
 import me.zhyd.oauth.config.AuthConfig
@@ -13,6 +12,7 @@ import me.zhyd.oauth.model.AuthUser
 import me.zhyd.oauth.request.*
 import java.util.*
 
+
 /**
  * 认证授权工具类
  */
@@ -22,11 +22,11 @@ object SocialUtils {
     )
 
     @Throws(AuthException::class)
-    fun loginAuth(loginBody: LoginBody, socialProperties: SocialProperties): AuthResponse<AuthUser> {
-        val authRequest = getAuthRequest(loginBody.source, socialProperties)
+    fun loginAuth(source: String, code: String, state: String, socialProperties: SocialProperties): AuthResponse<AuthUser> {
+        val authRequest = getAuthRequest(source, socialProperties)
         val callback = AuthCallback()
-        callback.code = loginBody.socialCode
-        callback.state = loginBody.socialState
+        callback.code = code
+        callback.state = state
         return authRequest.login(callback) as AuthResponse<AuthUser>
     }
 
