@@ -173,8 +173,8 @@ class SysMenu : BaseEntity() {
         fun innerLinkReplaceEach(path: String?): String {
             return StringUtils.replaceEach(
                 path,
-                arrayOf(Constants.HTTP, Constants.HTTPS, Constants.WWW, "."),
-                arrayOf("", "", "", "/")
+                arrayOf(Constants.HTTP, Constants.HTTPS, Constants.WWW, ".", ":"),
+                arrayOf("", "", "", "/", "/")
             )
         }
     }
