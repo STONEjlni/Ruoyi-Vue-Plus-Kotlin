@@ -100,7 +100,7 @@ services:
     network_mode: "host"
 
   server1:
-    image: blank/server:1.0.0
+    image: blank/server:5.1.1
     container_name: server1
     environment:
       # 时区上海
@@ -115,7 +115,7 @@ services:
     network_mode: "host"
 
   server2:
-    image: blank/server:1.0.0
+    image: blank/server:5.1.1
     container_name: server2
     environment:
       # 时区上海
@@ -130,7 +130,7 @@ services:
     network_mode: "host"
 
   monitor-admin:
-    image: blank/monitor-admin:1.0.0
+    image: blank/monitor-admin:5.1.1
     container_name: monitor-admin
     environment:
       # 时区上海
@@ -142,7 +142,7 @@ services:
     network_mode: "host"
 
   powerjob-server:
-    image: blank/powerjob-server:5.1.0
+    image: blank/powerjob-server:5.1.1
     container_name: powerjob-server
     environment:
       # 时区上海
