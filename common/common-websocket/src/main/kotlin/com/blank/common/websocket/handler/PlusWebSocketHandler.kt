@@ -37,7 +37,6 @@ class PlusWebSocketHandler : AbstractWebSocketHandler() {
     @Throws(Exception::class)
     override fun handleTextMessage(session: WebSocketSession, message: TextMessage) {
         val loginUser = session.attributes[WebSocketConstants.LOGIN_USER_KEY] as LoginUser?
-        log.info { "PlusWebSocketHandler, 连接：${session.id}，已收到消息:${message.payload}" }
         val userIds = mutableListOf(loginUser!!.userId!!)
         val webSocketMessageDto = WebSocketMessageDto()
         webSocketMessageDto.sessionKeys = userIds

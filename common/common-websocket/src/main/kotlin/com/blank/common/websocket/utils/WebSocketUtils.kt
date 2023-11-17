@@ -3,7 +3,6 @@ package com.blank.common.websocket.utils
 import cn.hutool.core.collection.CollUtil
 import com.blank.common.core.annotation.Slf4j
 import com.blank.common.core.annotation.Slf4j.Companion.log
-import com.blank.common.core.domain.model.LoginUser
 import com.blank.common.redis.utils.RedisUtils.publish
 import com.blank.common.redis.utils.RedisUtils.subscribe
 import com.blank.common.websocket.constant.WebSocketConstants
@@ -115,11 +114,7 @@ object WebSocketUtils {
         } else {
             try {
                 // 获取当前会话中的用户
-                val loginUser = session.attributes[WebSocketConstants.LOGIN_USER_KEY] as LoginUser?
                 session.sendMessage(message)
-                log.info {
-                    "[send] sessionId: ${session.id},userId:${loginUser!!.userId},userType:${loginUser.userType},message:$message"
-                }
             } catch (e: IOException) {
                 log.error(e) { "[send] session($session) 发送消息($message) 异常" }
             }

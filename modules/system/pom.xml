@@ -72,6 +72,11 @@
             <artifactId>common-oss</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.blank</groupId>
+            <artifactId>common-websocket</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

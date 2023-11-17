@@ -14,9 +14,11 @@ import com.blank.common.core.domain.model.SocialLoginBody
 import com.blank.common.core.utils.MessageUtils.message
 import com.blank.common.core.utils.ValidatorUtils.validate
 import com.blank.common.json.utils.JsonUtils
+import com.blank.common.satoken.utils.LoginHelper.getUserId
 import com.blank.common.social.config.properties.SocialProperties
 import com.blank.common.social.utils.SocialUtils.getAuthRequest
 import com.blank.common.social.utils.SocialUtils.loginAuth
+import com.blank.common.websocket.utils.WebSocketUtils
 import com.blank.system.service.ISysClientService
 import com.blank.system.service.ISysConfigService
 import com.blank.system.service.ISysSocialService
@@ -28,6 +30,8 @@ import me.zhyd.oauth.utils.AuthStateUtils
 import org.apache.commons.lang3.StringUtils
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -44,7 +48,8 @@ class AuthController(
     private val registerService: SysRegisterService,
     private val configService: ISysConfigService,
     private val socialUserService: ISysSocialService,
-    private val clientService: ISysClientService
+    private val clientService: ISysClientService,
+    private val scheduledExecutorService: ScheduledExecutorService,
 ) {
 
 
@@ -70,7 +75,16 @@ class AuthController(
             return fail(msg = message("auth.grant.type.blocked"))
         }
         // 登录
-        return ok(data = IAuthStrategy.login(body, client, grantType))
+        val loginVo = IAuthStrategy.login(body, client, grantType)
+
+        val userId = getUserId()!!
+        scheduledExecutorService.schedule({
+            WebSocketUtils.sendMessage(
+                userId,
+                "欢迎登录RuoYi-Vue-Plus后台管理系统"
+            )
+        }, 3, TimeUnit.SECONDS)
+        return ok(data = loginVo)
     }
 
     /**
