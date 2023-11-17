@@ -40,18 +40,18 @@ class PlusWebInvokeTimeInterceptor : HandlerInterceptor {
                     val reader = request.reader
                     jsonParam = IoUtil.read(reader)
                 }
-                log.debug {
+                log.info {
                     "[PLUS]开始请求 => URL[$url],参数类型[json],参数:[$jsonParam]"
                 }
             } else {
                 val parameterMap = request.parameterMap
                 if (MapUtil.isNotEmpty(parameterMap)) {
                     val parameters = toJsonString(parameterMap)
-                    log.debug {
+                    log.info {
                         "[PLUS]开始请求 => URL[$url],参数类型[param],参数:[$parameters]"
                     }
                 } else {
-                    log.debug { "[PLUS]开始请求 => URL[$url],无参数" }
+                    log.info { "[PLUS]开始请求 => URL[$url],无参数" }
                 }
             }
             val stopWatch = StopWatch()
@@ -80,7 +80,7 @@ class PlusWebInvokeTimeInterceptor : HandlerInterceptor {
         if (prodProfile != SpringUtil.getActiveProfile()) {
             val stopWatch = invokeTimeTL.get()
             stopWatch.stop()
-            log.debug {
+            log.info {
                 "[PLUS]结束请求 => URL[${request.method} ${request.requestURI}],耗时:[${stopWatch.time}]毫秒"
             }
             invokeTimeTL.remove()

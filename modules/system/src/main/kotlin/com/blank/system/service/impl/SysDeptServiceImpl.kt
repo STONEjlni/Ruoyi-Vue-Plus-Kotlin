@@ -75,9 +75,9 @@ class SysDeptServiceImpl(
             .and(SYS_DEPT.PARENT_ID.eq(bo.parentId))
             .and(SYS_DEPT.DEPT_NAME.like(bo.deptName))
             .and(SYS_DEPT.STATUS.eq(bo.status))
-            .orderBy(SYS_DEPT.DEPT_ID, true)
             .orderBy(SYS_DEPT.PARENT_ID, true)
             .orderBy(SYS_DEPT.ORDER_NUM, true)
+            .orderBy(SYS_DEPT.DEPT_ID, true)
     }
 
     /**
