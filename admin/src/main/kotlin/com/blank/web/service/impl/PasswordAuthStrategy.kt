@@ -45,7 +45,7 @@ class PasswordAuthStrategy(
     private val userMapper: SysUserMapper
 ) : IAuthStrategy {
 
-    override fun login(clientId: String?, body: String?, client: SysClient?): LoginVo {
+    override fun login(body: String?, client: SysClient?): LoginVo {
         val loginBody: PasswordLoginBody? = JsonUtils.parseObject(body, PasswordLoginBody::class.java)
         validate(loginBody)
         val username = loginBody!!.username!!
@@ -69,7 +69,7 @@ class PasswordAuthStrategy(
         // 例如: 后台用户30分钟过期 app用户1天过期
         model.setTimeout(client?.timeout!!)
         model.setActiveTimeout(client.activeTimeout!!)
-        model.setExtra(LoginHelper.CLIENT_KEY, clientId)
+        model.setExtra(LoginHelper.CLIENT_KEY, client.clientId)
         // 生成token
         login(loginUser, model)
         loginService.recordLogininfor(username, Constants.LOGIN_SUCCESS, message("user.login.success"))
@@ -77,7 +77,7 @@ class PasswordAuthStrategy(
         val loginVo = LoginVo()
         loginVo.accessToken = StpUtil.getTokenValue()
         loginVo.expireIn = StpUtil.getTokenTimeout()
-        loginVo.clientId = clientId
+        loginVo.clientId = client.clientId
         return loginVo
     }
 

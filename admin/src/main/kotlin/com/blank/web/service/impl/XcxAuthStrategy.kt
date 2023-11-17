@@ -31,7 +31,7 @@ class XcxAuthStrategy(
     private val loginService: SysLoginService
 ) : IAuthStrategy {
 
-    override fun login(clientId: String?, body: String?, client: SysClient?): LoginVo {
+    override fun login(body: String?, client: SysClient?): LoginVo {
         val loginBody: XcxLoginBody? = JsonUtils.parseObject(body, XcxLoginBody::class.java)
         validate(loginBody)
         // xcxCode 为 小程序调用 wx.login 授权后获取
@@ -61,7 +61,7 @@ class XcxAuthStrategy(
         // 例如: 后台用户30分钟过期 app用户1天过期
         model.setTimeout(client?.timeout!!)
         model.setActiveTimeout(client.activeTimeout!!)
-        model.setExtra(LoginHelper.CLIENT_KEY, clientId)
+        model.setExtra(LoginHelper.CLIENT_KEY, client.clientId)
         // 生成token
         login(loginUser, model)
         loginService.recordLogininfor(user.userName!!, Constants.LOGIN_SUCCESS, message("user.login.success"))
@@ -69,7 +69,7 @@ class XcxAuthStrategy(
         val loginVo = LoginVo()
         loginVo.accessToken = StpUtil.getTokenValue()
         loginVo.expireIn = StpUtil.getTokenTimeout()
-        loginVo.clientId = clientId
+        loginVo.clientId = client.clientId
         loginVo.openid = openid
         return loginVo
     }

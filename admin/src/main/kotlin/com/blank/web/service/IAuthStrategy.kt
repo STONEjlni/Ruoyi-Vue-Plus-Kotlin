@@ -15,7 +15,7 @@ interface IAuthStrategy {
     /**
      * 登录
      */
-    fun login(clientId: String?, body: String?, client: SysClient?): LoginVo
+    fun login(body: String?, client: SysClient?): LoginVo
 
     companion object {
         /**
@@ -29,7 +29,7 @@ interface IAuthStrategy {
                 throw ServiceException("授权类型不正确!")
             }
             val instance = SpringUtil.getBean<IAuthStrategy>(beanName)
-            return instance.login(clientId, body, client)
+            return instance.login(body, client)
         }
 
         const val BASE_NAME = "AuthStrategy"
