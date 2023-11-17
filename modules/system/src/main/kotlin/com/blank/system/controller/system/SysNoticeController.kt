@@ -3,16 +3,19 @@ package com.blank.system.controller.system
 import cn.dev33.satoken.annotation.SaCheckPermission
 import com.blank.common.core.domain.R
 import com.blank.common.core.domain.R.Companion.ok
+import com.blank.common.core.service.DictService
 import com.blank.common.log.annotation.Log
 import com.blank.common.log.enums.BusinessType
 import com.blank.common.mybatis.core.page.PageQuery
 import com.blank.common.mybatis.core.page.TableDataInfo
 import com.blank.common.web.core.BaseController
+import com.blank.common.websocket.utils.WebSocketUtils
 import com.blank.system.domain.bo.SysNoticeBo
 import com.blank.system.domain.vo.SysNoticeVo
 import com.blank.system.service.ISysNoticeService
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+
 
 /**
  * 公告 信息操作处理
@@ -21,7 +24,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/system/notice")
 class SysNoticeController(
-    private val noticeService: ISysNoticeService
+    private val noticeService: ISysNoticeService,
+    private val dictService: DictService
 ) : BaseController() {
 
     /**
@@ -51,7 +55,13 @@ class SysNoticeController(
     @Log(title = "通知公告", businessType = BusinessType.INSERT)
     @PostMapping
     fun add(@Validated @RequestBody notice: SysNoticeBo): R<Unit> {
-        return toAjax(noticeService.insertNotice(notice))
+        val rows = noticeService.insertNotice(notice)
+        if (rows <= 0) {
+            return R.fail()
+        }
+        val type = dictService.getDictLabel("sys_notice_type", notice.noticeType!!)
+        WebSocketUtils.publishAll("[" + type + "] ${notice.noticeTitle}")
+        return ok()
     }
 
     /**

@@ -9,7 +9,6 @@ import com.blank.common.websocket.constant.WebSocketConstants
 import com.blank.common.websocket.dto.WebSocketMessageDto
 import com.blank.common.websocket.holder.WebSocketSessionHolder.existSession
 import com.blank.common.websocket.holder.WebSocketSessionHolder.getSessions
-import com.blank.common.websocket.holder.WebSocketSessionHolder.getSessionsAll
 import org.springframework.web.socket.PongMessage
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketMessage
@@ -83,12 +82,6 @@ object WebSocketUtils {
      * @param message 消息内容
      */
     fun publishAll(message: String) {
-        getSessionsAll().forEach(Consumer { key: Long ->
-            sendMessage(
-                key,
-                message
-            )
-        })
         val broadcastMessage = WebSocketMessageDto()
         broadcastMessage.message = message
         publish(
