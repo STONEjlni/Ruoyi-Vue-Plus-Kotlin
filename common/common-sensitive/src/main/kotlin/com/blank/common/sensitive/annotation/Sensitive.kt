@@ -13,5 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 @JacksonAnnotationsInside
 @JsonSerialize(using = SensitiveHandler::class)
 annotation class Sensitive(
-    val strategy: SensitiveStrategy
+    val strategy: SensitiveStrategy,
+    val roleKey: String,
+    val perms: String,
 )

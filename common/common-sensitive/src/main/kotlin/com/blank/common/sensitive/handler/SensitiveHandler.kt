@@ -23,12 +23,14 @@ import java.util.*
 @Slf4j
 class SensitiveHandler : JsonSerializer<String>(), ContextualSerializer {
     private var strategy: SensitiveStrategy? = null
+    private var roleKey: String? = null
+    private var perms: String? = null
 
     @Throws(IOException::class)
     override fun serialize(value: String, gen: JsonGenerator, serializers: SerializerProvider?) {
         try {
             val sensitiveService = SpringUtil.getBean(SensitiveService::class.java)
-            if (ObjectUtil.isNotNull(sensitiveService) && sensitiveService.isSensitive()) {
+            if (ObjectUtil.isNotNull(sensitiveService) && sensitiveService.isSensitive(roleKey, perms)) {
                 gen.writeString(strategy!!.desensitizer.apply(value))
             } else {
                 gen.writeString(value)
@@ -43,7 +45,9 @@ class SensitiveHandler : JsonSerializer<String>(), ContextualSerializer {
     override fun createContextual(prov: SerializerProvider, property: BeanProperty): JsonSerializer<*> {
         val annotation = property.getAnnotation(Sensitive::class.java)
         if (Objects.nonNull(annotation) && String::class.java == property.type.rawClass) {
-            strategy = annotation.strategy
+            this.strategy = annotation.strategy
+            this.roleKey = annotation.roleKey
+            this.perms = annotation.perms
             return this
         }
         return prov.findValueSerializer(property.type, property)

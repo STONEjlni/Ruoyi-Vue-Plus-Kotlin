@@ -10,5 +10,5 @@ interface SensitiveService {
     /**
      * 是否脱敏
      */
-    fun isSensitive(): Boolean
+    fun isSensitive(roleKey: String?, perms: String?): Boolean
 }
