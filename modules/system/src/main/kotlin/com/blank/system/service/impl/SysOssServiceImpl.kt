@@ -59,7 +59,12 @@ class SysOssServiceImpl(
         for (id in ossIds) {
             val vo: SysOssVo? = getAopProxy(this).getById(id)
             if (ObjectUtil.isNotNull(vo)) {
-                list.add(matchingUrl(vo!!))
+                try {
+                    list.add(matchingUrl(vo!!))
+                } catch (ignored: java.lang.Exception) {
+                    // 如果oss异常无法连接则将数据直接返回
+                    list.add(vo!!)
+                }
             }
         }
         return list
@@ -70,7 +75,12 @@ class SysOssServiceImpl(
         for (id in splitTo(ossIds, Convert::toLong)) {
             val vo: SysOssVo? = getAopProxy(this).getById(id)
             if (ObjectUtil.isNotNull(vo)) {
-                list.add(matchingUrl(vo!!).url!!)
+                try {
+                    list.add(matchingUrl(vo!!).url!!)
+                } catch (ignored: java.lang.Exception) {
+                    // 如果oss异常无法连接则将数据直接返回
+                    list.add(vo?.url!!)
+                }
             }
         }
         return list.joinToString(separator = StringUtilsExtend.SEPARATOR) { it }
