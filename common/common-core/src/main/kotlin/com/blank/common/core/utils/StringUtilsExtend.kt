@@ -311,4 +311,15 @@ object StringUtilsExtend {
             .filter { Objects.nonNull(it) }
             .map { mapper.apply(it) }
     }
+
+    /**
+     * str为true返回1，否则返回0
+     * @param str
+     * @return 0,1
+     */
+    fun boolStrTo01(str: String): String {
+        return if (StrUtil.equals(str, "true", true)) {
+            "1"
+        } else "0"
+    }
 }

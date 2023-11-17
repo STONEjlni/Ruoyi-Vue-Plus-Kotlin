@@ -206,10 +206,10 @@ object VelocityUtils {
         val importList = HashSet<String>()
         if (CollUtil.isNotEmpty(columns)) {
             for (column in columns!!) {
-                if (!column.isSuperColumn() && GenConstants.TYPE_DATE == column.javaType) {
+                if (!column.isSuperColumn && GenConstants.TYPE_DATE == column.javaType) {
                     importList.add("java.util.Date")
                     importList.add("com.fasterxml.jackson.annotation.JsonFormat")
-                } else if (!column.isSuperColumn() && GenConstants.TYPE_BIGDECIMAL == column.javaType) {
+                } else if (!column.isSuperColumn && GenConstants.TYPE_BIGDECIMAL == column.javaType) {
                     importList.add("java.math.BigDecimal")
                 }
             }
@@ -239,7 +239,7 @@ object VelocityUtils {
     fun addDicts(dicts: MutableSet<String>, columns: MutableList<GenTableColumn>?) {
         if (CollUtil.isNotEmpty(columns)) {
             for (column in columns!!) {
-                if (!column.isSuperColumn() && StringUtils.isNotEmpty(column.dictType) && StringUtils.equalsAny(
+                if (!column.isSuperColumn && StringUtils.isNotEmpty(column.dictType) && StringUtils.equalsAny(
                         column.htmlType,
                         *arrayOf(GenConstants.HTML_SELECT, GenConstants.HTML_RADIO, GenConstants.HTML_CHECKBOX)
                     )

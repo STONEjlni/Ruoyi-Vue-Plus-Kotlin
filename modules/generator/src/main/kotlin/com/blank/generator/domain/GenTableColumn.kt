@@ -56,36 +56,57 @@ class GenTableColumn : BaseEntity() {
      * 是否主键（1是）
      */
     var isPk: String? = null
+        set(value) {
+            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+        }
 
     /**
      * 是否自增（1是）
      */
     var isIncrement: String? = null
+        set(value) {
+            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+        }
 
     /**
      * 是否必填（1是）
      */
     var isRequired: String? = null
+        set(value) {
+            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+        }
 
     /**
      * 是否为插入字段（1是）
      */
     var isInsert: String? = null
+        set(value) {
+            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+        }
 
     /**
      * 是否编辑字段（1是）
      */
     var isEdit: String? = null
+        set(value) {
+            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+        }
 
     /**
      * 是否列表字段（1是）
      */
     var isList: String? = null
+        set(value) {
+            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+        }
 
     /**
      * 是否查询字段（1是）
      */
     var isQuery: String? = null
+        set(value) {
+            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+        }
 
     /**
      * 查询方式（EQ等于、NE不等于、GT大于、LT小于、LIKE模糊、BETWEEN范围）
@@ -106,13 +127,11 @@ class GenTableColumn : BaseEntity() {
      * 排序
      */
     var sort: Int? = null
-
-    fun getCapJavaField(): String {
-        return StringUtils.capitalize(javaField)
-    }
+    val capJavaField: String
+        get() = StringUtils.capitalize(javaField)
 
     fun isPk(): Boolean {
-        return isPk(this.isPk)
+        return isPk(isPk)
     }
 
     fun isPk(isPk: String?): Boolean {
@@ -120,7 +139,7 @@ class GenTableColumn : BaseEntity() {
     }
 
     fun isIncrement(): Boolean {
-        return isIncrement(this.isIncrement)
+        return isIncrement(isIncrement)
     }
 
     fun isIncrement(isIncrement: String?): Boolean {
@@ -128,7 +147,7 @@ class GenTableColumn : BaseEntity() {
     }
 
     fun isRequired(): Boolean {
-        return isRequired(this.isRequired)
+        return isRequired(isRequired)
     }
 
     fun isRequired(isRequired: String?): Boolean {
@@ -136,7 +155,7 @@ class GenTableColumn : BaseEntity() {
     }
 
     fun isInsert(): Boolean {
-        return isInsert(this.isInsert)
+        return isInsert(isInsert)
     }
 
     fun isInsert(isInsert: String?): Boolean {
@@ -144,7 +163,7 @@ class GenTableColumn : BaseEntity() {
     }
 
     fun isEdit(): Boolean {
-        return isEdit(this.isEdit)
+        return isInsert(isEdit)
     }
 
     fun isEdit(isEdit: String?): Boolean {
@@ -152,7 +171,7 @@ class GenTableColumn : BaseEntity() {
     }
 
     fun isList(): Boolean {
-        return isList(this.isList)
+        return isList(isList)
     }
 
     fun isList(isList: String?): Boolean {
@@ -160,29 +179,26 @@ class GenTableColumn : BaseEntity() {
     }
 
     fun isQuery(): Boolean {
-        return isQuery(this.isQuery)
+        return isQuery(isQuery)
     }
 
     fun isQuery(isQuery: String?): Boolean {
         return isQuery != null && StringUtils.equals("1", isQuery)
     }
 
-    fun isSuperColumn(): Boolean {
-        return isSuperColumn(this.javaField)
-    }
-
-    fun isUsableColumn(): Boolean {
-        return isUsableColumn(this.javaField)
-    }
+    val isSuperColumn: Boolean
+        get() = isSuperColumn(javaField)
+    val isUsableColumn: Boolean
+        get() = isUsableColumn(javaField)
 
     fun readConverterExp(): String? {
-        var remarks = StringUtils.substringBetween(columnComment, "（", "）")
-        var sb = StringBuffer()
+        val remarks = StringUtils.substringBetween(columnComment, "（", "）")
+        val sb = StringBuffer()
         return if (StringUtils.isNotEmpty(remarks)) {
             for (value in remarks.split(" ").toTypedArray()) {
                 if (StringUtils.isNotEmpty(value)) {
-                    var startStr: Any = value.subSequence(0, 1)
-                    var endStr = value.substring(1)
+                    val startStr: Any = value.subSequence(0, 1)
+                    val endStr = value.substring(1)
                     sb.append(StringUtils.EMPTY).append(startStr).append("=").append(endStr)
                         .append(StringUtilsExtend.SEPARATOR)
                 }
@@ -191,6 +207,62 @@ class GenTableColumn : BaseEntity() {
         } else {
             columnComment
         }
+    }
+
+    fun getIsPk(): String? {
+        return isPk
+    }
+
+    fun setIsPk(isPk: String?) {
+        this.isPk = isPk
+    }
+
+    fun getIsIncrement(): String? {
+        return isIncrement
+    }
+
+    fun setIsIncrement(isIncrement: String?) {
+        this.isIncrement = isIncrement
+    }
+
+    fun getIsRequired(): String? {
+        return isRequired
+    }
+
+    fun setIsRequired(isRequired: String?) {
+        this.isRequired = isRequired
+    }
+
+    fun getIsInsert(): String? {
+        return isInsert
+    }
+
+    fun setIsInsert(isInsert: String?) {
+        this.isInsert = isInsert
+    }
+
+    fun getIsEdit(): String? {
+        return isEdit
+    }
+
+    fun setIsEdit(isEdit: String?) {
+        this.isEdit = isEdit
+    }
+
+    fun getIsList(): String? {
+        return isList
+    }
+
+    fun setIsList(isList: String?) {
+        this.isList = isList
+    }
+
+    fun getIsQuery(): String? {
+        return isQuery
+    }
+
+    fun setIsQuery(isQuery: String?) {
+        this.isQuery = isQuery
     }
 
     companion object {
