@@ -72,7 +72,7 @@ class GenController(
      */
     @SaCheckPermission("tool:gen:list")
     @GetMapping(value = ["/column/{tableId}"])
-    fun columnList(tableId: Long): TableDataInfo<GenTableColumn>? {
+    fun columnList(@PathVariable("tableId") tableId: Long): TableDataInfo<GenTableColumn>? {
         val dataInfo = TableDataInfo<GenTableColumn>()
         val list = genTableService.selectGenTableColumnListByTableId(tableId)
         dataInfo.rows = list
