@@ -5,6 +5,50 @@
     <top-nav id="topmenu-container" class="topmenu-container" v-if="settingsStore.topNav" />
 
     <div class="right-menu flex align-center">
+      <template v-if="appStore.device !== 'mobile'">
+
+        <!-- <header-search id="header-search" class="right-menu-item" /> -->
+        <search-menu ref="searchMenuRef"/>
+        <el-tooltip content="搜索" effect="dark" placement="bottom">
+          <div class="right-menu-item hover-effect" @click="openSearchMenu">
+            <svg-icon class-name="search-icon" icon-class="search"/>
+          </div>
+        </el-tooltip>
+        <!-- 消息 -->
+        <el-tooltip :content="$t('navbar.message')" effect="dark" placement="bottom">
+          <div>
+            <el-popover placement="bottom" trigger="click" transition="el-zoom-in-top" :width="300" :persistent="false">
+              <template #reference>
+                <el-badge :value="newNotice > 0 ? newNotice : ''" :max="99">
+                  <svg-icon icon-class="message"/>
+                </el-badge>
+              </template>
+              <template #default>
+                <notice></notice>
+              </template>
+            </el-popover>
+          </div>
+        </el-tooltip>
+        <el-tooltip content="Github" effect="dark" placement="bottom">
+          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect"/>
+        </el-tooltip>
+
+        <el-tooltip :content="$t('navbar.document')" effect="dark" placement="bottom">
+          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect"/>
+        </el-tooltip>
+
+        <el-tooltip :content="$t('navbar.full')" effect="dark" placement="bottom">
+          <screenfull id="screenfull" class="right-menu-item hover-effect"/>
+        </el-tooltip>
+
+        <el-tooltip :content="$t('navbar.language')" effect="dark" placement="bottom">
+          <lang-select id="lang-select" class="right-menu-item hover-effect"/>
+        </el-tooltip>
+
+        <el-tooltip :content="$t('navbar.layoutSize')" effect="dark" placement="bottom">
+          <size-select id="size-select" class="right-menu-item hover-effect"/>
+        </el-tooltip>
+      </template>
       <div class="avatar-container">
         <el-dropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="click">
           <div class="avatar-wrapper">
@@ -13,6 +57,9 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
+              <router-link to="/user/profile" v-if="!dynamic">
+                <el-dropdown-item>{{ $t('navbar.personalCenter') }}</el-dropdown-item>
+              </router-link>
               <el-dropdown-item command="setLayout" v-if="settingsStore.showSettings">
                 <span>{{ $t('navbar.layoutSetting') }}</span>
               </el-dropdown-item>
@@ -32,16 +79,22 @@ import SearchMenu from './TopBar/search.vue';
 import useAppStore from '@/store/modules/app';
 import useUserStore from '@/store/modules/user';
 import useSettingsStore from '@/store/modules/settings';
-import { ComponentInternalInstance } from "vue";
+import {ComponentInternalInstance} from "vue";
+import notice from './notice/index.vue';
+import useNoticeStore from '@/store/modules/notice';
 
 const appStore = useAppStore();
 const userStore = useUserStore();
 const settingsStore = useSettingsStore();
+const noticeStore = storeToRefs(useNoticeStore());
+const newNotice = ref(<number>0);
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const userId = ref(userStore.userId);
 const companyName = ref(undefined);
+// 是否切换了租户
+const dynamic = ref(false);
 // 搜索菜单
 const searchMenuRef = ref<InstanceType<typeof SearchMenu>>();
 
@@ -81,12 +134,21 @@ const handleCommand = (command: string) => {
         commandMap[command]();
     }
 }
+
+//用深度监听 消息
+watch(() => noticeStore.state.value.notices, (newVal, oldVal) => {
+  newNotice.value = newVal.filter((item: any) => !item.read).length;
+}, {deep: true});
 </script>
 
 <style lang="scss" scoped>
 
 :deep(.el-select .el-input__wrapper) {
   height:30px;
+}
+
+:deep(.el-badge__content.is-fixed) {
+  top: 12px;
 }
 
 .flex {

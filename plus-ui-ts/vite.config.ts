@@ -1,8 +1,9 @@
-import { UserConfig, ConfigEnv, loadEnv, defineConfig } from 'vite';
+import {ConfigEnv, defineConfig, loadEnv, UserConfig} from 'vite';
 
 import createPlugins from './vite/plugins';
 
 import path from 'path';
+
 export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd());
   return {
@@ -28,6 +29,7 @@ export default defineConfig(({ mode, command }: ConfigEnv): UserConfig => {
         [env.VITE_APP_BASE_API]: {
           target: 'http://localhost:8080',
           changeOrigin: true,
+          ws: true,
           rewrite: (path) => path.replace(new RegExp('^' + env.VITE_APP_BASE_API), '')
         }
       }

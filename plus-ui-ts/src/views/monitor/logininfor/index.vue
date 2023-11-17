@@ -73,6 +73,12 @@
           sortable="custom"
           :sort-orders="['descending', 'ascending']"
         />
+        <el-table-column label="客户端" align="center" prop="clientKey" :show-overflow-tooltip="true"/>
+        <el-table-column label="设备类型" align="center">
+          <template #default="scope">
+            <dict-tag :options="sys_device_type" :value="scope.row.deviceType"/>
+          </template>
+        </el-table-column>
         <el-table-column label="地址" align="center" prop="ipaddr" :show-overflow-tooltip="true" />
         <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
         <el-table-column label="操作系统" align="center" prop="os" :show-overflow-tooltip="true" />
@@ -96,10 +102,11 @@
 </template>
 
 <script setup name="Logininfor" lang="ts">
-import { list, delLoginInfo, cleanLoginInfo, unlockLoginInfo } from "@/api/monitor/loginInfo";
-import { LoginInfoQuery, LoginInfoVO } from "@/api/monitor/loginInfo/types";
+import {cleanLoginInfo, delLoginInfo, list, unlockLoginInfo} from "@/api/monitor/loginInfo";
+import {LoginInfoQuery, LoginInfoVO} from "@/api/monitor/loginInfo/types";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const {sys_device_type} = toRefs<any>(proxy?.useDict("sys_device_type"));
 const { sys_common_status } = toRefs<any>(proxy?.useDict("sys_common_status"));
 
 const loginInfoList = ref<LoginInfoVO[]>([]);

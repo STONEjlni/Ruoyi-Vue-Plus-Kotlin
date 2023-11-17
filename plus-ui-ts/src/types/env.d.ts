@@ -1,5 +1,5 @@
 declare module '*.vue' {
-  import { DefineComponent } from 'vue';
+  import {DefineComponent} from 'vue';
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
@@ -69,6 +69,7 @@ interface ImportMetaEnv {
   VITE_APP_ENV: string;
   VITE_APP_RSA_PUBLIC_KEY: string;
   VITE_APP_CLIENT_ID: string;
+  VITE_APP_WEBSOCKET: string;
 }
 interface ImportMeta {
   readonly env: ImportMetaEnv;
