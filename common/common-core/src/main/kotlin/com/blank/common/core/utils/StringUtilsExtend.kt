@@ -317,7 +317,11 @@ object StringUtilsExtend {
      * @param str
      * @return 0,1
      */
-    fun boolStrTo01(str: String): String {
+    fun boolStrTo01(str: String?): String? {
+        if (StrUtil.isBlank(str) || !StrUtil.equalsAny(str, "false", "true")) {
+            return str
+        }
+
         return if (StrUtil.equals(str, "true", true)) {
             "1"
         } else "0"
