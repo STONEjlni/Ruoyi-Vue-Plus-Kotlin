@@ -157,7 +157,7 @@ class LogAspect {
      */
     @Throws(Exception::class)
     private fun setRequestValue(joinPoint: JoinPoint, operLog: OperLogEvent, excludeParamNames: Array<String>) {
-        val paramsMap: Map<String, String> = getParamMap(getRequest()!!)
+        val paramsMap: MutableMap<String, String> = getParamMap(getRequest()!!)
         val requestMethod = operLog.requestMethod
         if (MapUtil.isEmpty(paramsMap) && HttpMethod.PUT.name() == requestMethod || HttpMethod.POST.name() == requestMethod) {
             val params = argsArrayToString(joinPoint.args, excludeParamNames)
@@ -208,7 +208,7 @@ class LogAspect {
                 return value is MultipartFile
             }
         } else if (MutableMap::class.java.isAssignableFrom(clazz)) {
-            val map = o as Map<*, *>
+            val map = o as MutableMap<*, *>
             for (value in map.values) {
                 return value is MultipartFile
             }

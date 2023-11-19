@@ -25,7 +25,7 @@ object InternalMailUtil {
         addrStrs: Array<String>,
         charset: Charset = Charset.defaultCharset()
     ): Array<InternetAddress> {
-        val resultList: List<InternetAddress> = ArrayList(addrStrs.size)
+        val resultList: MutableList<InternetAddress> = ArrayList(addrStrs.size)
         var addrs: Array<InternetAddress>
         for (addrStr in addrStrs) {
             addrs = parseAddress(addrStr, charset)

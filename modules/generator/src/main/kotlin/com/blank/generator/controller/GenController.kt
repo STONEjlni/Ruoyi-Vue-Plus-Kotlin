@@ -45,7 +45,7 @@ class GenController(
      */
     @SaCheckPermission("tool:gen:query")
     @GetMapping(value = ["/{tableId}"])
-    fun getInfo(@PathVariable tableId: Long): R<Map<String, Any>> {
+    fun getInfo(@PathVariable tableId: Long): R<MutableMap<String, Any>> {
         val table = genTableService.selectGenTableById(tableId)!!
         val tables = genTableService.selectGenTableAll()
         val list = genTableService.selectGenTableColumnListByTableId(tableId)
@@ -131,7 +131,7 @@ class GenController(
     @Throws(
         IOException::class
     )
-    fun preview(@PathVariable("tableId") tableId: Long): R<Map<String, String>> {
+    fun preview(@PathVariable("tableId") tableId: Long): R<MutableMap<String, String>> {
         val dataMap = genTableService.previewCode(tableId)
         return ok(data = dataMap)
     }

@@ -54,7 +54,7 @@ class SysOperLogServiceImpl(
     }
 
     private fun buildQueryWrapper(operLog: SysOperLogBo): QueryWrapper {
-        val params: Map<String, Any> = operLog.params
+        val params: MutableMap<String, Any> = operLog.params
         val queryWrapper: QueryWrapper = QueryWrapper.create().from(SYS_OPER_LOG)
             .where(SYS_OPER_LOG.TITLE.like(operLog.title))
             .and(SYS_OPER_LOG.OPER_IP.like(operLog.operIp))

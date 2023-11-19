@@ -225,7 +225,7 @@ object RedisUtils {
      * @param dataList 待缓存的List数据
      * @return 缓存的对象
      */
-    fun <T> setCacheList(key: String?, dataList: List<T>?): Boolean {
+    fun <T> setCacheList(key: String?, dataList: MutableList<T>?): Boolean {
         val rList = CLIENT.getList<T>(key)
         return rList.addAll(dataList!!)
     }
@@ -250,7 +250,7 @@ object RedisUtils {
      * @param key 缓存的键值
      * @return 缓存键值对应的数据
      */
-    fun <T> getCacheList(key: String?): List<T> {
+    fun <T> getCacheList(key: String?): MutableList<T> {
         val rList = CLIENT.getList<T>(key)
         return rList.readAll()
     }
@@ -262,7 +262,7 @@ object RedisUtils {
      * @param dataSet 缓存的数据
      * @return 缓存数据的对象
      */
-    fun <T> setCacheSet(key: String?, dataSet: Set<T>?): Boolean {
+    fun <T> setCacheSet(key: String?, dataSet: MutableSet<T>?): Boolean {
         val rSet = CLIENT.getSet<T>(key)
         return rSet.addAll(dataSet!!)
     }
@@ -287,7 +287,7 @@ object RedisUtils {
      * @param key 缓存的key
      * @return set对象
      */
-    fun <T> getCacheSet(key: String?): Set<T> {
+    fun <T> getCacheSet(key: String?): MutableSet<T> {
         val rSet = CLIENT.getSet<T>(key)
         return rSet.readAll()
     }
@@ -298,7 +298,7 @@ object RedisUtils {
      * @param key     缓存的键值
      * @param dataMap 缓存的数据
      */
-    fun <T> setCacheMap(key: String?, dataMap: Map<String, T>?) {
+    fun <T> setCacheMap(key: String?, dataMap: MutableMap<String, T>?) {
         if (dataMap != null) {
             val rMap = CLIENT.getMap<String, T>(key)
             rMap.putAll(dataMap)
@@ -325,7 +325,7 @@ object RedisUtils {
      * @param key 缓存的键值
      * @return map对象
      */
-    fun <T> getCacheMap(key: String?): Map<String, T> {
+    fun <T> getCacheMap(key: String?): MutableMap<String, T> {
         val rMap = CLIENT.getMap<String, T>(key)
         return rMap.getAll(rMap.keys)
     }
@@ -336,7 +336,7 @@ object RedisUtils {
      * @param key 缓存的键值
      * @return key列表
      */
-    fun <T> getCacheMapKeySet(key: String?): Set<String> {
+    fun <T> getCacheMapKeySet(key: String?): MutableSet<String> {
         val rMap = CLIENT.getMap<String, T>(key)
         return rMap.keys
     }
@@ -383,7 +383,7 @@ object RedisUtils {
      * @param key   Redis键
      * @param hKeys Hash键
      */
-    fun <T> delMultiCacheMapValue(key: String?, hKeys: Set<String>) {
+    fun <T> delMultiCacheMapValue(key: String?, hKeys: MutableSet<String>) {
         val batch = CLIENT.createBatch()
         val rMap = batch.getMap<String, T>(key)
         for (hKey in hKeys) {
@@ -399,7 +399,7 @@ object RedisUtils {
      * @param hKeys Hash键集合
      * @return Hash对象集合
      */
-    fun <K, V> getMultiCacheMapValue(key: String?, hKeys: Set<K>?): Map<K, V> {
+    fun <K, V> getMultiCacheMapValue(key: String?, hKeys: MutableSet<K>?): MutableMap<K, V> {
         val rMap = CLIENT.getMap<K, V>(key)
         return rMap.getAll(hKeys)
     }

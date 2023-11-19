@@ -21,12 +21,12 @@ class EncryptorManager {
     /**
      * 类加密字段缓存
      */
-    private val fieldCache: MutableMap<Class<*>, Set<Field>> = ConcurrentHashMap()
+    private val fieldCache: MutableMap<Class<*>, MutableSet<Field>> = ConcurrentHashMap()
 
     /**
      * 获取类加密字段缓存
      */
-    fun getFieldCache(sourceClazz: Class<*>): Set<Field> {
+    fun getFieldCache(sourceClazz: Class<*>): MutableSet<Field> {
         return fieldCache.computeIfAbsent(
             sourceClazz
         ) { clazz: Class<*>? ->

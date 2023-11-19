@@ -66,7 +66,7 @@ class SysRoleServiceImpl(
     }
 
     private fun buildQueryWrapper(bo: SysRoleBo): QueryWrapper {
-        val params: Map<String, Any> = bo.params
+        val params: MutableMap<String, Any> = bo.params
         return QueryWrapper.create()
             .where(SYS_ROLE.ROLE_ID.eq(bo.roleId))
             .and(SYS_ROLE.ROLE_NAME.like(bo.roleName))

@@ -76,11 +76,11 @@ object JsonUtils {
         }
     }
 
-    fun parseArrayMap(text: String?): List<Dict>? {
+    fun parseArrayMap(text: String?): MutableList<Dict>? {
         return if (StrUtil.isBlank(text)) {
             null
         } else try {
-            OBJECT_MAPPER.readValue<List<Dict>>(
+            OBJECT_MAPPER.readValue<MutableList<Dict>>(
                 text, OBJECT_MAPPER.typeFactory.constructCollectionType(
                     MutableList::class.java,
                     Dict::class.java
@@ -91,11 +91,11 @@ object JsonUtils {
         }
     }
 
-    fun <T> parseArray(text: String?, clazz: Class<T>?): List<T> {
+    fun <T> parseArray(text: String?, clazz: Class<T>?): MutableList<T> {
         return if (StringUtils.isEmpty(text)) {
             ArrayList()
         } else try {
-            OBJECT_MAPPER.readValue<List<T>>(
+            OBJECT_MAPPER.readValue<MutableList<T>>(
                 text, OBJECT_MAPPER.typeFactory.constructCollectionType(MutableList::class.java, clazz)
             )
         } catch (e: IOException) {

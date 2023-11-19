@@ -328,7 +328,7 @@ class GenTableServiceImpl(
      * @param tableId 表编号
      * @return 预览数据列表
      */
-    override fun previewCode(tableId: Long): Map<String, String> {
+    override fun previewCode(tableId: Long): MutableMap<String, String> {
         val dataMap: MutableMap<String, String> = LinkedHashMap()
         // 查询表信息
         val table = baseMapper.selectOneWithRelationsById(tableId)

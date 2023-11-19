@@ -29,7 +29,7 @@ class CacheController(
         get() {
             val connection = connectionFactory.connection
             val commandStats = connection.commands().info("commandstats")
-            val pieList: MutableList<Map<String, String>> = ArrayList()
+            val pieList: MutableList<MutableMap<String, String>> = ArrayList()
             commandStats?.stringPropertyNames()?.forEach(Consumer { key: String? ->
                 val `data`: MutableMap<String, String> = HashMap(2)
                 val property = commandStats.getProperty(key)

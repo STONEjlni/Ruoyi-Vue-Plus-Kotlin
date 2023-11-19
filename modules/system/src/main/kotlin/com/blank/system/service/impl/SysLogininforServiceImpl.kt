@@ -108,7 +108,7 @@ class SysLogininforServiceImpl(
         logininfor: SysLogininforBo,
         pageQuery: PageQuery
     ): TableDataInfo<SysLogininforVo> {
-        val params: Map<String, Any?> = logininfor.params
+        val params: MutableMap<String, Any> = logininfor.params
         val lqw: QueryWrapper = QueryWrapper.create().from(SYS_LOGININFOR)
             .where(SYS_LOGININFOR.IPADDR.like(logininfor.ipaddr))
             .and(SYS_LOGININFOR.STATUS.eq(logininfor.status))
@@ -150,7 +150,7 @@ class SysLogininforServiceImpl(
      * @return 登录记录集合
      */
     override fun selectLogininforList(logininfor: SysLogininforBo): MutableList<SysLogininforVo> {
-        val params: Map<String, Any> = logininfor.params
+        val params: MutableMap<String, Any> = logininfor.params
         return baseMapper.selectListByQueryAs(
             QueryWrapper.create().from(SYS_LOGININFOR)
                 .where(SYS_LOGININFOR.IPADDR.like(logininfor.ipaddr))

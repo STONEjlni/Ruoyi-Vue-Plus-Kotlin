@@ -137,7 +137,7 @@ object EncryptUtils {
      *
      * @return 公私钥Map
      */
-    fun generateSm2Key(): Map<String, String> {
+    fun generateSm2Key(): MutableMap<String, String> {
         val keyMap: MutableMap<String, String> = HashMap(2)
         val sm2 = SmUtil.sm2()
         keyMap[PRIVATE_KEY] = sm2.privateKeyBase64
@@ -189,7 +189,7 @@ object EncryptUtils {
      *
      * @return 公私钥Map
      */
-    fun generateRsaKey(): Map<String, String> {
+    fun generateRsaKey(): MutableMap<String, String> {
         val keyMap: MutableMap<String, String> = HashMap(2)
         val rsa = SecureUtil.rsa()
         keyMap[PRIVATE_KEY] = rsa.privateKeyBase64

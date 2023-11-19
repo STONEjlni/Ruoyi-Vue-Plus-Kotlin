@@ -68,7 +68,7 @@ class SysUserServiceImpl(
     }
 
     private fun buildQueryWrapper(user: SysUserBo): QueryWrapper {
-        val params: Map<String, Any> = user.params
+        val params: MutableMap<String, Any> = user.params
         val queryWrapper: QueryWrapper = QueryWrapper.create().from(SYS_USER.`as`("u"))
             .where(SYS_USER.DEL_FLAG.eq(UserConstants.USER_NORMAL))
             .and(SYS_USER.USER_ID.eq(user.userId))

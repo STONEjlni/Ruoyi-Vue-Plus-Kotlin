@@ -29,7 +29,7 @@ class SpringDocProperties {
     /**
      * 标签
      */
-    var tags: List<Tag>? = null
+    var tags: MutableList<Tag>? = null
 
     /**
      * 路径

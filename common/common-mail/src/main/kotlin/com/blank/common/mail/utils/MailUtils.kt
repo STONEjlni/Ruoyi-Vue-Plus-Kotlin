@@ -312,7 +312,7 @@ object MailUtils {
         to: String,
         subject: String,
         content: String,
-        imageMap: Map<String, InputStream>?,
+        imageMap: MutableMap<String, InputStream>?,
         vararg files: File
     ): String {
         return send(to, subject, content, imageMap, true, files = files)
@@ -334,7 +334,7 @@ object MailUtils {
         to: String,
         subject: String,
         content: String,
-        imageMap: Map<String, InputStream>?,
+        imageMap: MutableMap<String, InputStream>?,
         isHtml: Boolean,
         vararg files: File
     ): String {
@@ -362,7 +362,7 @@ object MailUtils {
         bcc: String,
         subject: String,
         content: String,
-        imageMap: Map<String, InputStream>?,
+        imageMap: MutableMap<String, InputStream>?,
         isHtml: Boolean,
         vararg files: File
     ): String {
@@ -389,7 +389,7 @@ object MailUtils {
         tos: Collection<String>,
         subject: String,
         content: String,
-        imageMap: Map<String, InputStream>?,
+        imageMap: MutableMap<String, InputStream>?,
         vararg files: File
     ): String {
         return send(tos, subject, content, imageMap, true, files = files)
@@ -410,7 +410,7 @@ object MailUtils {
         tos: Collection<String>,
         subject: String,
         content: String,
-        imageMap: Map<String, InputStream>?,
+        imageMap: MutableMap<String, InputStream>?,
         isHtml: Boolean,
         vararg files: File
     ): String {
@@ -437,7 +437,7 @@ object MailUtils {
         bccs: Collection<String>?,
         subject: String,
         content: String,
-        imageMap: Map<String, InputStream>?,
+        imageMap: MutableMap<String, InputStream>?,
         isHtml: Boolean,
         vararg files: File
     ): String {
@@ -468,7 +468,7 @@ object MailUtils {
         to: String,
         subject: String,
         content: String,
-        imageMap: Map<String, InputStream>?,
+        imageMap: MutableMap<String, InputStream>?,
         isHtml: Boolean,
         vararg files: File
     ): String {
@@ -493,7 +493,7 @@ object MailUtils {
         tos: Collection<String>,
         subject: String,
         content: String,
-        imageMap: Map<String, InputStream>?,
+        imageMap: MutableMap<String, InputStream>?,
         isHtml: Boolean,
         vararg files: File
     ): String {
@@ -522,7 +522,7 @@ object MailUtils {
         bccs: Collection<String>?,
         subject: String,
         content: String,
-        imageMap: Map<String, InputStream>?,
+        imageMap: MutableMap<String, InputStream>?,
         isHtml: Boolean,
         vararg files: File
     ): String {
@@ -616,11 +616,11 @@ object MailUtils {
      * @param addresses 多个联系人，如果为空返回null
      * @return 联系人列表
      */
-    private fun splitAddress(addresses: String): List<String>? {
+    private fun splitAddress(addresses: String): MutableList<String>? {
         if (StrUtil.isBlank(addresses)) {
             return null
         }
-        val result: List<String>
+        val result: MutableList<String>
         result = if (StrUtil.contains(addresses, CharUtil.COMMA)) {
             StrUtil.splitTrim(addresses, CharUtil.COMMA)
         } else if (StrUtil.contains(addresses, ';')) {

@@ -50,8 +50,8 @@ class OpenApiHandler
     securityParser: SecurityService,
     springDocConfigProperties: SpringDocConfigProperties,
     propertyResolverUtils: PropertyResolverUtils,
-    openApiBuilderCustomizers: Optional<List<OpenApiBuilderCustomizer>>,
-    serverBaseUrlCustomizers: Optional<List<ServerBaseUrlCustomizer>>,
+    openApiBuilderCustomizers: Optional<MutableList<OpenApiBuilderCustomizer>>,
+    serverBaseUrlCustomizers: Optional<MutableList<ServerBaseUrlCustomizer>>,
     javadocProvider: Optional<JavadocProvider>
 ) : OpenAPIService(
     openAPI,
@@ -78,22 +78,22 @@ class OpenApiHandler
     /**
      * The Mappings map.
      */
-    private val mappingsMap: Map<String, Any> = HashMap()
+    private val mappingsMap: MutableMap<String, Any> = mutableMapOf()
 
     /**
      * The Springdoc tags.
      */
-    private val springdocTags: Map<HandlerMethod, Tag> = HashMap()
+    private val springdocTags: MutableMap<HandlerMethod, Tag> = mutableMapOf()
 
     /**
      * The Open api builder customisers.
      */
-    private var openApiBuilderCustomisers: Optional<List<OpenApiBuilderCustomizer>>? = openApiBuilderCustomizers
+    private var openApiBuilderCustomisers: Optional<MutableList<OpenApiBuilderCustomizer>>? = openApiBuilderCustomizers
 
     /**
      * The server base URL customisers.
      */
-    private var serverBaseUrlCustomizers: Optional<List<ServerBaseUrlCustomizer>>? = serverBaseUrlCustomizers
+    private var serverBaseUrlCustomizers: Optional<MutableList<ServerBaseUrlCustomizer>>? = serverBaseUrlCustomizers
 
     /**
      * The Spring doc config properties.
@@ -103,7 +103,7 @@ class OpenApiHandler
     /**
      * The Cached open api map.
      */
-    private val cachedOpenAPI: Map<String, OpenAPI> = HashMap()
+    private val cachedOpenAPI: MutableMap<String, OpenAPI> = mutableMapOf()
 
     /**
      * The Property resolver utils.
@@ -186,7 +186,7 @@ class OpenApiHandler
                     val tag = Tag()
 
                     // 自定义部分 修改使用java注释当tag名
-                    val list: List<String> = IoUtil.readLines(StringReader(description), ArrayList())
+                    val list: MutableList<String> = IoUtil.readLines(StringReader(description), ArrayList())
                     // tag.setName(tagAutoName);
                     tag.name = list[0]
                     operation.addTagsItem(list[0])
@@ -243,19 +243,19 @@ class OpenApiHandler
                     tag!!.name, locale
                 )
             }.collect(Collectors.toSet()))
-            val allTags: List<io.swagger.v3.oas.annotations.tags.Tag> = ArrayList(methodTags)
+            val allTags: MutableList<io.swagger.v3.oas.annotations.tags.Tag> = ArrayList(methodTags)
             addTags(allTags, tags, locale)
         }
     }
 
     private fun addTags(
-        sourceTags: List<io.swagger.v3.oas.annotations.tags.Tag>,
+        sourceTags: MutableList<io.swagger.v3.oas.annotations.tags.Tag>,
         tags: MutableSet<Tag>,
         locale: Locale
     ) {
         val optionalTagSet = AnnotationsUtils
             .getTags(sourceTags.toTypedArray<io.swagger.v3.oas.annotations.tags.Tag>(), true)
-        optionalTagSet.ifPresent { tagsSet: Set<Tag> ->
+        optionalTagSet.ifPresent { tagsSet: MutableSet<Tag> ->
             tagsSet.forEach(
                 Consumer { tag: Tag ->
                     tag.name(propertyResolverUtils!!.resolve(tag.name, locale))
