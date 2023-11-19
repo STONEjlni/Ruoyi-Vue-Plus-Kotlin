@@ -68,15 +68,18 @@ class MyBatisFlexConfig : MyBatisFlexCustomizer {
                     val current = if (ObjectUtil.isNotNull(it.createTime)) it.createTime else Date()
                     it.createTime = current
                     it.updateTime = current
-                    val loginUser: LoginUser? = getLoginUser()
-                    if (ObjectUtil.isNotNull(loginUser)) {
-                        val userId: Long =
-                            if (ObjectUtil.isNotNull(it.createBy)) it.createBy!! else loginUser!!.userId!!
-                        // 当前已登录 且 创建人为空 则填充
-                        it.createBy = userId
-                        // 当前已登录 且 更新人为空 则填充
-                        it.updateBy = userId
-                        it.createDept = if (ObjectUtil.isNotNull(it.createDept)) it.createDept else loginUser?.deptId
+
+                    if (it.createBy == null || it.updateBy == null) {
+                        val loginUser: LoginUser? = getLoginUser()
+                        if (ObjectUtil.isNotNull(loginUser)) {
+                            val userId: Long =
+                                if (ObjectUtil.isNotNull(it.createBy)) it.createBy!! else loginUser!!.userId!!
+                            // 当前已登录 且 创建人为空 则填充
+                            it.createBy = userId
+                            // 当前已登录 且 更新人为空 则填充
+                            it.updateBy = userId
+                            it.createDept = if (ObjectUtil.isNotNull(it.createDept)) it.createDept else loginUser?.deptId
+                        }
                     }
                 }
             } catch (e: Exception) {
