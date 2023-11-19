@@ -90,10 +90,12 @@ class MyBatisFlexConfig : MyBatisFlexCustomizer {
                     val current = Date()
                     // 更新时间填充(不管为不为空)
                     it.updateTime = current
-                    val loginUser = getLoginUser()
-                    // 当前已登录 更新人填充(不管为不为空)
-                    if (ObjectUtil.isNotNull(loginUser)) {
-                        it.updateBy = loginUser!!.userId
+                    if (it.updateBy == null) {
+                        val loginUser = getLoginUser()
+                        // 当前已登录 更新人填充(不管为不为空)
+                        if (ObjectUtil.isNotNull(loginUser)) {
+                            it.updateBy = loginUser!!.userId
+                        }
                     }
                 }
             } catch (e: java.lang.Exception) {
