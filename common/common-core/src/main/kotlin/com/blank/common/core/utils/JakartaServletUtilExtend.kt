@@ -70,7 +70,7 @@ object JakartaServletUtilExtend {
      * @param request 请求对象[ServletRequest]
      * @return Map
      */
-    fun getParams(request: ServletRequest): Map<String, Array<String>> {
+    fun getParams(request: ServletRequest): MutableMap<String, Array<String>> {
         val map = request.parameterMap
         return Collections.unmodifiableMap(map)
     }
@@ -81,8 +81,8 @@ object JakartaServletUtilExtend {
      * @param request 请求对象[ServletRequest]
      * @return Map
      */
-    fun getParamMap(request: ServletRequest): Map<String, String> {
-        val params: MutableMap<String, String> = HashMap()
+    fun getParamMap(request: ServletRequest): MutableMap<String, String> {
+        val params: MutableMap<String, String> = mutableMapOf()
         for ((key, value) in getParams(request)) {
             params[key] = StringUtils.join(value, com.blank.common.core.utils.StringUtilsExtend.SEPARATOR)
         }
@@ -134,7 +134,7 @@ object JakartaServletUtilExtend {
         } else urlDecode(value)
     }
 
-    fun getHeaders(request: HttpServletRequest): Map<String, String> {
+    fun getHeaders(request: HttpServletRequest): MutableMap<String, String> {
         val map: MutableMap<String, String> = LinkedCaseInsensitiveMap()
         val enumeration = request.headerNames
         if (enumeration != null) {

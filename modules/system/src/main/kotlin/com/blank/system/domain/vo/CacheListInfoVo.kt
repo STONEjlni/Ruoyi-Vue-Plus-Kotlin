@@ -8,5 +8,5 @@ import java.util.*
 class CacheListInfoVo {
     var info: Properties? = null
     var dbSize: Long? = null
-    var commandStats: MutableList<Map<String, String>>? = null
+    var commandStats: MutableList<MutableMap<String, String>>? = null
 }

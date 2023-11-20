@@ -50,7 +50,7 @@ class SpringDocConfig(
         openApi.tags(properties.tags)
         openApi.paths(properties.paths)
         openApi.components(properties.components)
-        val keySet: Set<String> = properties.components!!.securitySchemes.keys
+        val keySet: MutableSet<String> = properties.components!!.securitySchemes.keys
         val list: MutableList<SecurityRequirement> = ArrayList()
         val securityRequirement = SecurityRequirement()
         keySet.forEach(Consumer { name: String? -> securityRequirement.addList(name) })
@@ -78,8 +78,8 @@ class SpringDocConfig(
         securityParser: SecurityService,
         springDocConfigProperties: SpringDocConfigProperties,
         propertyResolverUtils: PropertyResolverUtils,
-        openApiBuilderCustomisers: Optional<List<OpenApiBuilderCustomizer>>,
-        serverBaseUrlCustomisers: Optional<List<ServerBaseUrlCustomizer>>,
+        openApiBuilderCustomisers: Optional<MutableList<OpenApiBuilderCustomizer>>,
+        serverBaseUrlCustomisers: Optional<MutableList<ServerBaseUrlCustomizer>>,
         javadocProvider: Optional<JavadocProvider>
     ): OpenAPIService {
         return OpenApiHandler(

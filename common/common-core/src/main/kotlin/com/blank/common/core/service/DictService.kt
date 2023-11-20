@@ -39,7 +39,7 @@ interface DictService {
      * @param dictType 字典类型
      * @return dictValue为key，dictLabel为值组成的Map
      */
-    fun getAllDictByDictType(dictType: String): Map<String, String>?
+    fun getAllDictByDictType(dictType: String): MutableMap<String, String>?
 
     /**
      * 根据字典类型和字典值获取字典标签

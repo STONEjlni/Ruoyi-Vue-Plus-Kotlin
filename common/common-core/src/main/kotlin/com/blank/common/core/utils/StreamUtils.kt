@@ -252,7 +252,7 @@ object StreamUtils {
         val key: MutableSet<K> = HashSet()
         key.addAll(map1.keys)
         key.addAll(map2.keys)
-        val map: MutableMap<K, V> = HashMap()
+        val map: MutableMap<K, V> = mutableMapOf()
         for (t in key) {
             val x = map1[t]
             val y = map2[t]

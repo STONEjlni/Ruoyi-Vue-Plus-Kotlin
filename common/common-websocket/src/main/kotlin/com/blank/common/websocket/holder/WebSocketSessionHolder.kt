@@ -23,7 +23,7 @@ object WebSocketSessionHolder {
         return USER_SESSION_MAP[sessionKey]
     }
 
-    fun getSessionsAll(): Set<Long> {
+    fun getSessionsAll(): MutableSet<Long> {
         return USER_SESSION_MAP.keys
     }
 

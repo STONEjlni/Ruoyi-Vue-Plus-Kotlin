@@ -113,7 +113,7 @@ object StringUtilsExtend {
      * @param sep 分隔符
      * @return set集合
      */
-    fun str2Set(str: String, sep: String): Set<String> {
+    fun str2Set(str: String, sep: String): MutableSet<String> {
         return HashSet(str2List(str, sep, true, false))
     }
 
@@ -126,7 +126,7 @@ object StringUtilsExtend {
      * @param trim        去掉首尾空白
      * @return list集合
      */
-    fun str2List(str: String, sep: String, filterBlank: Boolean, trim: Boolean): List<String> {
+    fun str2List(str: String, sep: String, filterBlank: Boolean, trim: Boolean): MutableList<String> {
         val list: MutableList<String> = ArrayList()
         if (isEmpty(str)) {
             return list
@@ -203,7 +203,7 @@ object StringUtilsExtend {
      * @param strs 需要检查的字符串数组
      * @return 是否匹配
      */
-    fun matches(str: String, strs: List<String>): Boolean {
+    fun matches(str: String, strs: MutableList<String>): Boolean {
         if (isEmpty(str) || CollUtil.isEmpty(strs)) {
             return false
         }
@@ -270,8 +270,8 @@ object StringUtilsExtend {
      * @param str 被切分的字符串
      * @return 分割后的数据列表
      */
-    fun splitList(str: String): List<String> {
-        return splitTo(str) { value: Any -> Convert.toStr(value) }
+    fun splitList(str: String): MutableList<String> {
+        return splitTo(str) { value: Any -> Convert.toStr(value) }.toMutableList()
     }
 
     /**
@@ -281,8 +281,8 @@ object StringUtilsExtend {
      * @param separator 分隔符
      * @return 分割后的数据列表
      */
-    fun splitList(str: String, separator: String): List<String> {
-        return splitTo(str, separator) { value: Any -> Convert.toStr(value) }
+    fun splitList(str: String, separator: String): MutableList<String> {
+        return splitTo(str, separator) { value: Any -> Convert.toStr(value) }.toMutableList()
     }
 
     /**
@@ -292,8 +292,8 @@ object StringUtilsExtend {
      * @param mapper 自定义转换
      * @return 分割后的数据列表
      */
-    fun <T> splitTo(str: String, mapper: Function<in Any, T>): List<T> {
-        return splitTo(str, SEPARATOR, mapper)
+    fun <T> splitTo(str: String, mapper: Function<in Any, T>): MutableList<T> {
+        return splitTo(str, SEPARATOR, mapper).toMutableList()
     }
 
     /**
@@ -304,12 +304,12 @@ object StringUtilsExtend {
      * @param mapper    自定义转换
      * @return 分割后的数据列表
      */
-    fun <T> splitTo(str: String, separator: String, mapper: Function<in Any, T>): List<T> {
+    fun <T> splitTo(str: String, separator: String, mapper: Function<in Any, T>): MutableList<T> {
         return if (StrUtil.isBlank(str)) {
             ArrayList(0)
         } else StrUtil.split(str, separator)
             .filter { Objects.nonNull(it) }
-            .map { mapper.apply(it) }
+            .map { mapper.apply(it) }.toMutableList()
     }
 
     /**
@@ -317,7 +317,11 @@ object StringUtilsExtend {
      * @param str
      * @return 0,1
      */
-    fun boolStrTo01(str: String): String {
+    fun boolStrTo01(str: String?): String? {
+        if (StrUtil.isBlank(str) || !StrUtil.equalsAny(str, "false", "true")) {
+            return str
+        }
+
         return if (StrUtil.equals(str, "true", true)) {
             "1"
         } else "0"

@@ -57,7 +57,10 @@ class GenTableColumn : BaseEntity() {
      */
     var isPk: String? = null
         set(value) {
-            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+            field = StringUtilsExtend.boolStrTo01(value)
+        }
+        get() {
+            return field
         }
 
     /**
@@ -65,7 +68,10 @@ class GenTableColumn : BaseEntity() {
      */
     var isIncrement: String? = null
         set(value) {
-            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+            field = StringUtilsExtend.boolStrTo01(value)
+        }
+        get() {
+            return field
         }
 
     /**
@@ -73,7 +79,10 @@ class GenTableColumn : BaseEntity() {
      */
     var isRequired: String? = null
         set(value) {
-            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+            field = StringUtilsExtend.boolStrTo01(value)
+        }
+        get() {
+            return field
         }
 
     /**
@@ -81,7 +90,10 @@ class GenTableColumn : BaseEntity() {
      */
     var isInsert: String? = null
         set(value) {
-            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+            field = StringUtilsExtend.boolStrTo01(value)
+        }
+        get() {
+            return field
         }
 
     /**
@@ -89,7 +101,10 @@ class GenTableColumn : BaseEntity() {
      */
     var isEdit: String? = null
         set(value) {
-            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+            field = StringUtilsExtend.boolStrTo01(value)
+        }
+        get() {
+            return field
         }
 
     /**
@@ -97,7 +112,10 @@ class GenTableColumn : BaseEntity() {
      */
     var isList: String? = null
         set(value) {
-            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+            field = StringUtilsExtend.boolStrTo01(value)
+        }
+        get() {
+            return field
         }
 
     /**
@@ -105,7 +123,10 @@ class GenTableColumn : BaseEntity() {
      */
     var isQuery: String? = null
         set(value) {
-            field = StringUtilsExtend.boolStrTo01(value.let { "false" })
+            field = StringUtilsExtend.boolStrTo01(value)
+        }
+        get() {
+            return field
         }
 
     /**
@@ -199,8 +220,7 @@ class GenTableColumn : BaseEntity() {
                 if (StringUtils.isNotEmpty(value)) {
                     val startStr: Any = value.subSequence(0, 1)
                     val endStr = value.substring(1)
-                    sb.append(StringUtils.EMPTY).append(startStr).append("=").append(endStr)
-                        .append(StringUtilsExtend.SEPARATOR)
+                    sb.append(StringUtils.EMPTY).append(startStr).append("=").append(endStr).append(StringUtilsExtend.SEPARATOR)
                 }
             }
             sb.deleteCharAt(sb.length - 1).toString()
@@ -267,11 +287,9 @@ class GenTableColumn : BaseEntity() {
 
     companion object {
         fun isSuperColumn(javaField: String?): Boolean {
-            return StringUtils.equalsAnyIgnoreCase(
-                javaField,  // BaseEntity
+            return StringUtils.equalsAnyIgnoreCase(javaField,  // BaseEntity
                 "createBy", "createTime", "updateBy", "updateTime",  // TreeEntity
-                "parentName", "parentId"
-            )
+                "parentName", "parentId")
         }
 
         fun isUsableColumn(javaField: String?): Boolean {

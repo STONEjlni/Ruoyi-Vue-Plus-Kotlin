@@ -15,10 +15,10 @@ object CacheUtils {
      *
      * @param cacheNames 缓存组名称
      */
-    fun keys(cacheNames: String?): Set<Any> {
+    fun keys(cacheNames: String?): MutableSet<Any> {
         val rmap = CACHE_MANAGER.getCache(cacheNames!!)!!
             .nativeCache as RMap<*, *>
-        return rmap.keys
+        return rmap.keys.toMutableSet()
     }
 
     /**

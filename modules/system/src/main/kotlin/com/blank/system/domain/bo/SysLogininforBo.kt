@@ -67,5 +67,5 @@ class SysLogininforBo {
     /**
      * 请求参数
      */
-    var params: Map<String, Any> = HashMap()
+    var params: MutableMap<String, Any> = mutableMapOf()
 }

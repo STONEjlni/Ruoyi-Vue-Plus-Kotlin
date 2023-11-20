@@ -17,5 +17,5 @@ class SocialProperties {
     /**
      * 授权类型
      */
-    var type: Map<String, SocialLoginConfigProperties>? = null
+    var type: MutableMap<String, SocialLoginConfigProperties>? = null
 }

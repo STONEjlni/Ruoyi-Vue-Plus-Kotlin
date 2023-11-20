@@ -87,7 +87,7 @@ class SysOssServiceImpl(
     }
 
     private fun buildQueryWrapper(bo: SysOssBo): QueryWrapper {
-        val params: Map<String, Any?> = bo.params
+        val params: MutableMap<String, Any> = bo.params
         return QueryWrapper.create().from(SYS_OSS)
             .where(SYS_OSS.FILE_NAME.like(bo.fileName))
             .and(SYS_OSS.ORIGINAL_NAME.like(bo.originalName))

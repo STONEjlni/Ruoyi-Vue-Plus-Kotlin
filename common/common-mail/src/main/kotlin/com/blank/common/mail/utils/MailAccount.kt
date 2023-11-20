@@ -174,7 +174,7 @@ class MailAccount : Serializable {
     /**
      * 自定义的其他属性，此自定义属性会覆盖默认属性
      */
-    val customProperty: MutableMap<String, Any> = HashMap()
+    val customProperty: MutableMap<String, Any> = mutableMapOf()
 
     // -------------------------------------------------------------- Constructor start
 

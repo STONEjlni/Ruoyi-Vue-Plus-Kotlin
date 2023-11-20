@@ -12,7 +12,7 @@ object DataPermissionHelper {
     private const val DATA_PERMISSION_KEY = "data:permission"
 
     fun <T> getVariable(key: String): T? {
-        val context: Map<String, Any> = getContext()
+        val context: MutableMap<String, Any> = getContext()
         return context[key] as T?
     }
 

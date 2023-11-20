@@ -85,7 +85,7 @@ interface IGenTableService {
      * @param tableId 表编号
      * @return 预览数据列表
      */
-    fun previewCode(tableId: Long): Map<String, String>?
+    fun previewCode(tableId: Long): MutableMap<String, String>?
 
     /**
      * 生成代码（下载方式）

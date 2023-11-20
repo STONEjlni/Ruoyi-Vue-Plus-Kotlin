@@ -281,7 +281,7 @@ object VelocityUtils {
      * @param paramsObj 生成其他选项
      * @return 树编码
      */
-    fun getTreecode(paramsObj: Map<String, Any>?): String {
+    fun getTreecode(paramsObj: MutableMap<String, Any>?): String {
         return if (CollUtil.isNotEmpty(paramsObj) && paramsObj!!.containsKey(GenConstants.TREE_CODE)) {
             toCamelCase(Convert.toStr(paramsObj[GenConstants.TREE_CODE]))
         } else StringUtils.EMPTY

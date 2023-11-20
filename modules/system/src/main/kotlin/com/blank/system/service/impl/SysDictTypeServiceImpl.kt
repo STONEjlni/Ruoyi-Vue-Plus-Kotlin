@@ -60,7 +60,7 @@ class SysDictTypeServiceImpl(
     }
 
     private fun buildQueryWrapper(bo: SysDictTypeBo): QueryWrapper {
-        val params: Map<String, Any> = bo.params
+        val params: MutableMap<String, Any> = bo.params
         return QueryWrapper.create().from(SYS_DICT_TYPE)
             .where(SYS_DICT_TYPE.DICT_NAME.like(bo.dictName))
             .and(SYS_DICT_TYPE.DICT_TYPE.like(bo.dictType))
