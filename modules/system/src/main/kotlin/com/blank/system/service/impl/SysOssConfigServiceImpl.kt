@@ -155,8 +155,9 @@ class SysOssConfigServiceImpl(
     @Transactional(rollbackFor = [Exception::class])
     override fun updateOssConfigStatus(bo: SysOssConfigBo): Int {
         val sysOssConfig = MapstructUtils.convert(bo, SysOssConfig::class.java)!!
-        val updateOldStatus = UpdateChain.of(SysOssConfig::class.java).set(SysOssConfig::status, "1")
-            .where(SysOssConfig::status).eq("0")
+        val updateOldStatus = UpdateChain.of(SysOssConfig::class.java)
+            .set(SYS_OSS_CONFIG.STATUS, "1")
+            .where(SYS_OSS_CONFIG.STATUS.eq("0"))
             .update()
         val row = baseMapper.update(sysOssConfig)
         if (updateOldStatus || row > 0) {
