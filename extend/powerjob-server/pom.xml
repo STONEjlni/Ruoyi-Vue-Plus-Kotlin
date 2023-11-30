@@ -96,7 +96,7 @@
                     <correctErrorTypes>true</correctErrorTypes>
                     <args>
                         <arg>-Xjsr305=strict</arg>
-                        <arg>-jvm-target=20</arg>
+                        <arg>-jvm-target=21</arg>
                         <arg>-Xjvm-default=all</arg>
                     </args>
                     <compilerPlugins>

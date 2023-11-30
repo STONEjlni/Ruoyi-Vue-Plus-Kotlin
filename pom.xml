@@ -18,7 +18,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>20</java.version>
-        <kotlin.version>1.9.20</kotlin.version>
+        <kotlin.version>1.9.21</kotlin.version>
+        <!-- 开启k2编译器，设置里也要调成2.0 -->
+        <!--<kotlin.compiler.languageVersion>2.0</kotlin.compiler.languageVersion>-->
         <springdoc.version>2.2.0</springdoc.version>
         <therapi-javadoc.version>0.15.0</therapi-javadoc.version>
         <velocity.version>2.3</velocity.version>
@@ -356,7 +358,7 @@
                     <correctErrorTypes>true</correctErrorTypes>
                     <args>
                         <arg>-Xjsr305=strict</arg>
-                        <arg>-jvm-target=20</arg>
+                        <arg>-jvm-target=21</arg>
                         <arg>-Xjvm-default=all</arg>
                     </args>
                     <compilerPlugins>

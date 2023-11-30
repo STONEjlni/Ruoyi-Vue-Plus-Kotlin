@@ -17,11 +17,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 @EnableWebSecurity
 @Configuration
 class SecurityConfig(adminServerProperties: AdminServerProperties) {
-    private val adminContextPath: String
-
-    init {
-        adminContextPath = adminServerProperties.contextPath
+    private val adminContextPath: String by lazy {
+        adminServerProperties.contextPath
     }
+
+    /*init {
+        adminContextPath = adminServerProperties.contextPath
+    }*/
 
     @Bean
     @Throws(Exception::class)
